@@ -13,6 +13,6 @@ class TCPServerSocket {
     private:
 
     uint16_t TCPServerPort;
-}
+};
 
 #endif
