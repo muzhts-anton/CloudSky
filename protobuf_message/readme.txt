@@ -13,3 +13,6 @@ for execute binary file:
 
 watching in buttons_coords.bin:
 hd buttons_coords.bin 
+
+
+Цель - научиться передавать данные по сети. Запустить как-то сервер и клиента и передать данные между ними.
