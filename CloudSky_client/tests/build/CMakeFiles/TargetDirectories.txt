@@ -1,4 +1,0 @@
-/home/konstantin/cloud/CloudSky/CloudSky_client/tests/build/CMakeFiles/rebuild_cache.dir
-/home/konstantin/cloud/CloudSky/CloudSky_client/tests/build/CMakeFiles/edit_cache.dir
-/home/konstantin/cloud/CloudSky/CloudSky_client/tests/build/CMakeFiles/test.dir
-/home/konstantin/cloud/CloudSky/CloudSky_client/tests/build/CMakeFiles/tests_client.dir
