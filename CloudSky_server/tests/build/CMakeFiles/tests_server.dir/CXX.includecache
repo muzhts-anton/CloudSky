@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/konstantin/cloud/CloudSky/CloudSky_server/include/SoundComponent.h
+iostream
+-
+libavcodec/avcodec.h
+-
+libavformat/avformat.h
+-
+libswresample/swresample.h
+-
+libavutil/frame.h
+-
+
+/home/konstantin/cloud/CloudSky/CloudSky_server/include/VideoComponent.h
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+time.h
+-
+cstdint
+-
+libavcodec/avcodec.h
+-
+libswscale/swscale.h
+-
+libavutil/pixfmt.h
+-
+
+/home/konstantin/cloud/CloudSky/CloudSky_server/tests/tests.cpp
+gtest/gtest.h
+/home/konstantin/cloud/CloudSky/CloudSky_server/tests/gtest/gtest.h
+../include/SoundComponent.h
+/home/konstantin/cloud/CloudSky/CloudSky_server/include/SoundComponent.h
+../include/VideoComponent.h
+/home/konstantin/cloud/CloudSky/CloudSky_server/include/VideoComponent.h
+
