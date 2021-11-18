@@ -11,6 +11,12 @@ class TCPClientSocket {
 
     void start();
 
+    void stop();
+
+    void setPort(uint16_t port);
+
+    uint16_t getPort();
+
     private:
 
     uint16_t TCPClientPort;

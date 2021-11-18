@@ -9,6 +9,7 @@ class Server {
 
     uint16_t getPort()  const;
     uint16_t setPort(const uint16_t port);
+    int getStatus();
     void stop();
     void start();
     void restart();
@@ -22,6 +23,7 @@ class Server {
     uint16_t TCPServerPort;
     uint16_t UDPServerPort;
     std::string hostName;
+    bool isRunning;
 
 };
 

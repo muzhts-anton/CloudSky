@@ -11,6 +11,10 @@ class UDPClientSocket {
 
     void getAudio(char *data, size_t size);
 
+    void setPort(uint16_t port);
+
+    uint16_t getPort();
+
     private:
 
     uint16_t UDPClientPort;
