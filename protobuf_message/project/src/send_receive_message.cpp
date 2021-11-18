@@ -14,9 +14,9 @@ using namespace std;
 #define error_serialize_message 3
 
 
-int reading_interaction(FILE *interaction_file, keyboard_mouse::buttons_coords& message){ // reading interaction from file
+
     
-}
+
 
 int sending_interaction(std::ofstream& out, std::string file_path, keyboard_mouse::buttons_coords message){
     out.open(file_path, std::ios_base::binary);
@@ -54,21 +54,18 @@ int main(){
     bool arr_init[2]{true,true};
     int arri_init[2]{100,200};
 
-    //SendInteraction SendM(file_path, message);
+
     SendInteraction SendM(file_path, message);
     SendM.PrintMessage();
-    //send_interaction send_mes(file_path, message);
 
     std::ofstream out;
-    //int result = sending_interaction(out, file_path, message);
     if (SendM.SendIt()) cout<<"Error with sending";
 
     keyboard_mouse::buttons_coords ReceiveMessage;
     ReceiveInteraction ReceiveM(file_path, ReceiveMessage);
     ifstream inp;
     keyboard_mouse::buttons_coords parsed_buttons_coords;
-    //result = receive_interaction((inp), file_path, parsed_buttons_coords);
-    //cout<<"Func receive x_coord = "<<parsed_buttons_coords.x_coord()<<endl;
+
     if(ReceiveM.ReceiveIt()) cout<<"Error wint receiving";
     ReceiveM.PrintMessage();
 

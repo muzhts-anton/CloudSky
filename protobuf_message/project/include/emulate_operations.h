@@ -1,5 +1,6 @@
+#include "message_operations.h"
+
 class EmulateInteraction: public ReceiveInteraction{
-    //ReceiveInteraction message();
     public:
     EmulateInteraction(std::string FilePath, keyboard_mouse::buttons_coords Message1): ReceiveInteraction(FilePath, Message1){
 
@@ -29,6 +30,6 @@ class EmulateInteraction: public ReceiveInteraction{
 
     };
     bool get_current_button_state(char button_symbol){
-        
+
     };
 };

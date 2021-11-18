@@ -5,7 +5,7 @@ class DataBaseHandler{
     std::connection_pool* GetInstance()
     Connect()
     Close()
-    Select(std::string&)
+    Select(std::string&){}
     Insert(std::string&)
     Update(std::string&)
     Delete(std::string&)

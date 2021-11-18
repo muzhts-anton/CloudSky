@@ -40,13 +40,11 @@
 
     SendInteraction::SendInteraction(std::string file_path, keyboard_mouse::buttons_coords message_1): 
     InteractionOperations(message_1){
-        //GetMessage() = message_1;
         out.open(file_path, std::ios_base::binary);
         if(!out){
             cout<<"FILE DOES NOT OPENED!"<<endl;
             assert(error_with_file);
             exit(error_with_file);
-            //out.close();
         };
     }
     SendInteraction::SendInteraction(std::string file_path, bool button_pressed[button_quanity], int coords[2]):
@@ -77,7 +75,6 @@
 
     ReceiveInteraction::ReceiveInteraction(std::string file_path, keyboard_mouse::buttons_coords message_1): 
     InteractionOperations(message_1){
-        //GetMessage() = message_1;
         in.open(file_path, std::ios_base::binary);
         if(!in){
             assert(error_with_file);
@@ -92,7 +89,6 @@
             exit(error_with_file);
             in.close();
         };
-        //SetMessage(button_pressed, coords);
     }
     ReceiveInteraction::~ReceiveInteraction(){
         in.close();
