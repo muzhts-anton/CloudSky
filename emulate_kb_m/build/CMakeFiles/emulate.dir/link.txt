@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/emulate.dir/project/src/emulate.cpp.o  -o emulate 

@@ -1,6 +1,7 @@
 #include<iostream>
 #include <fstream>
 #include "../include/keyboard_mouse_message.pb.h"
+#include "../include/message_operations.h"
 using namespace std;
 
 #define button_quanity 3
@@ -12,108 +13,6 @@ using namespace std;
 #define error_parse_message 2
 #define error_serialize_message 3
 
-class InteractionOperations{
-    public:
-    keyboard_mouse::buttons_coords message;
-    //std::fstream stream;
-    keyboard_mouse::buttons_coords& GetMessage (){
-        return message;
-    }
-    void SetMessage(bool button_pressed[button_quanity], int coords[coord_quanity]){
-        for (int i = 0; i < button_quanity; ++i) {
-            GetMessage().add_button_pressed(button_pressed[i]);
-        }
-        GetMessage().set_x_coord(coords[0]);
-        GetMessage().set_y_coord(coords[1]);
-    }
-    InteractionOperations(keyboard_mouse::buttons_coords message_1){
-        GetMessage() = message_1;
-    };
-    InteractionOperations(bool button_pressed[button_quanity], int coords[2]){
-        SetMessage(button_pressed, coords);
-    };
-    void PrintMessage(){
-        cout<< "Pressed buttons: ";
-        for(const bool &button : GetMessage().button_pressed()){
-            cout<<button<<" ";
-        };
-        cout<<endl;
-        cout<<"x_coord = "<<GetMessage().x_coord()<<endl;
-        cout<<"y_coord = "<<GetMessage().y_coord()<<endl;
-    }
-};
-
-class SendInteraction: public InteractionOperations{ // send_interaction
-    std::ofstream out;
-    public:
-    SendInteraction(std::string file_path, keyboard_mouse::buttons_coords message_1): 
-    InteractionOperations(message_1){
-        //GetMessage() = message_1;
-        out.open(file_path, std::ios_base::binary);
-        if(!out){
-            cout<<"FILE DOES NOT OPENED!"<<endl;
-            assert(error_with_file);
-            exit(error_with_file);
-            //out.close();
-        };
-    }
-    SendInteraction(std::string file_path, bool button_pressed[button_quanity], int coords[2]): InteractionOperations(button_pressed, coords){
-        out.open(file_path, std::ios_base::binary);
-        if(!out){
-            cout<<"FILE DOES NOT OPENED!"<<endl;
-            assert(error_with_file);
-            exit(error_with_file);
-            //out.close();
-        };
-        //SetMessage(button_pressed, coords);
-    }
-    ~SendInteraction(){
-        out.close();
-    }
-    int SendIt(){
-        ofstream out_addit;
-        out_addit.open("buttons_coords.bin", std::ios_base::binary);
-
-        if(!message.SerializePartialToOstream(&out_addit)){
-            cout<<"ERRORSEND IT !"<<endl;
-            return error_serialize_message;
-        };
-        return success;
-    }
-};
-
-class ReceiveInteraction: public InteractionOperations{ // send_interaction
-    std::ifstream in;
-    public:
-    ReceiveInteraction(std::string file_path, keyboard_mouse::buttons_coords message_1): 
-    InteractionOperations(message_1){
-        //GetMessage() = message_1;
-        in.open(file_path, std::ios_base::binary);
-        if(!in){
-            assert(error_with_file);
-            exit(error_with_file);
-            in.close();
-        };
-    }
-    ReceiveInteraction(std::string file_path, bool button_pressed[button_quanity], int coords[2]): InteractionOperations(button_pressed, coords){
-        in.open(file_path, std::ios_base::binary);
-        if(!in){
-            assert(error_with_file);
-            exit(error_with_file);
-            in.close();
-        };
-        //SetMessage(button_pressed, coords);
-    }
-    ~ReceiveInteraction(){
-        in.close();
-    }
-    int ReceiveIt(){
-    if (!message.ParseFromIstream(&in)) {
-        return error_parse_message;
-    };
-    return success;
-    }
-};
 
 int reading_interaction(FILE *interaction_file, keyboard_mouse::buttons_coords& message){ // reading interaction from file
     
