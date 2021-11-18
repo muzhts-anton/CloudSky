@@ -1,8 +1,5 @@
 #include "../include/message_operations.h"
 
-
-
-
     keyboard_mouse::buttons_coords& InteractionOperations::GetMessage (){
         return message;
     }

@@ -7,4 +7,3 @@ send_receive_keyb_m1
 project/src/emulate.cpp
 project/src/mouse_move.cpp
 project/src/mouse_move
-emulate_kb_m/build

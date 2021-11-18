@@ -15,35 +15,6 @@ using namespace std;
 
 
 
-    
-
-
-int sending_interaction(std::ofstream& out, std::string file_path, keyboard_mouse::buttons_coords message){
-    out.open(file_path, std::ios_base::binary);
-    if(!out){
-        return error_with_file;
-        out.close();
-    };
-    if(!message.SerializePartialToOstream(&out)){
-        return error_serialize_message;
-        out.close();
-    };
-    out.close();
-    return success;
-}
-int receive_interaction(std::ifstream& in, std::string file_path, keyboard_mouse::buttons_coords& parsed_buttons_coords){
-    in.open(file_path, std::ios_base::binary);
-    if(!in){
-        return error_with_file;
-        in.close();
-    } ;
-    if (!parsed_buttons_coords.ParseFromIstream(&in)) {
-        return error_parse_message;
-        in.close();
-    } ;
-    in.close();
-    return success;
-}
 int main(){
     std::string file_path = "buttons_coords.bin";
     keyboard_mouse::buttons_coords message;

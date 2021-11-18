@@ -1,4 +1,0 @@
-/home/viktor/Projects/Team_project/CloudSky/emulate_kb_m/build/CMakeFiles/rebuild_cache.dir
-/home/viktor/Projects/Team_project/CloudSky/emulate_kb_m/build/CMakeFiles/edit_cache.dir
-/home/viktor/Projects/Team_project/CloudSky/emulate_kb_m/build/CMakeFiles/mouse_move.dir
-/home/viktor/Projects/Team_project/CloudSky/emulate_kb_m/build/CMakeFiles/emulate.dir
