@@ -1,6 +1,6 @@
 #include<iostream>
 #include <fstream>
-#include "keyboard_mouse_message.pb.h"
+#include "../include/keyboard_mouse_message.pb.h"
 using namespace std;
 
 #define button_quanity 3
