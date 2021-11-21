@@ -24,8 +24,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
+FIND_PACKAGE(Protobuf REQUIRED)
+INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS src/keyboard_mouse_message.proto)
+add_library(MessageOperations STATIC src/message_operations.cpp include/message_operations.h)
+#add_executable(CloudSky_MyClient src/send_receive_message.cpp  ${PROTO_SRCS} ${PROTO_HDRS})
+
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+
+FIND_PACKAGE( Qt5Multimedia REQUIRED )
+FIND_PACKAGE( Qt5MultimediaWidgets REQUIRED )
+ 
+SET(QT_USE_QTMULTIMEDIA TRUE)
+SET(QT_USE_QTMULTIMEDIAWIDGETS TRUE)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -47,11 +61,13 @@ else()
     else()
         add_executable(CloudSky_MyClient
             ${PROJECT_SOURCES}
+            src/send_receive_message.cpp
+            ${PROTO_SRCS} ${PROTO_HDRS}
         )
     endif()
 endif()
 
-target_link_libraries(CloudSky_MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(CloudSky_MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets MessageOperations ${Protobuf_LIBRARIES})
 
 set_target_properties(CloudSky_MyClient PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

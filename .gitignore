@@ -33,3 +33,7 @@
 
 # Env
 build/
+.vscode/
+*.swp
+buttons_coords.bin
+*.user
