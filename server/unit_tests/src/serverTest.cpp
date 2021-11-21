@@ -10,5 +10,13 @@ TEST(protocolServer, changingPortTest) {
 }
 
 TEST(protocolServer, serverStatusTest) {
-
+    Server server;
+    EXPECT_EQ(server.getStatus(), SHUT_DOWN);
+    server.start();
+    EXPECT_EQ(server.getStatus(), RUNNING);
+    server.restart();
+    EXPECT_EQ(server.getStatus(), RUNNING);
+    server.stop();
+    EXPECT_EQ(server.getStatus(), STOPPED);
 }
+
