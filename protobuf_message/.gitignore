@@ -1,5 +1,4 @@
 build
-project/include/message_operations.h
 project/src/buttons_coords.bin 
 .vscode
 send_receive_keyb_m

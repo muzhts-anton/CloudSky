@@ -20,7 +20,7 @@ TEST(EMULATE_TEST, coords_test) {
 
 TEST(EMULATE_TEST, button_test) {
     string file_path = "";
-    bool ButtonSeq[button_quanity]{true,false,false};
+    bool ButtonSeq[button_quanity]{true,false,false}; 
     int coords[coord_quanity]{100, 886};
     EmulateInteraction emulate(file_path, ButtonSeq, coords);
 

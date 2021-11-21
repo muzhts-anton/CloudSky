@@ -15,18 +15,10 @@ add_executable(send_receive_keyb_m project/src/send_receive_message.cpp  ${PROTO
 target_link_libraries(send_receive_keyb_m MessageOperations ${Protobuf_LIBRARIES})
 
 
+# enable_testing()
+# find_package(GTest REQUIRED)
+# include_directories(${GTEST_INCLUDE_DIR})
+# add_executable(message_test project/tests/message_test.cpp project/src/message_operations.cpp)
 
-#set(CMAKE_C_FLAGS "pkg-config --cflags --libs protobuf")
-#NCLUDE(FindProtobuf)
-#FIND_PACKAGE(Protobuf REQUIRED)
-#INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
-#PROTOBUF_GENERATE_CPP(PROTO_SRC PROTO_HEADER message.proto)
-#ADD_LIBRARY(proto ${PROTO_HEADER} ${PROTO_SRC})
-
-#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-
-#add_executable(send_receive_keyb_m send_receive_message.cpp)
-
-
-
-#add_executable(send_receive_keyb_m send_receive_message.cpp keyboard_mouse_message.pb.cc)
+# target_link_libraries(message_test ${GTEST_LIBRARIES} MessageOperations)
+# target_link_libraries(message_test gtest pthread) #!
