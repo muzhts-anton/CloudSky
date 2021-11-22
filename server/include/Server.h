@@ -5,6 +5,11 @@
 #include <iostream>
 #include <fstream>
 
+#include "TCPServerSocket.h"
+
+constexpr int serverDefaultPort = 8050;
+constexpr const char *serverDefaultIp = "127.0.0.1";
+
 // class Server {
 //     public:
 
@@ -29,7 +34,18 @@
 // };
 
 class Server {
+public:
+    Server(int port=serverDefaultPort, const char *ip=serverDefaultIp);
 
+    ~Server();
+
+    void start();
+
+    void getInteraction();
+
+private:
+    TCPServerSocket *serverSocket;
+    char *hostName;
 };
 
 #endif
