@@ -97,8 +97,6 @@ int main(int argc, char** argv) {
     dev_fake_keyboard.id.product = 0x01;
     dev_fake_keyboard.id.version = 1;
 
-
-
     /**configure the input device to send type of events, inform to subsystem which 
      * type of input events we are using via ioctl calls. 
      * UI_SET_EVBIT ioctl request is used to applied on uinput descriptor to enable a type of event.
@@ -150,7 +148,6 @@ int main(int argc, char** argv) {
     }
     fwrite(kb_set_bool, sizeof(bool), 3,buttons);
     fclose(buttons);
-
 
     if ((buttons=fopen("pressed_butons.txt", "rb"))==NULL) {
         printf ("Cannot open file.\n");

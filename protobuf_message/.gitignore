@@ -1,8 +1,9 @@
 build
-project/src/buttons_coords.bin 
+project/src/ButtonsCoords.bin 
 .vscode
-send_receive_keyb_m
-send_receive_keyb_m1
-project/src/emulate.cpp
-project/src/mouse_move.cpp
+SendReceiveKeybMess
+SendReceiveKeybMess1
+project/src/Emulate.cpp
+project/src/MouseMove.cpp
 project/src/mouse_move
+clang-format.clang

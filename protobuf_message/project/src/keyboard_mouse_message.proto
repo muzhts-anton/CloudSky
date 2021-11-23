@@ -1,9 +1,0 @@
-syntax="proto3";
-package keyboard_mouse;
-
-message buttons_coords
-{
-    repeated bool button_pressed=1 [packed = true]; // repeated => button_pressed is array
-    int64 x_coord=2;
-    int64 y_coord=3;
-}
