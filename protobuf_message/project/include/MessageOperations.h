@@ -14,7 +14,7 @@ using namespace std;
 #define ERROR_WITH_FILE 1
 #define ERROR_PARSE_MESSAGE 2
 #define ERROR_SERIALIZE_MESSAGE 3
-
+namespace ViktorDev {
 class InteractionOperations {
 public:
     KeyboardMouse::ButtonsCoords message;
@@ -53,5 +53,5 @@ public:
     ~ReceiveInteraction();
     int receiveIt();
 };
-
+}
 #endif

@@ -6,4 +6,5 @@ SendReceiveKeybMess1
 project/src/Emulate.cpp
 project/src/MouseMove.cpp
 project/src/mouse_move
+#protobuf_message/clang-format.clang
 clang-format.clang

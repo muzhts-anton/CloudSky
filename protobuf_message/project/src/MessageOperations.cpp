@@ -1,4 +1,5 @@
 #include "../include/MessageOperations.h"
+using namespace ViktorDev;
 
 KeyboardMouse::ButtonsCoords& InteractionOperations::getMessage()
 {

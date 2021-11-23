@@ -15,7 +15,7 @@
 
 #include <string>
 #include <time.h>
-
+namespace ViktorDev {
 class EmulateInteraction : public ReceiveInteraction {
 public:
     EmulateInteraction(std::string filePath, KeyboardMouse::ButtonsCoords message);
@@ -76,5 +76,5 @@ private:
 
 //     };
 // };
-
+}
 #endif

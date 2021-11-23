@@ -1,5 +1,5 @@
 #include "../include/OperationEmulation.h"
-
+using namespace ViktorDev;
 EmulateInteraction::EmulateInteraction(std::string filePath, KeyboardMouse::ButtonsCoords message)
     : ReceiveInteraction(filePath, message) {
 

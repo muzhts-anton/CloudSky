@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 using namespace std;
-
+using namespace ViktorDev;
 int main()
 {
 
