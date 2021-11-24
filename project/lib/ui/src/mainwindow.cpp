@@ -1,16 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "message_operations.h"
+#include "keyboard_mouse_message.pb.h"
 
 #include <QtGui>
-#include <QFile>
-#include <QTextStream>
-
-#include <QtMultimedia/QMediaPlayer>
-
 #include <iostream>
 #include <fstream>
-#include "include/keyboard_mouse_message.pb.h"
-#include "include/message_operations.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), _ui(new Ui::MainWindow)
@@ -21,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
         _butts[i] = false;
     
     _timer = new QTimer();
-    _timer->setInterval(1000 / 60);
+    _timer->setInterval(1000 / 80);
     _timer->start();
 
     connect(_timer, &QTimer::timeout, this, &MainWindow::timerOutEvent);

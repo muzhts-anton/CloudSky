@@ -11,63 +11,32 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# QtCreator supports the following variables for Android, which are identical to qmake Android variables.
-# Check https://doc.qt.io/qt/deployment-android.html for more information.
-# They need to be set before the find_package( ...) calls below.
-
-#if(ANDROID)
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
-#        set(ANDROID_EXTRA_LIBS
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
-#    endif()
-#endif()
-
-FIND_PACKAGE(Protobuf REQUIRED)
-INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS src/keyboard_mouse_message.proto)
-add_library(MessageOperations STATIC src/message_operations.cpp include/message_operations.h)
-#add_executable(CloudSky_MyClient src/send_receive_message.cpp  ${PROTO_SRCS} ${PROTO_HDRS})
-
-
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
-FIND_PACKAGE( Qt5Multimedia REQUIRED )
-FIND_PACKAGE( Qt5MultimediaWidgets REQUIRED )
+# FIND_PACKAGE( Qt5Multimedia REQUIRED )
+# FIND_PACKAGE( Qt5MultimediaWidgets REQUIRED )
  
-SET(QT_USE_QTMULTIMEDIA TRUE)
-SET(QT_USE_QTMULTIMEDIAWIDGETS TRUE)
+# SET(QT_USE_QTMULTIMEDIA TRUE)
+# SET(QT_USE_QTMULTIMEDIAWIDGETS TRUE)
 
-set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-)
+FIND_PACKAGE(Protobuf REQUIRED)
+
+add_subdirectory(project/lib/proto)
+add_subdirectory(project/lib/ui)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(CloudSky_MyClient
+        project/src/main.cpp
         MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
     )
 else()
-    if(ANDROID)
-        add_library(CloudSky_MyClient SHARED
-            ${PROJECT_SOURCES}
-        )
-    else()
-        add_executable(CloudSky_MyClient
-            ${PROJECT_SOURCES}
-            src/send_receive_message.cpp
-            ${PROTO_SRCS} ${PROTO_HDRS}
-        )
-    endif()
+    add_executable(CloudSky_MyClient
+        project/src/main.cpp
+    )
 endif()
 
-target_link_libraries(CloudSky_MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets MessageOperations ${Protobuf_LIBRARIES})
+target_link_libraries(CloudSky_MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ui)
 
 set_target_properties(CloudSky_MyClient PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
