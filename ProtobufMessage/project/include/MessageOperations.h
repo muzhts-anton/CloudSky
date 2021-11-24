@@ -2,18 +2,22 @@
 #define MessageOperations_H
 
 #include "KeyboardMouseMessage.pb.h"
+//#include "InteractionOperations.h"
+//#include "ReceiveInteraction.h"
+//#include "SendInteraction.h"
 #include <fstream>
 #include <iostream>
 
 using namespace std;
+constexpr int BUTTON_QUANITY = 9;
+constexpr int COORD_QUANITY = 2;
 
-#define BUTTON_QUANITY 9
-#define COORD_QUANITY 2
+constexpr int SUCCESS = 0;
+constexpr int ERROR_WITH_FILE = 1;
+constexpr int ERROR_PARSE_MESSAGE = 2;
+constexpr int ERROR_SERIALIZE_MESSAGE = 3;
 
-#define SUCCESS 0
-#define ERROR_WITH_FILE 1
-#define ERROR_PARSE_MESSAGE 2
-#define ERROR_SERIALIZE_MESSAGE 3
+
 namespace ViktorDev {
 class InteractionOperations {
 public:
