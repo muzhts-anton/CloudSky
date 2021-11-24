@@ -1,0 +1,16 @@
+build
+project/src/ButtonsCoords.bin 
+.vscode
+SendReceiveKeybMess
+SendReceiveKeybMess1
+project/src/Emulate.cpp
+project/src/MouseMove.cpp
+project/src/mouse_move
+project/src/SendInteraction.cpp
+project/src/ReceiveInteraction.cpp
+project/src/InteractionOperations.cpp
+project/include/SendInteraction.h
+project/include/ReceiveInteraction.h
+project/include/InteractionOperations.h
+#ProtobufMessage/clang-format.clang
+clang-format.clang
