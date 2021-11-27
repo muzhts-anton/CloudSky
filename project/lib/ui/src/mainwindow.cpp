@@ -1,11 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "message_operations.h"
-#include "keyboard_mouse_message.pb.h"
+//#include "message_operations.h"
+//#include "keyboard_mouse_message.pb.h"
 
 #include <QtGui>
 #include <iostream>
 #include <fstream>
+#include <QDebug>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -25,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::timerOutEvent()
 {
+    qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
+    /*
     std::string file_path = "buttons_coords.bin";
     keyboard_mouse::buttons_coords message;
 
@@ -49,6 +52,7 @@ void MainWindow::timerOutEvent()
     if (ReceiveM.ReceiveIt())
         cout << "Error wint receiving";
     ReceiveM.PrintMessage();
+    */
 }
 
     // a w s d space q e f esc
