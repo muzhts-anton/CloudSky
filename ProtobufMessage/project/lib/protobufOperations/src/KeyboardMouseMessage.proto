@@ -6,5 +6,5 @@ message ButtonsCoords
     repeated bool buttonPressed = 1 [ packed = true ]; // repeated => buttonPressed is array
     int64 xCoord = 2;
     int64 yCoord = 3;
-    repeated bool mouseClick = 4 [ packed = true ];
+    //repeated bool mouseClick = 4 [ packed = true ];
 }

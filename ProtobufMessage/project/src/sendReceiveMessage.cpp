@@ -12,26 +12,26 @@ int main()
     std::string filePath = "buttonsCoords.bin";
     KeyboardMouse::ButtonsCoords message;
     cout<<"IN SendReceiveKeyMess 222";
-    // message.add_buttonpressed(true);
-    // message.add_buttonpressed(false);
-    // message.set_xcoord(5);
-    // message.set_ycoord(10);
-    // //bool arrInit[2] { true, true };
-    // //int arriInit[2] { 100, 200 };
+    message.add_buttonpressed(true);
+    message.add_buttonpressed(false);
+    message.set_xcoord(5);
+    message.set_ycoord(10);
+    //bool arrInit[2] { true, true };
+    //int arriInit[2] { 100, 200 };
 
-    // SendInteraction sendMessageHandler(filePath, message);
-    // sendMessageHandler.printMessage();
+    SendInteraction sendMessageHandler(filePath, message);
+    sendMessageHandler.printMessage();
 
-    // std::ofstream out;
-    // if (sendMessageHandler.sendIt())
-    //     cout << "Error with sending";
-    // KeyboardMouse::ButtonsCoords parsedButtonsCoords;
-    // ReceiveInteraction receiveMessangeHandler(filePath, parsedButtonsCoords);
-    // //ifstream inp;
-    // //KeyboardMouse::ButtonsCoords parsedButtonsCoords;
+    std::ofstream out;
+    if (sendMessageHandler.sendIt())
+        cout << "Error with sending";
+    KeyboardMouse::ButtonsCoords parsedButtonsCoords;
+    ReceiveInteraction receiveMessangeHandler(filePath, parsedButtonsCoords);
+    //ifstream inp;
+    //KeyboardMouse::ButtonsCoords parsedButtonsCoords;
 
-    // if (receiveMessangeHandler.receiveIt())
-    //     cout << "Error with receiving";
-    // receiveMessangeHandler.printMessage();
+    if (receiveMessangeHandler.receiveIt())
+        cout << "Error with receiving";
+    receiveMessangeHandler.printMessage();
     return SUCCESS;
 }
