@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "../include/MessageOperations.h"
-#include "../include/OperationEmulation.h"
+#include "../include/messageOperations.h"
+#include "../include/operationEmulation.h"
 
 using namespace std;
 

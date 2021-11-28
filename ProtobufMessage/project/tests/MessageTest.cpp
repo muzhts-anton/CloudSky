@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../include/MessageOperations.h"
+#include "../include/messageOperations.h"
 
 TEST(MESSAGE_TEST, constructorMessageTest)
 {

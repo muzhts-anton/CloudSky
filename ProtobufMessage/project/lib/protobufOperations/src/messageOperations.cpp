@@ -1,4 +1,8 @@
-#include "../include/MessageOperations.h"
+#include "../include/messageOperations.h"
+
+//#pragma comment( MessageOperations, "Protobuf_LIBRARIES" )
+
+
 using namespace ViktorDev;
 
 KeyboardMouse::ButtonsCoords& InteractionOperations::getMessage()
@@ -17,12 +21,12 @@ InteractionOperations::InteractionOperations(KeyboardMouse::ButtonsCoords myMess
 {
     getMessage() = myMessage;
     this->filePath = filePath;
-};
+}
 InteractionOperations::InteractionOperations(bool buttonPressed[BUTTON_QUANITY], int coords[2], string filePath)
 {
     setMessage(buttonPressed, coords);
     this->filePath = filePath;
-};
+}
 InteractionOperations::InteractionOperations()
 {
     for (int i = 0; i < BUTTON_QUANITY; ++i) {
@@ -31,7 +35,7 @@ InteractionOperations::InteractionOperations()
     getMessage().set_xcoord(0);
     getMessage().set_ycoord(0);
     this->filePath = "";
-};
+}
 void InteractionOperations::printMessage()
 {
     cout << "Pressed buttons: ";
@@ -62,7 +66,7 @@ SendInteraction::SendInteraction(std::string filePath, bool buttonPressed[BUTTON
         assert(ERROR_WITH_FILE);
         exit(ERROR_WITH_FILE);
     };
-};
+}
 SendInteraction::~SendInteraction()
 {
     out.close();

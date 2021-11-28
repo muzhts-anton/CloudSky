@@ -1,10 +1,10 @@
-#ifndef MessageOperations_H
-#define MessageOperations_H
+#ifndef MESSAGEOPERATIONS_H
+#define MESSAGEOPERATIONS_H
 
 #include "KeyboardMouseMessage.pb.h"
-//#include "InteractionOperations.h"
-//#include "ReceiveInteraction.h"
-//#include "SendInteraction.h"
+//#include "interactionOperations.h"
+//#include "receiveInteraction.h"
+//#include "sendInteraction.h"
 #include <fstream>
 #include <iostream>
 
@@ -40,7 +40,7 @@ class SendInteraction : public InteractionOperations {
 public:
     SendInteraction() = delete;
     SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage);
-    InteractionOperations(myMessage);
+    //InteractionOperations(myMessage);
     SendInteraction(std::string filePath, bool buttonPressed[BUTTON_QUANITY], int coords[2]);
     ~SendInteraction();
     int sendIt();
@@ -52,10 +52,10 @@ class ReceiveInteraction : public InteractionOperations {
 public:
     ReceiveInteraction() = delete;
     ReceiveInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage);
-    InteractionOperations(myMessage);
+    //InteractionOperations(myMessage);
     ReceiveInteraction(std::string filePath, bool buttonPressed[BUTTON_QUANITY], int coords[2]);
     ~ReceiveInteraction();
     int receiveIt();
 };
 }
-#endif
+#endif //MESSAGEOPERATIONS_H
