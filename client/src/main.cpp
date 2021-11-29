@@ -1,11 +1,17 @@
-#include "mainwindow.h"
+#include <iostream>
 
-#include <QApplication>
+#include "TCPClientSocket.h"
 
-int main(int argc, char *argv[])
+int main()
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
+    TCPClient::TCPClientSocket socket(8050, "127.0.0.2");
+    socket.activateSocket();
+    int fps = 1;
+    std::string file_path = "buttonsCoords.bin";
+    while (true)
+    {
+        socket.transmitFile(file_path);
+        usleep(1000.0 / fps);
+    }
+    return 0;
 }

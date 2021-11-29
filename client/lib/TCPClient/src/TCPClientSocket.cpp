@@ -41,7 +41,7 @@ void TCPClient::TCPClientSocket::createConnection(){
         std::cout<<"[LOG] : Connection Successfull.\n";
 }
 
-void TCPClient::TCPClientSocket::transmit_file(std::string filename){
+void TCPClient::TCPClientSocket::transmitFile(std::string filename){
     file.open(filename, std::ios::in | std::ios::binary);
     if(file.is_open()) {
         if (debug)

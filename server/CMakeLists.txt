@@ -21,9 +21,8 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${GTEST_INCLUDE_DIRS}/inc/)
 
-add_subdirectory(lib/protobufOperations)
 add_subdirectory(lib/TCPServer)
 
 add_executable(CloudSky_MyServer src/main.cpp)
 
-target_link_libraries(CloudSky_MyServer protobufOperations TCPServer)
+target_link_libraries(CloudSky_MyServer TCPServer)
