@@ -19,7 +19,7 @@ constexpr const char *defaultClientIp = "127.0.0.1";
 namespace TCPClient {
 class TCPClientSocket{
 public:
-    TCPClientSocket(int port=defaultClientPort, const char *ip=defaultClientIp);
+    TCPClientSocket(const int port=defaultClientPort, const char *ip=defaultClientIp);
 
     void createSocket();
 

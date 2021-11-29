@@ -3,7 +3,7 @@
 
 constexpr bool debug = true;
 
-TCPClient::TCPClientSocket::TCPClientSocket(int port, const char *ip){  
+TCPClient::TCPClientSocket::TCPClientSocket(const int port, const char *ip){  
     PORT = port;
     IP = ip;
     address.sin_family = AF_INET;

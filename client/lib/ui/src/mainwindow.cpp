@@ -13,7 +13,7 @@ using namespace std;
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), _ui(new Ui::MainWindow)
+    : QMainWindow(parent), _ui(new Ui::MainWindow), socket(8050, "127.0.0.2")
 {
     _ui->setupUi(this);
 
