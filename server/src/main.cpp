@@ -10,7 +10,6 @@ int main() {
     while (true)
     {
         server.getInteraction();
-        std::cout << "Here we are\n";
         KeyboardMouse::ButtonsCoords ReceiveMessage;
         ViktorDev::ReceiveInteraction ReceiveM(filename, ReceiveMessage);
 
