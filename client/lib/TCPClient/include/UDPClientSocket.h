@@ -4,20 +4,50 @@
 
 #include <iostream>
 
+#include<iostream>
+#include<fstream>
+#include<stdio.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+constexpr int defaultServerPort = 8050;
+constexpr const char *defaultServerIp = "127.0.0.1";
+
+namespace UDPClient {
 class UDPClientSocket {
-    public:
+public:
 
-    void getVideo(char *data, size_t size);
+    UDPClientSocket(int port=defaultServerPort, const char *ip=defaultServerIp);
 
-    void getAudio(char *data, size_t size);
+    UDPClientSocket& operator=(UDPClientSocket& that);
 
-    void setPort(uint16_t port);
+    ~UDPClientSocket();
 
-    uint16_t getPort();
+    void activateSocket();
 
-    private:
+    void bindSocket();
 
-    uint16_t UDPClientPort;
+    void setListenSet();
+
+    void acceptConnection();
+
+    void createSocket();
+
+    void receiveFile();
+
+private:
+
+    std::fstream file;
+    int PORT;
+    int generalSocketDescriptor;
+    int newSocketDescriptor;
+    struct sockaddr_in address;
+    int addressLength;
+    const char *IP;
 };
+}
 
 #endif

@@ -16,41 +16,41 @@ void UDPServer::UDPServerSocket::activateSocket() {
     createSocket();
     if(inet_pton(AF_INET, IP, &address.sin_addr)<=0) { 
         if (debug)
-            std::cout<<"[ERROR] : Invalid address\n";
+            std::cout<<"[ERROR] : UPD Invalid address\n";
     }
-    else
-        createConnection();
+    // else
+    //     createConnection();
 }
 
 void UDPServer::UDPServerSocket::createSocket(){
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == 0) { 
         if (debug)
-            perror("[ERROR] : Socket failed");
+            perror("[ERROR] : UPD Socket failed");
         exit(EXIT_FAILURE);
     }
     if (debug)
-        std::cout<<"[LOG] : Socket Created Successfully.\n";
+        std::cout<<"[LOG] : UPD Socket Created Successfully.\n";
 }
 
 void UDPServer::UDPServerSocket::createConnection(){
     if (connect(generalSocketDescriptor, (struct sockaddr *)&address, sizeof(address)) < 0) { 
         if (debug)
-            perror("[ERROR] : connection attempt failed.\n");
+            perror("[ERROR] : UPD connection attempt failed.\n");
         exit(EXIT_FAILURE);
     }
     if (debug)
-        std::cout<<"[LOG] : Connection Successfull.\n";
+        std::cout<<"[LOG] : UPD Connection Successfull.\n";
 }
 
 void UDPServer::UDPServerSocket::transmitFile(std::string filename){
     file.open(filename, std::ios::in | std::ios::binary);
     if(file.is_open()) {
         if (debug)
-            std::cout<<"[LOG] : File is ready to Transmit.\n";
+            std::cout<<"[LOG] : UPD File is ready to Transmit.\n";
     }
     else {
         if (debug)
-            std::cout<<"[ERROR] : File loading failed, Exititng.\n";
+            std::cout<<"[ERROR] : UPD File loading failed, Exititng.\n";
         exit(EXIT_FAILURE);
     }
     char buffer[1024] = {};
@@ -60,7 +60,7 @@ void UDPServer::UDPServerSocket::transmitFile(std::string filename){
         length++;
     }
     if (debug)
-        std::cout<<"[LOG] : Sending...\n";
+        std::cout<<"[LOG] : UPD Sending...\n";
 
     int bytesSent = sendto(generalSocketDescriptor, buffer, length, MSG_DONTWAIT, \
     (struct sockaddr *)&address, sizeof(address));
@@ -68,7 +68,7 @@ void UDPServer::UDPServerSocket::transmitFile(std::string filename){
     //int bytesSent = send(generalSocketDescriptor , buffer , length - 1, 0 );
     file.close();
     if (debug) {
-        std::cout<<"[LOG] : Transmitted Data Size "<< bytesSent <<" Bytes.\n";
-        std::cout<<"[LOG] : File Transfer Complete.\n";
+        std::cout<<"[LOG] : UPD Transmitted Data Size "<< bytesSent <<" Bytes.\n";
+        std::cout<<"[LOG] : UPD File Transfer Complete.\n";
     }
 }

@@ -15,7 +15,7 @@ void TCPClient::TCPClientSocket::activateSocket() {
     createSocket();
     if(inet_pton(AF_INET, IP, &address.sin_addr)<=0) { 
         if (debug)
-            std::cout<<"[ERROR] : Invalid address\n";
+            std::cout<<"[ERROR] : TCP Invalid address\n";
     }
     else
         createConnection();
@@ -24,32 +24,32 @@ void TCPClient::TCPClientSocket::activateSocket() {
 void TCPClient::TCPClientSocket::createSocket(){
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == 0) { 
         if (debug)
-            perror("[ERROR] : Socket failed");
+            perror("[ERROR] : TCP Socket failed");
         exit(EXIT_FAILURE);
     }
     if (debug)
-        std::cout<<"[LOG] : Socket Created Successfully.\n";
+        std::cout<<"[LOG] : TCP Socket Created Successfully.\n";
 }
 
 void TCPClient::TCPClientSocket::createConnection(){
     if (connect(generalSocketDescriptor, (struct sockaddr *)&address, sizeof(address)) < 0) { 
         if (debug)
-            perror("[ERROR] : connection attempt failed.\n");
+            perror("[ERROR] : TCP connection attempt failed.\n");
         exit(EXIT_FAILURE);
     }
     if (debug)
-        std::cout<<"[LOG] : Connection Successfull.\n";
+        std::cout<<"[LOG] : TCP Connection Successfull.\n";
 }
 
 void TCPClient::TCPClientSocket::transmitFile(std::string filename){
     file.open(filename, std::ios::in | std::ios::binary);
     if(file.is_open()) {
         if (debug)
-            std::cout<<"[LOG] : File is ready to Transmit.\n";
+            std::cout<<"[LOG] : TCP File is ready to Transmit.\n";
     }
     else {
         if (debug)
-            std::cout<<"[ERROR] : File loading failed, Exititng.\n";
+            std::cout<<"[ERROR] : TCP File loading failed, Exititng.\n";
         exit(EXIT_FAILURE);
     }
     //std::string contents((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -61,12 +61,12 @@ void TCPClient::TCPClientSocket::transmitFile(std::string filename){
         length++;
     }
     if (debug)
-        std::cout<<"[LOG] : Sending...\n";
+        std::cout<<"[LOG] : TCP Sending...\n";
 
     int bytes_sent = send(generalSocketDescriptor , buffer , length - 1, 0 );
     file.close();
     if (debug) {
-        std::cout<<"[LOG] : Transmitted Data Size "<< bytes_sent <<" Bytes.\n";
-        std::cout<<"[LOG] : File Transfer Complete.\n";
+        std::cout<<"[LOG] : TCP Transmitted Data Size "<< bytes_sent <<" Bytes.\n";
+        std::cout<<"[LOG] : TCP File Transfer Complete.\n";
     }
 }
