@@ -14,7 +14,7 @@
 constexpr int defaultServerPort = 8050;
 constexpr const char *defaultServerIp = "127.0.0.1";
 
-
+namespace TCPServer {
 class TCPServerSocket {
 public:
 
@@ -46,5 +46,6 @@ private:
     int addressLength;
     const char *IP;
 };
+}
 
 #endif

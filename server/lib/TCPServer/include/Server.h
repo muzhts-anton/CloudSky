@@ -6,9 +6,13 @@
 #include <fstream>
 
 #include "TCPServerSocket.h"
+#include "UDPServerSocket.h"
 
 constexpr int serverDefaultPort = 8050;
 constexpr const char *serverDefaultIp = "127.0.0.1";
+
+using namespace TCPServer;
+using namespace UDPServer;
 
 // class Server {
 //     public:
@@ -43,8 +47,11 @@ public:
 
     void getInteraction();
 
+    void sendFile(std::string filename);
+
 private:
-    TCPServerSocket *serverSocket;
+    TCPServerSocket *TCPSocket;
+    UDPServerSocket *UDPSocket;
     char *hostName;
 };
 

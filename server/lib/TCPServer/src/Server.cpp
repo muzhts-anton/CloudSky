@@ -5,8 +5,6 @@
 #include <netinet/in.h>
 
 #include "Server.h"
-//#include "TCPServerSocket.h"
-#include "UDPServerSocket.h"
 #include "Interactions.h"
 #include "SoundComponent.h"
 #include "VideoComponent.h"
@@ -15,18 +13,28 @@
 
 #include <unistd.h>
 
+using namespace TCPServer;
+using namespace UDPServer;
+
 Server::Server(int port, const char *ip) {
-    serverSocket = new TCPServerSocket(port, ip);
+    TCPSocket = new TCPServerSocket(port, ip);
+    UDPSocket = new UDPServerSocket(port, ip);
 }
 
 Server::~Server() {
-    delete serverSocket;
+    delete TCPSocket;
+    delete UDPSocket;
 }
 
 void Server::start() {
-    serverSocket->activateSocket();
+    TCPSocket->activateSocket();
+    UDPSocket->activateSocket();
 }
 
 void Server::getInteraction() {
-    serverSocket->receiveFile();
+    TCPSocket->receiveFile();
+}
+
+void Server::sendFile(std::string filename) {
+    UDPSocket->transmitFile(filename);
 }

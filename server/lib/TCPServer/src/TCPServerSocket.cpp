@@ -5,6 +5,8 @@
 
 constexpr int debug = 1;
 
+using namespace TCPServer;
+
 TCPServerSocket::TCPServerSocket(int port, const char *ip) {
     PORT = port;
     IP = ip;
@@ -37,7 +39,7 @@ void TCPServerSocket::activateSocket() {
 }
 
 void TCPServerSocket::createSocket(){
-    if ((generalSocketDescriptor = socket(AF_INET, SOCK_STREAM, 0)) < 0) { 
+    if ((generalSocketDescriptor = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) { 
         if (debug)
             perror("[ERROR] : Socket failed.\n");
         exit(EXIT_FAILURE);

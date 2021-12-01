@@ -1,4 +1,4 @@
-add_library(TCPServer STATIC src/TCPServerSocket.cpp src/Server.cpp 
+add_library(TCPServer STATIC src/TCPServerSocket.cpp  src/UDPServerSocket.cpp src/Server.cpp 
 include/TCPServerSocket.h include/Server.h)
 
 target_include_directories(TCPServer PUBLIC include)

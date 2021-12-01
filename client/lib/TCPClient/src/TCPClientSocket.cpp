@@ -22,7 +22,7 @@ void TCPClient::TCPClientSocket::activateSocket() {
 }
 
 void TCPClient::TCPClientSocket::createSocket(){
-    if ((generalSocketDescriptor = socket(AF_INET, SOCK_STREAM, 0)) == 0) { 
+    if ((generalSocketDescriptor = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == 0) { 
         if (debug)
             perror("[ERROR] : Socket failed");
         exit(EXIT_FAILURE);

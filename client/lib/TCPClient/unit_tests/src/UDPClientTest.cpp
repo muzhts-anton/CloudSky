@@ -2,7 +2,7 @@
 #include "UDPClientSocket.hpp"
 #include "constants.h"
 
-TEST(UPDClientTest, changingPortTest) {
+TEST(UDPClientTest, changingPortTest) {
     UDPClientSocket clientSocket;
     EXPECT_EQ(clientSocket.getPort(), UDP_DEFAULT_PORT);
     clientSocket.setPort(UDP_DEFAULT_PORT + 1);
