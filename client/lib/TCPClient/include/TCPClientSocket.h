@@ -21,6 +21,8 @@ class TCPClientSocket{
 public:
     TCPClientSocket(const int port=defaultClientPort, const char *ip=defaultClientIp);
 
+    ~TCPClientSocket();
+    
     void createSocket();
 
     void createConnection();

@@ -11,6 +11,12 @@ TCPClient::TCPClientSocket::TCPClientSocket(const int port, const char *ip){
     addressLength = sizeof(address);
 }
 
+TCPClient::TCPClientSocket::~TCPClientSocket() {
+    if (file.is_open())
+        file.close();
+    close(generalSocketDescriptor);
+}
+
 void TCPClient::TCPClientSocket::activateSocket() {
     createSocket();
     if(inet_pton(AF_INET, IP, &address.sin_addr)<=0) { 

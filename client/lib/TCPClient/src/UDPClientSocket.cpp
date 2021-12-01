@@ -36,8 +36,6 @@ UDPClientSocket::~UDPClientSocket() {
 void UDPClientSocket::activateSocket() {
     createSocket();
     bindSocket();
-    // setListenSet();
-    // acceptConnection();
 }
 
 void UDPClientSocket::createSocket(){
@@ -60,28 +58,8 @@ void UDPClientSocket::bindSocket(){
         std::cout<<"[LOG] : UPD Bind Successful.\n";
 }
 
-void UDPClientSocket::setListenSet(){
-    if (listen(generalSocketDescriptor, 3) < 0) {
-        if (debug)
-            perror("[ERROR] : UPD Listen");
-        exit(EXIT_FAILURE);
-    }
-    if (debug)
-        std::cout<<"[LOG] : UPD Socket in Listen State (Max Connection Queue: 3)\n";
-}
-
-void UDPClientSocket::acceptConnection(){
-    if ((newSocketDescriptor = accept(generalSocketDescriptor, (struct sockaddr *)&address, (socklen_t*)&addressLength))<0) { 
-        if (debug)
-            perror("[ERROR] : UPD Accept");
-        exit(EXIT_FAILURE);
-    }
-    if (debug)
-        std::cout<<"[LOG] : UPD Connected to Server.\n";
-}
-
-void UDPClientSocket::receiveFile(){
-    file.open("receivedData.bin", std::ios::out | std::ios::trunc | std::ios::binary);
+void UDPClientSocket::receiveFile(std::string fileToReceivePath){
+    file.open(fileToReceivePath, std::ios::out | std::ios::trunc | std::ios::binary);
     if(file.is_open()) {
         if (debug)
             std::cout<<"[LOG] : UPD File Created.\n";
@@ -93,7 +71,7 @@ void UDPClientSocket::receiveFile(){
     }
     char buffer[1024] = {};
     unsigned len = 0;
-    int valread = recvfrom(newSocketDescriptor, buffer, 1024, MSG_DONTWAIT, \
+    int valread = recvfrom(generalSocketDescriptor, buffer, 1024, MSG_DONTWAIT, \
     (struct sockaddr *) &address, &len);
     //int valread = read(newSocketDescriptor, buffer, 1024);
     if (debug) {

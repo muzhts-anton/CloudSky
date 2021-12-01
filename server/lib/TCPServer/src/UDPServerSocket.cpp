@@ -12,14 +12,16 @@ UDPServer::UDPServerSocket::UDPServerSocket(const int port, const char *ip){
     addressLength = sizeof(address);
 }
 
+UDPServer::UDPServerSocket::~UDPServerSocket() {
+    close(generalSocketDescriptor);
+}
+
 void UDPServer::UDPServerSocket::activateSocket() {
     createSocket();
     if(inet_pton(AF_INET, IP, &address.sin_addr)<=0) { 
         if (debug)
             std::cout<<"[ERROR] : UPD Invalid address\n";
     }
-    // else
-    //     createConnection();
 }
 
 void UDPServer::UDPServerSocket::createSocket(){

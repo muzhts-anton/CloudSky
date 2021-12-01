@@ -36,7 +36,7 @@ public:
 
     void createSocket();
 
-    void receiveFile();
+    void receiveFile(std::string fileToReceivePath);
 
 private:
 
@@ -45,6 +45,7 @@ private:
     int generalSocketDescriptor;
     int newSocketDescriptor;
     struct sockaddr_in address;
+    struct sockaddr_in clientAddress;
     int addressLength;
     const char *IP;
 };

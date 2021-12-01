@@ -7,14 +7,15 @@ int main()
 {
     TCPClient::TCPClientSocket TCPSocket(8050, "127.0.0.1");
     TCPSocket.activateSocket();
-    UDPClient::UDPClientSocket UDPSocket(8051, "127.0.0.2");
+    UDPClient::UDPClientSocket UDPSocket(8050, "127.0.0.1");
     UDPSocket.activateSocket();
-    int fps = 1;
+    double fps = 0.5;
     std::string fileToSendPath = "buttonsCoords.bin";
     std::string fileToReceivePath = "receivedFile.bin";
     while (true)
     {
         TCPSocket.transmitFile(fileToSendPath);
+        UDPSocket.receiveFile(fileToReceivePath);
         usleep(1000.0 / fps);
     }
     return 0;

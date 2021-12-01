@@ -23,6 +23,8 @@ class UDPServerSocket{
 public:
     UDPServerSocket(const int port=defaultServerUDPPort, const char *ip=defaultServerUDPIp);
 
+    ~UDPServerSocket();
+    
     void createSocket();
 
     void createConnection();
