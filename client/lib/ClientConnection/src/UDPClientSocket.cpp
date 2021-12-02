@@ -34,6 +34,7 @@ UDPClientSocket::~UDPClientSocket()
     if (file.is_open())
         file.close();
     close(generalSocketDescriptor);
+    close(newSocketDescriptor);
 }
 
 void UDPClientSocket::activateSocket()

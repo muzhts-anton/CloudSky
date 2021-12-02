@@ -51,6 +51,23 @@ void TCPClient::TCPClientSocket::createConnection()
         std::cout << "[LOG] : TCP Connection Successfull.\n";
 }
 
+int TCPClient::TCPClientSocket::receivePortNumber()
+{
+    int port = -1;
+    std::string portString;
+    char buffer[1024] = {};
+    int valread = read(generalSocketDescriptor, buffer, 1024);
+    if (debug) {
+        std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
+    }
+    if (valread > 0 && valread < 15) {
+        for (int i = 0; i < valread; i++)
+            portString.push_back(buffer[i]);
+        port = std::stoi(portString);
+    }
+    return port;
+}
+
 void TCPClient::TCPClientSocket::transmitFile(std::string filename)
 {
     file.open(filename, std::ios::in | std::ios::binary);

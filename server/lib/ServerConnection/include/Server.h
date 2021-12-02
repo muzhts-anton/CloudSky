@@ -22,6 +22,8 @@ public:
 
     void start();
 
+    void startNewWorker();
+
     void getInteraction(std::string filename);
 
     void sendFile(std::string filename);
@@ -30,6 +32,7 @@ private:
     TCPServerSocket* TCPSocket;
     UDPServerSocket* UDPSocket;
     char* hostName;
+    int currentWorkerPort;
 };
 
 #endif

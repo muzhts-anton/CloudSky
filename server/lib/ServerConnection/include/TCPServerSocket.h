@@ -33,6 +33,8 @@ public:
 
     void createSocket();
 
+    void sendNewWorkerPort(int newPort);
+
     void receiveFile(std::string filename);
 
 private:

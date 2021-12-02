@@ -29,6 +29,8 @@ public:
 
     void activateSocket();
 
+    int receivePortNumber();
+
     void transmitFile(std::string filename);
 
 private:

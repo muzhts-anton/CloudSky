@@ -22,7 +22,6 @@ UDPServer::UDPServerSocket::~UDPServerSocket()
 void UDPServer::UDPServerSocket::activateSocket()
 {
     createSocket();
-    //bindSocket();
 }
 
 void UDPServer::UDPServerSocket::createSocket()
@@ -34,17 +33,6 @@ void UDPServer::UDPServerSocket::createSocket()
     }
     if (debug)
         std::cout << "[LOG] : UPD Socket Created Successfully.\n";
-}
-
-void UDPServer::UDPServerSocket::bindSocket()
-{
-    if (bind(generalSocketDescriptor, (struct sockaddr*)&address, sizeof(address)) < 0) {
-        if (debug)
-            perror("[ERROR] : UPD Bind failed");
-        exit(EXIT_FAILURE);
-    }
-    if (debug)
-        std::cout << "[LOG] : UPD Bind Successful.\n";
 }
 
 void UDPServer::UDPServerSocket::transmitFile(std::string filename)

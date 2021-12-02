@@ -1,6 +1,6 @@
 ## Информация по тому, как запускать Dockerfile в текущем проекте
 
-Сначала
+Сначала находясь в /server/lib/ServerConnection 
 ```bash
 docker build -t <imageName> .
 ```

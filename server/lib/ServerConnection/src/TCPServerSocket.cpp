@@ -32,6 +32,9 @@ TCPServerSocket::~TCPServerSocket()
 {
     if (file.is_open())
         file.close();
+    char buff[10] = { 0 };
+    while (recv(newSocketDescriptor, buff, 10, 0) > 0) { }
+    close(newSocketDescriptor);
     close(generalSocketDescriptor);
 }
 
@@ -87,6 +90,13 @@ void TCPServerSocket::acceptConnection()
         std::cout << "[LOG] : TCP Connected to Server.\n";
 }
 
+void TCPServerSocket::sendNewWorkerPort(int newPort)
+{
+    char buffer[20] = { 0 };
+    int length = std::snprintf(buffer, 20, "%d", newPort);
+    send(newSocketDescriptor, buffer, length, 0);
+}
+
 void TCPServerSocket::receiveFile(std::string filename)
 {
     file.open(filename, std::ios::out | std::ios::trunc | std::ios::binary);
@@ -103,6 +113,10 @@ void TCPServerSocket::receiveFile(std::string filename)
     if (debug) {
         std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
         std::cout << "[LOG] : TCP Saving data to file.\n";
+    }
+    if (valread == 0) {
+        std::cout << "[LOG] : TCP Client is not connected anymore, exiting...\n";
+        exit(0);
     }
     for (int i = 0; i < valread; i++)
         file.write(buffer + i, 1);

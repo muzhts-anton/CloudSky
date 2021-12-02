@@ -7,6 +7,8 @@ int main()
 {
     TCPClient::TCPClientSocket TCPSocket(8050, "127.0.0.1");
     TCPSocket.activateSocket();
+    // int newPort = TCPSocket.receivePortNumber();
+    // std::cout << "Переключаемся на порт " << newPort << std::endl;
     UDPClient::UDPClientSocket UDPSocket(8050, "127.0.0.1");
     UDPSocket.activateSocket();
     double fps = 0.5;
