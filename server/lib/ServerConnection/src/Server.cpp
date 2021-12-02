@@ -1,14 +1,14 @@
 #include <iostream>
-#include <stdexcept>
-#include <thread>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <stdexcept>
+#include <sys/socket.h>
+#include <thread>
 
-#include "Server.h"
+#include "DataBaseHandler.h"
 #include "Interactions.h"
+#include "Server.h"
 #include "SoundComponent.h"
 #include "VideoComponent.h"
-#include "DataBaseHandler.h"
 #include "constants.h"
 
 #include <unistd.h>
@@ -16,25 +16,30 @@
 using namespace TCPServer;
 using namespace UDPServer;
 
-Server::Server(int port, const char *ip) {
+Server::Server(int port, const char* ip)
+{
     TCPSocket = new TCPServerSocket(port, ip);
     UDPSocket = new UDPServerSocket(port, ip);
 }
 
-Server::~Server() {
+Server::~Server()
+{
     delete TCPSocket;
     delete UDPSocket;
 }
 
-void Server::start() {
+void Server::start()
+{
     TCPSocket->activateSocket();
     UDPSocket->activateSocket();
 }
 
-void Server::getInteraction() {
-    TCPSocket->receiveFile();
+void Server::getInteraction(std::string filename)
+{
+    TCPSocket->receiveFile(filename);
 }
 
-void Server::sendFile(std::string filename) {
+void Server::sendFile(std::string filename)
+{
     UDPSocket->transmitFile(filename);
 }

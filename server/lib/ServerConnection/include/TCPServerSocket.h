@@ -2,23 +2,22 @@
 
 #define TPCSERVERSOCKET_H_
 
-#include<iostream>
-#include<fstream>
-#include<stdio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <stdlib.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <fstream>
+#include <iostream>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 constexpr int defaultServerPort = 8050;
-constexpr const char *defaultServerIp = "127.0.0.1";
+constexpr const char* defaultServerIp = "127.0.0.1";
 
 namespace TCPServer {
 class TCPServerSocket {
 public:
-
-    TCPServerSocket(int port=defaultServerPort, const char *ip=defaultServerIp);
+    TCPServerSocket(int port = defaultServerPort, const char* ip = defaultServerIp);
 
     TCPServerSocket& operator=(TCPServerSocket& that);
 
@@ -34,17 +33,16 @@ public:
 
     void createSocket();
 
-    void receiveFile();
+    void receiveFile(std::string filename);
 
 private:
-
     std::fstream file;
     int PORT;
     int generalSocketDescriptor;
     int newSocketDescriptor;
     struct sockaddr_in address;
     int addressLength;
-    const char *IP;
+    const char* IP;
 };
 }
 

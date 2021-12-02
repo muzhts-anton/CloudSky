@@ -14,15 +14,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-Wall -Werror -Wextra -Wpedantic)
 
 find_package(GTest REQUIRED)
-FIND_PACKAGE(Protobuf REQUIRED)
-INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+# FIND_PACKAGE(Protobuf REQUIRED)
+# INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
+# INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 
 include_directories(${GTEST_INCLUDE_DIRS}/inc/)
 
-add_subdirectory(lib/TCPServer)
+add_subdirectory(lib/ServerConnection)
 
 add_executable(CloudSky_MyServer src/main.cpp)
 
-target_link_libraries(CloudSky_MyServer TCPServer)
+target_link_libraries(CloudSky_MyServer ServerConnection)

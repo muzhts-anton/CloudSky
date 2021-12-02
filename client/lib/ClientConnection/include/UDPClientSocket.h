@@ -4,23 +4,22 @@
 
 #include <iostream>
 
-#include<iostream>
-#include<fstream>
-#include<stdio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <stdlib.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <fstream>
+#include <iostream>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 constexpr int defaultServerPort = 8050;
-constexpr const char *defaultServerIp = "127.0.0.1";
+constexpr const char* defaultServerIp = "127.0.0.1";
 
 namespace UDPClient {
 class UDPClientSocket {
 public:
-
-    UDPClientSocket(int port=defaultServerPort, const char *ip=defaultServerIp);
+    UDPClientSocket(int port = defaultServerPort, const char* ip = defaultServerIp);
 
     UDPClientSocket& operator=(UDPClientSocket& that);
 
@@ -39,7 +38,6 @@ public:
     void receiveFile(std::string fileToReceivePath);
 
 private:
-
     std::fstream file;
     int PORT;
     int generalSocketDescriptor;
@@ -47,7 +45,7 @@ private:
     struct sockaddr_in address;
     struct sockaddr_in clientAddress;
     int addressLength;
-    const char *IP;
+    const char* IP;
 };
 }
 

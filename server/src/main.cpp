@@ -1,13 +1,13 @@
 #include "Server.h"
 
-int main() {
+int main()
+{
     Server server(8050, "127.0.0.1");
     server.start();
     double fps = 0.5;
-    std::string filename = "receivedButtonsCoords.bin";
-    while (true)
-    {
-        server.getInteraction();
+    std::string fileToReceivePath = "receivedButtonsCoords.bin";
+    while (true) {
+        server.getInteraction(fileToReceivePath);
         server.sendFile("fileToSend.bin");
         usleep(1000.0 / fps);
     }

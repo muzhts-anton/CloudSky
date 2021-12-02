@@ -9,5 +9,4 @@
 
 #define SERVER_IS_NOT_RUNNING -1
 
-
 #endif

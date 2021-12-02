@@ -14,8 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-Wall -Werror -Wextra -Wpedantic)
 
 
-add_subdirectory(lib/TCPClient)
+add_subdirectory(lib/ClientConnection)
 
 add_executable(CloudSky_MyClient src/main.cpp)
 
-target_link_libraries(CloudSky_MyClient TCPClient)
+target_link_libraries(CloudSky_MyClient ClientConnection)

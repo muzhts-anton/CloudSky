@@ -12,8 +12,7 @@ int main()
     double fps = 0.5;
     std::string fileToSendPath = "buttonsCoords.bin";
     std::string fileToReceivePath = "receivedFile.bin";
-    while (true)
-    {
+    while (true) {
         TCPSocket.transmitFile(fileToSendPath);
         UDPSocket.receiveFile(fileToReceivePath);
         usleep(1000.0 / fps);
