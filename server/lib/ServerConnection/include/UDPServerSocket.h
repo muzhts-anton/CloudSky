@@ -31,6 +31,8 @@ public:
 
     void activateSocket();
 
+    void bindSocket();
+
     void transmitFile(std::string filename);
 
 private:

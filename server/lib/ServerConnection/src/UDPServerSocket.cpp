@@ -9,6 +9,7 @@ UDPServer::UDPServerSocket::UDPServerSocket(const int port, const char* ip)
     PORT = port;
     IP = ip;
     address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
     addressLength = sizeof(address);
 }
@@ -21,10 +22,7 @@ UDPServer::UDPServerSocket::~UDPServerSocket()
 void UDPServer::UDPServerSocket::activateSocket()
 {
     createSocket();
-    if (inet_pton(AF_INET, IP, &address.sin_addr) <= 0) {
-        if (debug)
-            std::cout << "[ERROR] : UPD Invalid address\n";
-    }
+    //bindSocket();
 }
 
 void UDPServer::UDPServerSocket::createSocket()
@@ -38,15 +36,15 @@ void UDPServer::UDPServerSocket::createSocket()
         std::cout << "[LOG] : UPD Socket Created Successfully.\n";
 }
 
-void UDPServer::UDPServerSocket::createConnection()
+void UDPServer::UDPServerSocket::bindSocket()
 {
-    if (connect(generalSocketDescriptor, (struct sockaddr*)&address, sizeof(address)) < 0) {
+    if (bind(generalSocketDescriptor, (struct sockaddr*)&address, sizeof(address)) < 0) {
         if (debug)
-            perror("[ERROR] : UPD connection attempt failed.\n");
+            perror("[ERROR] : UPD Bind failed");
         exit(EXIT_FAILURE);
     }
     if (debug)
-        std::cout << "[LOG] : UPD Connection Successfull.\n";
+        std::cout << "[LOG] : UPD Bind Successful.\n";
 }
 
 void UDPServer::UDPServerSocket::transmitFile(std::string filename)
@@ -72,7 +70,6 @@ void UDPServer::UDPServerSocket::transmitFile(std::string filename)
     int bytesSent = sendto(generalSocketDescriptor, buffer, length, MSG_DONTWAIT,
         (struct sockaddr*)&address, sizeof(address));
 
-    //int bytesSent = send(generalSocketDescriptor , buffer , length - 1, 0 );
     file.close();
     if (debug) {
         std::cout << "[LOG] : UPD Transmitted Data Size " << bytesSent << " Bytes.\n";

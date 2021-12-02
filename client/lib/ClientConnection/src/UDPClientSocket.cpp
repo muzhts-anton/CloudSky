@@ -79,7 +79,6 @@ void UDPClientSocket::receiveFile(std::string fileToReceivePath)
     unsigned len = 0;
     int valread = recvfrom(generalSocketDescriptor, buffer, 1024, MSG_DONTWAIT,
         (struct sockaddr*)&address, &len);
-    //int valread = read(newSocketDescriptor, buffer, 1024);
     if (debug) {
         std::cout << "[LOG] : UPD Data received " << valread << " bytes\n";
         std::cout << "[LOG] : UPD Saving data to file.\n";
