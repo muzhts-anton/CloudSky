@@ -21,18 +21,23 @@ UDPServer::UDPServerSocket::~UDPServerSocket()
 
 void UDPServer::UDPServerSocket::activateSocket()
 {
-    createSocket();
+    try {
+        createSocket();
+    }
+    catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void UDPServer::UDPServerSocket::createSocket()
 {
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == 0) {
         if (debug)
-            perror("[ERROR] : UPD Socket failed");
-        exit(EXIT_FAILURE);
+            std::cerr << "[ERROR] : UPD Socket failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : UPD Socket failed.");
     }
     if (debug)
-        std::cout << "[LOG] : UPD Socket Created Successfully.\n";
+        std::cout << "[LOG] : UPD Socket Created Successfully." << std::endl;
 }
 
 void UDPServer::UDPServerSocket::transmitFile(std::string filename)
@@ -40,11 +45,11 @@ void UDPServer::UDPServerSocket::transmitFile(std::string filename)
     file.open(filename, std::ios::in | std::ios::binary);
     if (file.is_open()) {
         if (debug)
-            std::cout << "[LOG] : UPD File is ready to Transmit.\n";
+            std::cout << "[LOG] : UPD File is ready to Transmit." << std::endl;
     } else {
         if (debug)
-            std::cout << "[ERROR] : UPD File loading failed, Exititng.\n";
-        exit(EXIT_FAILURE);
+            std::cerr << "[ERROR] : UPD File loading failed. Maybe I should exit..." << std::endl;
+        throw std::invalid_argument("[ERROR] : UPD File loading failed. Maybe I should exit...");
     }
     char buffer[1024] = {};
     int length = 0;

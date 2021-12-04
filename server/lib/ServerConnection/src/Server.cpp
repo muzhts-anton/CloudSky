@@ -44,10 +44,20 @@ void Server::startNewWorker()
 
 void Server::getInteraction(std::string filename)
 {
-    TCPSocket->receiveFile(filename);
+    try {
+        TCPSocket->receiveFile(filename);
+    }
+    catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void Server::sendFile(std::string filename)
 {
-    UDPSocket->transmitFile(filename);
+    try {
+        UDPSocket->transmitFile(filename);
+    }
+    catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }

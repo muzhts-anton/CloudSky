@@ -39,16 +39,20 @@ UDPClientSocket::~UDPClientSocket()
 
 void UDPClientSocket::activateSocket()
 {
-    createSocket();
-    bindSocket();
+    try {
+        createSocket();
+        bindSocket();
+    } catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void UDPClientSocket::createSocket()
 {
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
         if (debug)
-            perror("[ERROR] : UPD Socket failed.\n");
-        exit(EXIT_FAILURE);
+            std::cout << "[ERROR] : UPD Socket failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : UPD Socket failed.");
     }
     if (debug)
         std::cout << "[LOG] : UPD Socket Created Successfully.\n";
@@ -58,8 +62,8 @@ void UDPClientSocket::bindSocket()
 {
     if (bind(generalSocketDescriptor, (struct sockaddr*)&address, sizeof(address)) < 0) {
         if (debug)
-            perror("[ERROR] : UPD Bind failed");
-        exit(EXIT_FAILURE);
+            std::cout << "[ERROR] : UPD Bind failed" << std::endl;
+        throw std::invalid_argument("[ERROR] : UPD Bind failed");
     }
     if (debug)
         std::cout << "[LOG] : UPD Bind Successful.\n";
@@ -73,8 +77,8 @@ void UDPClientSocket::receiveFile(std::string fileToReceivePath)
             std::cout << "[LOG] : UPD File Created.\n";
     } else {
         if (debug)
-            std::cout << "[ERROR] : UPD File creation failed, Exititng.\n";
-        exit(EXIT_FAILURE);
+            std::cout << "[ERROR] : UPD File creation failed. Maybe I should exit..." << std::endl;
+        throw std::invalid_argument("[ERROR] : UPD File creation failed. Maybe I should exit...");
     }
     char buffer[1024] = {};
     unsigned len = 0;

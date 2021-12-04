@@ -15,8 +15,12 @@ int main()
     std::string fileToSendPath = "buttonsCoords.bin";
     std::string fileToReceivePath = "receivedFile.bin";
     while (true) {
-        TCPSocket.transmitFile(fileToSendPath);
-        UDPSocket.receiveFile(fileToReceivePath);
+        try {
+            TCPSocket.transmitFile(fileToSendPath);
+            UDPSocket.receiveFile(fileToReceivePath);
+        } catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+        }
         usleep(1000.0 / fps);
     }
     return 0;

@@ -40,18 +40,23 @@ TCPServerSocket::~TCPServerSocket()
 
 void TCPServerSocket::activateSocket()
 {
-    createSocket();
-    bindSocket();
-    setListenSet();
-    acceptConnection();
+    try {
+            createSocket();
+            bindSocket();
+            setListenSet();
+            acceptConnection();
+    }
+    catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void TCPServerSocket::createSocket()
 {
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         if (debug)
-            perror("[ERROR] : TCP Socket failed.\n");
-        exit(EXIT_FAILURE);
+            std::cerr << "[ERROR] : TCP Socket failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP Socket failed.");
     }
     if (debug)
         std::cout << "[LOG] : TCP Socket Created Successfully.\n";
@@ -61,8 +66,8 @@ void TCPServerSocket::bindSocket()
 {
     if (bind(generalSocketDescriptor, (struct sockaddr*)&address, sizeof(address)) < 0) {
         if (debug)
-            perror("[ERROR] : TCP Bind failed");
-        exit(EXIT_FAILURE);
+            std::cerr << "[ERROR] : TCP Bind failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP Bind failed.");
     }
     if (debug)
         std::cout << "[LOG] : TCP Bind Successful.\n";
@@ -72,8 +77,8 @@ void TCPServerSocket::setListenSet()
 {
     if (listen(generalSocketDescriptor, 3) < 0) {
         if (debug)
-            perror("[ERROR] : TCP Listen");
-        exit(EXIT_FAILURE);
+            std::cerr << "[ERROR] : TCP Listen" << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP Listen.");
     }
     if (debug)
         std::cout << "[LOG] : TCP Socket in Listen State (Max Connection Queue: 3)\n";
@@ -83,8 +88,8 @@ void TCPServerSocket::acceptConnection()
 {
     if ((newSocketDescriptor = accept(generalSocketDescriptor, (struct sockaddr*)&address, (socklen_t*)&addressLength)) < 0) {
         if (debug)
-            perror("[ERROR] : TCP Accept");
-        exit(EXIT_FAILURE);
+            std::cerr << "[ERROR] : TCP Accept." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP Accept.");
     }
     if (debug)
         std::cout << "[LOG] : TCP Connected to Server.\n";
@@ -105,8 +110,8 @@ void TCPServerSocket::receiveFile(std::string filename)
             std::cout << "[LOG] : TCP File Created.\n";
     } else {
         if (debug)
-            std::cout << "[ERROR] : TCP File creation failed, Exititng.\n";
-        exit(EXIT_FAILURE);
+            std::cerr << "[ERROR] : TCP File creation failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP File creation failed.");
     }
     char buffer[1024] = {};
     int valread = read(newSocketDescriptor, buffer, 1024);
@@ -115,8 +120,7 @@ void TCPServerSocket::receiveFile(std::string filename)
         std::cout << "[LOG] : TCP Saving data to file.\n";
     }
     if (valread == 0) {
-        std::cout << "[LOG] : TCP Client is not connected anymore, exiting...\n";
-        exit(0);
+        std::cerr << "[LOG] : TCP Client is not connected anymore. Maybe I should exit...\n";
     }
     for (int i = 0; i < valread; i++)
         file.write(buffer + i, 1);

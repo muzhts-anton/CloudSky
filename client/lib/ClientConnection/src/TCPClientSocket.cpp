@@ -20,21 +20,26 @@ TCPClient::TCPClientSocket::~TCPClientSocket()
 }
 
 void TCPClient::TCPClientSocket::activateSocket()
-{
-    createSocket();
-    if (inet_pton(AF_INET, IP, &address.sin_addr) <= 0) {
-        if (debug)
-            std::cout << "[ERROR] : TCP Invalid address\n";
-    } else
-        createConnection();
+{   
+    try {
+        createSocket();
+        if (inet_pton(AF_INET, IP, &address.sin_addr) <= 0) {
+            if (debug)
+                std::cout << "[ERROR] : TCP Invalid address\n";
+        } else
+            createConnection();
+    }
+    catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void TCPClient::TCPClientSocket::createSocket()
 {
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == 0) {
         if (debug)
-            perror("[ERROR] : TCP Socket failed");
-        exit(EXIT_FAILURE);
+            std::cout << "[ERROR] : TCP Socket failed"  << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP Socket failed");
     }
     if (debug)
         std::cout << "[LOG] : TCP Socket Created Successfully.\n";
@@ -44,8 +49,8 @@ void TCPClient::TCPClientSocket::createConnection()
 {
     if (connect(generalSocketDescriptor, (struct sockaddr*)&address, sizeof(address)) < 0) {
         if (debug)
-            perror("[ERROR] : TCP connection attempt failed.\n");
-        exit(EXIT_FAILURE);
+            std::cout << "[ERROR] : TCP connection attempt failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP connection attempt failed.");
     }
     if (debug)
         std::cout << "[LOG] : TCP Connection Successfull.\n";
@@ -73,11 +78,11 @@ void TCPClient::TCPClientSocket::transmitFile(std::string filename)
     file.open(filename, std::ios::in | std::ios::binary);
     if (file.is_open()) {
         if (debug)
-            std::cout << "[LOG] : TCP File is ready to Transmit.\n";
+            std::cout << "[LOG] : TCP File is ready to Transmit." << std::endl;
     } else {
         if (debug)
-            std::cout << "[ERROR] : TCP File loading failed, Exititng.\n";
-        exit(EXIT_FAILURE);
+            std::cout << "[ERROR] : TCP File loading failed. Maybe I should exit..." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP File loading failed. Maybe I should exit...");
     }
     char buffer[1024] = {};
     int length = 0;
