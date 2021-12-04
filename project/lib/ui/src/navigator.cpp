@@ -1,10 +1,11 @@
 #include "navigator.h"
-#include "screensFactory.h"
 
-Navigator::Navigator(QStackedWidget* container, BaseScreensFactory* factory)
+#include <QDebug>
+
+Navigator::Navigator(QStackedWidget* container, ScreensFactory* factory)
+    : _container(container)
+    , _factory(factory)
 {
-    _factory = factory;
-    _container = container;
     _stack.append(this->getStartScreen());
 
     _container->addWidget(_stack.last());
@@ -14,10 +15,10 @@ Navigator::Navigator(QStackedWidget* container, BaseScreensFactory* factory)
 // slots
 void Navigator::navigateTo(screens::ScreenNames tag)
 {
-    fragment::BaseFragment* newFragment = _factory->create(tag);
     _stack.last()->onPause();
     disconnectFragment(_stack.last());
 
+    fragment::BaseFragment* newFragment = _factory->create(tag);
     connectFragment(newFragment);
     _stack.append(newFragment);
     _container->addWidget(newFragment);
@@ -28,8 +29,8 @@ void Navigator::back()
 {
     _container->removeWidget(_stack.last());
     delete _stack.last();
-
     _stack.removeLast();
+
     connectFragment(_stack.last());
     _stack.last()->onResume();
     _container->setCurrentWidget(_stack.last());
@@ -37,20 +38,21 @@ void Navigator::back()
 
 void Navigator::replace(screens::ScreenNames tag)
 {
-    fragment::BaseFragment* newFragment = _factory->create(tag);
     _container->removeWidget(_stack.last());
     delete _stack.last();
-
     _stack.removeLast();
+
+    fragment::BaseFragment* newFragment = _factory->create(tag);
     connectFragment(newFragment);
     _container->addWidget(newFragment);
 }
 
 void Navigator::newRootScreen(screens::ScreenNames tag)
 {
-    fragment::BaseFragment* newFragment = _factory->create(tag);
     disconnectFragment(_stack.last());
     _stack.clear();
+
+    fragment::BaseFragment* newFragment = _factory->create(tag);
     connectFragment(newFragment);
 
     for (int i = _container->count(); i >= 0; --i) {
@@ -70,7 +72,6 @@ fragment::BaseFragment* Navigator::getStartScreen()
 
 void Navigator::connectFragment(fragment::BaseFragment* fragment)
 {
-    qDebug("Navigator connect slots");
     connect(fragment, &fragment::BaseFragment::back, this, &Navigator::back);
     connect(fragment, &fragment::BaseFragment::replace, this, &Navigator::replace);
     connect(fragment, &fragment::BaseFragment::navigateTo, this, &Navigator::navigateTo);

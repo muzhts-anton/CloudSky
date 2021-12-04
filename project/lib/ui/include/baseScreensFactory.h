@@ -7,6 +7,7 @@
 class BaseScreensFactory
 {
 public:
+    virtual ~BaseScreensFactory() = default;
     virtual fragment::BaseFragment *create(screens::ScreenNames tag) = 0;
     virtual screens::ScreenNames getStart() = 0;
 };

@@ -1,7 +1,7 @@
 #include "baseFragment.h"
 
 namespace fragment {
-
+// TODO(Tony): = 0 or in .h. This looks ugly
 void BaseFragment::onPause() { }
 void BaseFragment::onResume() { }
 

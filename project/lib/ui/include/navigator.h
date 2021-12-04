@@ -2,7 +2,7 @@
 #define NAVIGATOR_H
 
 #include "baseFragment.h"
-#include "baseScreensFactory.h"
+#include "screensFactory.h"
 #include "screenNames.h"
 
 #include <QList>
@@ -11,7 +11,7 @@
 class Navigator : public QObject {
     Q_OBJECT
 public:
-    Navigator(QStackedWidget* container, BaseScreensFactory* screensFactory);
+    Navigator(QStackedWidget* container, ScreensFactory* screensFactory);
     Navigator()
         : _container(nullptr)
         , _factory(nullptr) {};
@@ -32,7 +32,7 @@ private:
 
 private:
     QStackedWidget* _container;
-    BaseScreensFactory* _factory;
+    ScreensFactory* _factory;
     QList<fragment::BaseFragment*> _stack;
 };
 

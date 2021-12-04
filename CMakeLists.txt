@@ -28,11 +28,10 @@ add_subdirectory(project/lib/ui)
 
 add_executable(CloudSky_MyClient project/src/main.cpp)
 
-target_link_libraries(CloudSky_MyClient Qt${QT_VERSION_MAJOR}::Widgets ui)
+target_link_libraries(CloudSky_MyClient Qt5::Widgets ui)
 
 set_target_properties(CloudSky_MyClient PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
-
