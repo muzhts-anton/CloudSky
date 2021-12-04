@@ -2,7 +2,7 @@
 
 int main()
 {
-    Server server(8050, "127.0.0.1");
+    Server server(8050, "0.0.0.0");
     server.start();
     //server.startNewWorker();
     double fps = 0.5;
