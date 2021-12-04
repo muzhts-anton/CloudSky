@@ -18,6 +18,10 @@ find_package(GTest REQUIRED)
 # INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
 # INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
+find_package(Boost)
+
+include_directories(${Boost_INCLUDE_DIRS})
+
 
 include_directories(${GTEST_INCLUDE_DIRS}/inc/)
 
@@ -25,4 +29,4 @@ add_subdirectory(lib/ServerConnection)
 
 add_executable(CloudSky_MyServer src/main.cpp)
 
-target_link_libraries(CloudSky_MyServer ServerConnection)
+target_link_libraries(CloudSky_MyServer ServerConnection ${Boost_LIBRARIES})

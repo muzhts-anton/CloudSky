@@ -4,35 +4,36 @@
 
 #include <fstream>
 #include <iostream>
+#include <boost/noncopyable.hpp>
+#include <boost/asio.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/lexical_cast.hpp>
 
-#include "TCPServerSocket.h"
-#include "UDPServerSocket.h"
+#include "Connection.h"
 
 constexpr int serverDefaultPort = 8050;
 constexpr const char* serverDefaultIp = "127.0.0.1";
 
-using namespace TCPServer;
-using namespace UDPServer;
-
-class Server {
+class Server: private boost::noncopyable {
 public:
-    Server(int port = serverDefaultPort, const char* ip = serverDefaultIp);
+    Server(const std::string& address, const std::string& port, std::size_t threadPoolSize);
 
-    ~Server();
-
-    void start();
-
-    void startNewWorker();
-
-    void getInteraction(std::string filename);
-
-    void sendFile(std::string filename);
+    void run();
 
 private:
-    TCPServerSocket* TCPSocket;
-    UDPServerSocket* UDPSocket;
+    std::size_t serverThreadPoolSize;
+    boost::asio::io_context serverContext;
+    boost::asio::signal_set serverSignals;
+    boost::asio::ip::tcp::acceptor serverTCPAcceptor;
+    boost::shared_ptr<ServerConnection::Connection> newConnection;
     char* hostName;
-    int currentWorkerPort;
+    int port;
+
+    void startAccept();
+
+    void handleAccept(const boost::system::error_code& e);
+
+    void handleStop();
 };
 
 #endif

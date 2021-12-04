@@ -3,61 +3,73 @@
 #include <stdexcept>
 #include <sys/socket.h>
 #include <thread>
+#include <boost/bind/bind.hpp>
 
 #include "DataBaseHandler.h"
 #include "Interactions.h"
 #include "Server.h"
+#include "Connection.h"
 #include "SoundComponent.h"
 #include "VideoComponent.h"
 #include "constants.h"
 
 #include <unistd.h>
 
-using namespace TCPServer;
-using namespace UDPServer;
 
-Server::Server(int port, const char* ip)
+Server::Server(const std::string& address, const std::string& port, std::size_t threadPoolSize):
+    serverThreadPoolSize(threadPoolSize),
+    serverSignals(serverContext),
+    serverTCPAcceptor(serverContext),
+    newConnection()
 {
-    TCPSocket = new TCPServerSocket(port, ip);
-    UDPSocket = new UDPServerSocket(port, ip);
-    currentWorkerPort = port + 1;
+    this->port = std::stoi(port);
+    serverSignals.add(SIGINT);
+    serverSignals.add(SIGTERM);
+    serverSignals.async_wait(boost::bind(&Server::handleStop, this));
+    
+    boost::asio::ip::tcp::resolver resolver(serverContext);
+    boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(address, port).begin();
+    serverTCPAcceptor.open(endpoint.protocol());
+    serverTCPAcceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+    serverTCPAcceptor.bind(endpoint);
+    serverTCPAcceptor.listen();
+
+    startAccept();
 }
 
-Server::~Server()
+void Server::run()
 {
-    delete TCPSocket;
-    delete UDPSocket;
-}
-
-void Server::start()
-{
-    TCPSocket->activateSocket();
-    UDPSocket->activateSocket();
-}
-
-void Server::startNewWorker()
-{
-    std::cout << "Начинаем передавать данные о новом worker-e" << std::endl;
-    TCPSocket->sendNewWorkerPort(currentWorkerPort);
-    std::cout << "Новый worker на порту " << currentWorkerPort++ << std::endl;
-}
-
-void Server::getInteraction(std::string filename)
-{
-    try {
-        TCPSocket->receiveFile(filename);
+    std::vector<boost::shared_ptr<std::thread> > threads;
+    for (std::size_t i = 0; i < serverThreadPoolSize; ++i)
+    {
+        boost::shared_ptr<std::thread> thread(new std::thread(
+                boost::bind(&boost::asio::io_context::run, &serverContext)));
+        threads.push_back(thread);
     }
-    catch (const std::invalid_argument& e) {
-        std::cerr << e.what() << std::endl;
-    }
+
+    for (std::size_t i = 0; i < threads.size(); ++i)
+        threads[i]->join();
 }
 
-void Server::sendFile(std::string filename)
+void Server::startAccept()
 {
-    try {
-        UDPSocket->transmitFile(filename);
-    }
-    catch (const std::invalid_argument& e) {
-        std::cerr << e.what() << std::endl;
-    }
+    newConnection.reset(new ServerConnection::Connection(serverContext, port));
+        serverTCPAcceptor.async_accept(newConnection->socket(),
+        boost::bind(&Server::handleAccept, this,
+        boost::asio::placeholders::error));
 }
+
+void Server::handleAccept(const boost::system::error_code& e)
+{
+    if (!e)
+    {
+        newConnection->start();
+    }
+    startAccept();
+}
+
+void Server::handleStop()
+{
+    serverContext.stop();
+}
+

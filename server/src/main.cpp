@@ -1,16 +1,20 @@
 #include "Server.h"
 
-int main()
-{
-    Server server(8050, "0.0.0.0");
-    server.start();
-    //server.startNewWorker();
-    double fps = 0.5;
-    std::string fileToReceivePath = "receivedButtonsCoords.bin";
-    while (true) {
-        server.getInteraction(fileToReceivePath);
-        server.sendFile("fileToSend.bin");
-        usleep(1000.0 / fps);
+int main(int argc, char* argv[])
+{   
+    if (argc != 4)
+        return -1;
+    try
+    {
+        std::size_t num_threads = boost::lexical_cast<std::size_t>(argv[3]);
+        Server server(argv[1], argv[2], num_threads);
+
+        server.run();
     }
+    catch (std::exception& e)
+    {
+        std::cerr << "exception: " << e.what() << "\n";
+    }
+
     return 0;
 }
