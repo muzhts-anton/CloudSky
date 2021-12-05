@@ -5,6 +5,7 @@
 #include <QTimer>
 
 #include "TCPClientSocket.h"
+#include "UDPClientSocket.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -28,7 +29,8 @@ private slots:
 
 private:
     Ui::MainWindow *_ui;
-    TCPClient::TCPClientSocket socket;
+    TCPClient::TCPClientSocket TCPSocket;
+    UDPClient::UDPClientSocket UDPSocket;
     QTimer *_timer;
     bool _butts[9];
 };

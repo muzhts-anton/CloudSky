@@ -33,11 +33,11 @@ void UDPWorker::UDPWorkerSocket::createSocket()
 {
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == 0) {
         if (debug)
-            std::cerr << "[ERROR] : UPD Socket failed." << std::endl;
-        throw std::invalid_argument("[ERROR] : UPD Socket failed.");
+            std::cerr << "[ERROR] : UDP Socket failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : UDP Socket failed.");
     }
     if (debug)
-        std::cout << "[LOG] : UPD Socket Created Successfully." << std::endl;
+        std::cout << "[LOG] : UDP Socket Created Successfully." << std::endl;
 }
 
 void UDPWorker::UDPWorkerSocket::transmitFile(std::string filename)
@@ -45,27 +45,27 @@ void UDPWorker::UDPWorkerSocket::transmitFile(std::string filename)
     file.open(filename, std::ios::in | std::ios::binary);
     if (file.is_open()) {
         if (debug)
-            std::cout << "[LOG] : UPD File is ready to Transmit." << std::endl;
+            std::cout << "[LOG] : UDP File is ready to Transmit." << std::endl;
     } else {
         if (debug)
-            std::cerr << "[ERROR] : UPD File loading failed. Maybe I should exit..." << std::endl;
-        throw std::invalid_argument("[ERROR] : UPD File loading failed. Maybe I should exit...");
+            std::cerr << "[ERROR] : UDP File loading failed. Maybe I should exit..." << std::endl;
+        throw std::invalid_argument("[ERROR] : UDP File loading failed. Maybe I should exit...");
     }
-    char buffer[1024] = {};
+    char buffer[2048] = {};
     int length = 0;
-    while (!file.eof()) {
+    while (length < 2048 && !file.eof()) {
         file.get(buffer[length]);
         length++;
     }
     if (debug)
-        std::cout << "[LOG] : UPD Sending...\n";
+        std::cout << "[LOG] : UDP Sending...\n";
 
-    int bytesSent = sendto(generalSocketDescriptor, buffer, length, MSG_DONTWAIT,
+    int bytesSent = sendto(generalSocketDescriptor, buffer, length - 1, MSG_DONTWAIT,
         (struct sockaddr*)&address, sizeof(address));
 
     file.close();
     if (debug) {
-        std::cout << "[LOG] : UPD Transmitted Data Size " << bytesSent << " Bytes.\n";
-        std::cout << "[LOG] : UPD File Transfer Complete.\n";
+        std::cout << "[LOG] : UDP Transmitted Data Size " << bytesSent << " Bytes.\n";
+        std::cout << "[LOG] : UDP File Transfer Complete.\n";
     }
 }

@@ -27,6 +27,8 @@ public:
 
     void activateSocket();
 
+    void changePort(int newPort);
+
     void bindSocket();
 
     void setListenSet();
