@@ -28,9 +28,24 @@ public slots:
     void onBack();
 
 private:
+    static constexpr short fps = 80;
+    enum class Buttons {
+        A = 0,
+        W,
+        S,
+        D,
+        SPACE,
+        Q,
+        E,
+        F,
+        ESC,
+        COUNT,
+    };
+
+private:
     QPushButton* _backBut;
     QTimer* _timer;
-    bool _butts[9];
+    bool _butts[(size_t)Buttons::COUNT];
 };
 
 } // namespace fragment

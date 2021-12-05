@@ -6,17 +6,17 @@ namespace fragment {
 
 GameFragment::GameFragment() : _backBut(new QPushButton("Go back\nStop testing"))
 {
-    QHBoxLayout* mainHLayout = new QHBoxLayout;
+    QHBoxLayout* mainHLayout = new QHBoxLayout(this);
 
     mainHLayout->addWidget(_backBut);
     mainHLayout->setAlignment(Qt::AlignCenter);
     this->setLayout(mainHLayout);
 
-    for (size_t i = 0; i < 9; ++i)
+    for (size_t i = 0; i < (size_t)GameFragment::Buttons::COUNT; ++i)
         _butts[i] = false;
 
-    _timer = new QTimer();
-    _timer->setInterval(1000 / 80.f);
+    _timer = new QTimer(this);
+    _timer->setInterval(1000.f / GameFragment::fps);
     _timer->start();
 
     connect(_backBut, &QPushButton::clicked, this, &GameFragment::onBack);
@@ -25,67 +25,68 @@ GameFragment::GameFragment() : _backBut(new QPushButton("Go back\nStop testing")
 
 void GameFragment::timerOutEvent()
 {
+    /* TODO(all): place to merge */
     qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
 }
 
 void GameFragment::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_A)
-        _butts[0] = true;
+        _butts[(size_t)Buttons::A] = true;
 
     if (event->key() == Qt::Key_W)
-        _butts[1] = true;
+        _butts[(size_t)Buttons::W] = true;
 
     if (event->key() == Qt::Key_S)
-        _butts[2] = true;
+        _butts[(size_t)Buttons::S] = true;
 
     if (event->key() == Qt::Key_D)
-        _butts[3] = true;
+        _butts[(size_t)Buttons::D] = true;
 
     if (event->key() == Qt::Key_Space)
-        _butts[4] = true;
+        _butts[(size_t)Buttons::SPACE] = true;
 
     if (event->key() == Qt::Key_Q)
-        _butts[5] = true;
+        _butts[(size_t)Buttons::Q] = true;
 
     if (event->key() == Qt::Key_E)
-        _butts[6] = true;
+        _butts[(size_t)Buttons::E] = true;
 
     if (event->key() == Qt::Key_F)
-        _butts[7] = true;
+        _butts[(size_t)Buttons::F] = true;
 
     if (event->key() == Qt::Key_Escape)
-        _butts[8] = true;
+        _butts[(size_t)Buttons::ESC] = true;
 }
 
 void GameFragment::keyReleaseEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_A)
-        _butts[0] = false;
+        _butts[(size_t)Buttons::A] = false;
 
     if (event->key() == Qt::Key_W)
-        _butts[1] = false;
+        _butts[(size_t)Buttons::W] = false;
 
     if (event->key() == Qt::Key_S)
-        _butts[2] = false;
+        _butts[(size_t)Buttons::S] = false;
 
     if (event->key() == Qt::Key_D)
-        _butts[3] = false;
+        _butts[(size_t)Buttons::D] = false;
 
     if (event->key() == Qt::Key_Space)
-        _butts[4] = false;
+        _butts[(size_t)Buttons::SPACE] = false;
 
     if (event->key() == Qt::Key_Q)
-        _butts[5] = false;
+        _butts[(size_t)Buttons::Q] = false;
 
     if (event->key() == Qt::Key_E)
-        _butts[6] = false;
+        _butts[(size_t)Buttons::E] = false;
 
     if (event->key() == Qt::Key_F)
-        _butts[7] = false;
+        _butts[(size_t)Buttons::F] = false;
 
     if (event->key() == Qt::Key_Escape)
-        _butts[8] = false;
+        _butts[(size_t)Buttons::ESC] = false;
 }
 
 void GameFragment::onBack()
