@@ -13,7 +13,7 @@ using namespace std;
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), _ui(new Ui::MainWindow), socket(8050, "127.0.0.2")
+    : QMainWindow(parent), _ui(new Ui::MainWindow), socket(8080, "127.0.0.1")
 {
     _ui->setupUi(this);
 
@@ -24,6 +24,10 @@ MainWindow::MainWindow(QWidget *parent)
     _timer->setInterval(1000 / 80);
     _timer->start();
     socket.activateSocket();
+    int newPort = socket.receivePortNumber();
+    std::cout << "Переключаемся на порт " << newPort << std::endl;
+    usleep(1000000);
+    socket.changePort(newPort);
     connect(_timer, &QTimer::timeout, this, &MainWindow::timerOutEvent);
 }
 
@@ -46,7 +50,7 @@ void MainWindow::timerOutEvent()
     std::ofstream out;
     if (SendM.sendIt())
         cout << "Error with sending";
-    socket.transmit_file(file_path);
+    socket.transmitFile(file_path);
 
     KeyboardMouse::ButtonsCoords ReceiveMessage;
     ViktorDev::ReceiveInteraction ReceiveM(file_path, ReceiveMessage);

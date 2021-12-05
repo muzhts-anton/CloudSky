@@ -26,13 +26,13 @@ find_package(GTest REQUIRED)
 
 include_directories(${GTEST_INCLUDE_DIRS}/inc/)
 
-add_subdirectory(lib/TCPClient)
+add_subdirectory(lib/ClientConnection)
 add_subdirectory(lib/protobufOperations)
 add_subdirectory(lib/ui)
 
 add_executable(CloudSky_MyClient src/main.cpp)
 
-target_link_libraries(CloudSky_MyClient Qt${QT_VERSION_MAJOR}::Widgets TCPClient ui protobufOperations)
+target_link_libraries(CloudSky_MyClient Qt${QT_VERSION_MAJOR}::Widgets ClientConnection ui protobufOperations)
 
 set_target_properties(CloudSky_MyClient PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

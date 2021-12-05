@@ -1,23 +1,20 @@
 #include "Server.h"
-#include "KeyboardMouseMessage.pb.h"
-#include "messageOperations.h"
 
-int main() {
-    Server server(8050, "127.0.0.2");
-    server.start();
-    int fps = 40;
-    std::string filename = "receivedButtonsCoords.bin";
-    while (true)
+int main(int argc, char* argv[])
+{   
+    if (argc != 4)
+        return -1;
+    try
     {
-        server.getInteraction();
-        KeyboardMouse::ButtonsCoords ReceiveMessage;
-        ViktorDev::ReceiveInteraction ReceiveM(filename, ReceiveMessage);
+        std::size_t num_threads = boost::lexical_cast<std::size_t>(argv[3]);
+        Server server(argv[1], argv[2], num_threads);
 
-        if (ReceiveM.receiveIt(filename))
-            cout << "Error wint receiving";
-        ReceiveM.printMessage();
-
-        usleep(1000.0 / fps);
+        server.run();
     }
+    catch (std::exception& e)
+    {
+        std::cerr << "exception: " << e.what() << "\n";
+    }
+
     return 0;
 }
