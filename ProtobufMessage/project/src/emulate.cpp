@@ -24,9 +24,9 @@ int main(int argc, char** argv)
     message.set_ycoord(-100);
 
     EmulateInteraction emulation;
-    emulation.initEmulateMouse();
-
-    emulation.initEmulateKeyboard();
+    //emulation.initEmulateMouse();
+    //emulation.initEmulateKeyboard();
+    emulation.initEmulateKbMouse();
     emulation.setKeysCoords(message);
     emulation.emulateKbMouse();
 

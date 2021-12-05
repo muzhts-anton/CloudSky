@@ -208,6 +208,10 @@ void ViktorDev::EmulateInteraction::initEmulateKeyboard(){
 
 }
 
+void ViktorDev::EmulateInteraction::initEmulateKbMouse(){
+    initEmulateMouse();
+    initEmulateKeyboard();
+}
 void ViktorDev::EmulateInteraction::setKeysCoords(const KeyboardMouse::ButtonsCoords &message){
     coordX = message.xcoord();
     coordY = message.ycoord();

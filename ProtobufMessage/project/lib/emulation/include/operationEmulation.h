@@ -31,6 +31,7 @@ public:
     void emulateMouseMovement();
     void initEmulateMouse();
     void initEmulateKeyboard();
+    void initEmulateKbMouse();
     void setKeysCoords(const KeyboardMouse::ButtonsCoords &message);
     void setKeyboard(int keyCode, bool isPressed);
     void synKeyboard();
