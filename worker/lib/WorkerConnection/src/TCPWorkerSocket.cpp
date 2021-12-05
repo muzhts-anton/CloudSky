@@ -22,7 +22,7 @@ TCPWorkerSocket& TCPWorkerSocket::operator=(TCPWorkerSocket& that)
     PORT = that.PORT;
     IP = that.IP;
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
+    //address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
     addressLength = sizeof(address);
     return *this;
@@ -42,9 +42,14 @@ void TCPWorkerSocket::activateSocket()
 {
     try {
             createSocket();
-            bindSocket();
-            setListenSet();
-            acceptConnection();
+            if (inet_pton(AF_INET, IP, &address.sin_addr) <= 0) {
+            if (debug)
+                std::cout << "[ERROR] : TCP Invalid address\n";
+            } else {
+                bindSocket();
+                setListenSet();
+                acceptConnection();
+            }
     }
     catch (const std::invalid_argument& e) {
         std::cerr << e.what() << std::endl;

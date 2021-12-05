@@ -29,6 +29,7 @@ private:
     boost::shared_ptr<ServerConnection::Connection> newConnection;
     char* hostName;
     int port;
+    int workerPort;
 
     void startAccept();
 

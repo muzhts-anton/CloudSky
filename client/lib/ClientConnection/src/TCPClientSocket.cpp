@@ -49,7 +49,7 @@ void TCPClient::TCPClientSocket::createConnection()
 {
     if (connect(generalSocketDescriptor, (struct sockaddr*)&address, sizeof(address)) < 0) {
         if (debug)
-            std::cout << "[ERROR] : TCP connection attempt failed." << std::endl;
+            perror("[ERROR] : TCP connection attempt failed.\n");
         throw std::invalid_argument("[ERROR] : TCP connection attempt failed.");
     }
     if (debug)
@@ -61,6 +61,10 @@ int TCPClient::TCPClientSocket::receivePortNumber()
     int port = -1;
     std::string portString;
     char buffer[1024] = {};
+    char message[10] = "Start";
+    int length = 6;
+    send(generalSocketDescriptor, message, length, 0);
+
     int valread = read(generalSocketDescriptor, buffer, 1024);
     if (debug) {
         std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
@@ -71,6 +75,18 @@ int TCPClient::TCPClientSocket::receivePortNumber()
         port = std::stoi(portString);
     }
     return port;
+}
+
+void TCPClient::TCPClientSocket::changePort(int newPort)
+{
+    PORT = newPort;
+    address.sin_port = htons(PORT);
+    try {
+        createConnection();
+    }
+    catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void TCPClient::TCPClientSocket::transmitFile(std::string filename)

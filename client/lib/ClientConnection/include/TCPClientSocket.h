@@ -31,6 +31,8 @@ public:
 
     int receivePortNumber();
 
+    void changePort(int newPort);
+
     void transmitFile(std::string filename);
 
 private:

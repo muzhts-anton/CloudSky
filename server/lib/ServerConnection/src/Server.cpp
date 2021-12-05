@@ -23,6 +23,7 @@ Server::Server(const std::string& address, const std::string& port, std::size_t 
     newConnection()
 {
     this->port = std::stoi(port);
+    workerPort = this->port + 1;
     serverSignals.add(SIGINT);
     serverSignals.add(SIGTERM);
     serverSignals.async_wait(boost::bind(&Server::handleStop, this));
@@ -53,7 +54,7 @@ void Server::run()
 
 void Server::startAccept()
 {
-    newConnection.reset(new ServerConnection::Connection(serverContext, port));
+    newConnection.reset(new ServerConnection::Connection(serverContext, workerPort++));
         serverTCPAcceptor.async_accept(newConnection->socket(),
         boost::bind(&Server::handleAccept, this,
         boost::asio::placeholders::error));

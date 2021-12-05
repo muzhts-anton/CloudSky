@@ -14,7 +14,7 @@ class Connection:
     private boost::noncopyable
 {
 public:
-    explicit Connection(boost::asio::io_context& ioContext, int &port);
+    explicit Connection(boost::asio::io_context& ioContext, int port);
     boost::asio::ip::tcp::socket& socket();
 
     void start();

@@ -1,8 +1,10 @@
 #include "Worker.h"
 
-int main()
+int main(int argc, char *argv[])
 {
-    Worker worker(8050, "0.0.0.0");
+    if (argc != 3)
+        return -1;
+    Worker worker(argv[1], argv[2]);
     worker.start();
     double fps = 0.5;
     std::string fileToReceivePath = "receivedButtonsCoords.bin";

@@ -23,6 +23,14 @@ Worker::Worker(int port, const char* ip)
     currentWorkerPort = port + 1;
 }
 
+Worker::Worker(const char* port, const char* ip)
+{
+    int numberPort = std::stoi(port);
+    TCPSocket = new TCPWorkerSocket(numberPort, ip);
+    UDPSocket = new UDPWorkerSocket(numberPort, ip);
+    currentWorkerPort = numberPort + 1;
+}
+
 Worker::~Worker()
 {
     delete TCPSocket;
