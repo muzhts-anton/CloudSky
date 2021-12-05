@@ -7,9 +7,25 @@ TEST(video, incorrectInit){
   ASSERT_EQ(video.initVideoComponent(), false);
 }
 
+TEST(video, incorrectStartLoop){
+  
+}
+
+TEST(video, incorrectStopLoop){
+  
+}
+
 TEST(audio, incorrectInit){
   SoundComponent audio;
   ASSERT_EQ(audio.initSoundComponent(), false);
+}
+
+TEST(audio, incorrectStartLoop){
+
+}
+
+TEST(audio, incorrectStopLoop){
+    
 }
 
 

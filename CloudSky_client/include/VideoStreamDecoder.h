@@ -1,5 +1,4 @@
 #pragma once
-
 #include <stdlib.h>
 #include <string.h>
 #include <queue>
@@ -17,7 +16,7 @@ class VideoStreamDecoder
 public:
 	VideoStreamDecoder();
 	~VideoStreamDecoder();
-	bool initDecorder();
+	bool initDecoder();
 	bool decodeVideoFrame(char *indata,int insize,AVFrame **frame);
 private:
     AVCodec *video_codec;

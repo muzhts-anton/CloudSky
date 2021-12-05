@@ -56,7 +56,7 @@ bool VideoStreamDecoder::openVideoCodec()
 	return true;
 }
 
-bool VideoStreamDecoder::initDecorder()
+bool VideoStreamDecoder::initDecoder()
 {
 
 	if(!this->openVideoCodec())
