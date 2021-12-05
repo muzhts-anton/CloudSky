@@ -1,4 +1,4 @@
-#include "../include/messageOperations.h"
+#include "messageOperations.h"
 
 //#pragma comment( MessageOperations, "Protobuf_LIBRARIES" )
 
@@ -89,6 +89,7 @@ ReceiveInteraction::ReceiveInteraction(std::string filePath, KeyboardMouse::Butt
 {
     in.open(filePath, std::ios_base::binary);
     if (!in) {
+        cout<<"ERROR_WITH_FILE in ReceiveInteraction constructor";
         assert(ERROR_WITH_FILE);
         exit(ERROR_WITH_FILE);
         in.close();
