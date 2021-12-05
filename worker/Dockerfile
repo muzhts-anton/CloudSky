@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
 MAINTAINER CoDex
-COPY build/CloudSky_MyServer /
+COPY build/CloudSky_MyWorker /
 COPY build/fileToSend.bin /
-CMD [ "./CloudSky_MyServer" ]
+CMD [ "./CloudSky_MyWorker" ]

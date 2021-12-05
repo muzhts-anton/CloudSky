@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options(-Wall -Werror -Wextra -Wpedantic)
+add_compile_options(-pthread) 
+add_link_options(-pthread)
 
 find_package(GTest REQUIRED)
 # FIND_PACKAGE(Protobuf REQUIRED)
