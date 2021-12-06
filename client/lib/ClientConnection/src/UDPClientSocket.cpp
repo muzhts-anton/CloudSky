@@ -47,6 +47,12 @@ void UDPClientSocket::activateSocket()
     }
 }
 
+void UDPClientSocket::changePort(int newPort)
+{
+    PORT = newPort;
+    address.sin_port = htons(PORT);
+}
+
 void UDPClientSocket::createSocket()
 {
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
@@ -80,9 +86,9 @@ void UDPClientSocket::receiveFile(std::string fileToReceivePath)
             std::cout << "[ERROR] : UPD File creation failed. Maybe I should exit..." << std::endl;
         throw std::invalid_argument("[ERROR] : UPD File creation failed. Maybe I should exit...");
     }
-    char buffer[1024] = {};
+    char buffer[2048] = {};
     unsigned len = 0;
-    int valread = recvfrom(generalSocketDescriptor, buffer, 1024, MSG_DONTWAIT,
+    int valread = recvfrom(generalSocketDescriptor, buffer, 2048, MSG_DONTWAIT,
         (struct sockaddr*)&address, &len);
     if (debug) {
         std::cout << "[LOG] : UPD Data received " << valread << " bytes\n";

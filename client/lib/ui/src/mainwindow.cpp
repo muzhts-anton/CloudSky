@@ -3,6 +3,7 @@
 #include "messageOperations.h"
 #include "KeyboardMouseMessage.pb.h"
 #include "TCPClientSocket.h"
+#include "UDPClientSocket.h"
 
 #include <QtGui>
 #include <iostream>
@@ -13,7 +14,8 @@ using namespace std;
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), _ui(new Ui::MainWindow), socket(8080, "127.0.0.1")
+    : QMainWindow(parent), _ui(new Ui::MainWindow), \
+    TCPSocket(8080, "127.0.0.1"), UDPSocket(8080, "127.0.0.1")
 {
     _ui->setupUi(this);
 
@@ -23,11 +25,13 @@ MainWindow::MainWindow(QWidget *parent)
     _timer = new QTimer();
     _timer->setInterval(1000 / 80);
     _timer->start();
-    socket.activateSocket();
-    int newPort = socket.receivePortNumber();
-    std::cout << "Переключаемся на порт " << newPort << std::endl;
+    TCPSocket.activateSocket();
+    // int newPort = TCPSocket.receivePortNumber();
+    // std::cout << "Переключаемся на порт " << newPort << std::endl;
     usleep(1000000);
-    socket.changePort(newPort);
+    // TCPSocket.changePort(newPort);
+    // UDPSocket.changePort(newPort);
+    UDPSocket.activateSocket();
     connect(_timer, &QTimer::timeout, this, &MainWindow::timerOutEvent);
 }
 
@@ -35,6 +39,7 @@ void MainWindow::timerOutEvent()
 {
     qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
     std::string file_path = "buttonsCoords.bin";
+    std::string videoFilename = "result.mp4";
     KeyboardMouse::ButtonsCoords message;
 
     for (size_t i = 0; i < 9; ++i)
@@ -50,7 +55,8 @@ void MainWindow::timerOutEvent()
     std::ofstream out;
     if (SendM.sendIt())
         cout << "Error with sending";
-    socket.transmitFile(file_path);
+    TCPSocket.transmitFile(file_path);
+    UDPSocket.receiveFile(videoFilename);
 
     KeyboardMouse::ButtonsCoords ReceiveMessage;
     ViktorDev::ReceiveInteraction ReceiveM(file_path, ReceiveMessage);

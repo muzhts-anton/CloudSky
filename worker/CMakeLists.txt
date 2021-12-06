@@ -11,7 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-Wall -Werror -Wextra -Wpedantic)
+add_compile_options(-Wall -Werror -Wextra -Wpedantic -Wno-deprecated-declarations)
 
 find_package(GTest REQUIRED)
 FIND_PACKAGE(Protobuf REQUIRED)
@@ -24,7 +24,8 @@ include_directories(${GTEST_INCLUDE_DIRS}/inc/)
 add_subdirectory(lib/WorkerConnection)
 add_subdirectory(lib/protobufOperations)
 add_subdirectory(lib/emulation)
+add_subdirectory(lib/VideoAudioOperations)
 
 add_executable(CloudSky_MyWorker src/main.cpp)
 
-target_link_libraries(CloudSky_MyWorker WorkerConnection protobufOperations emulation)
+target_link_libraries(CloudSky_MyWorker WorkerConnection protobufOperations emulation VideoAudioOperations)
