@@ -12,6 +12,16 @@ MAINTAINER CoDex
 # RUN make check
 # RUN make install
 # RUN ldconfig
+# Try 1
+# RUN echo "include /usr/local/llb/*" > /etc/ld.so.conf
+# RUN ldconfig
+# Try 2
+# RUN touch /etc/ld.so.conf.d/protobuf.conf
+# RUN echo "/usr/local/llb" > /etc/ld.so.conf.d/protobuf.conf
+# RUN ldconfig
+# Try 3
+# RUN echo "/usr/local/llb" > /etc/ld.so.conf.d/libc.conf
+# RUN ldconfig
 COPY build/CloudSky_MyWorker /
 COPY build/fileToSend.bin /
 ENV PORT "8050"
