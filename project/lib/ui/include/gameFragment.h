@@ -2,6 +2,7 @@
 #define GAMEFRAGMENT_H
 
 #include "baseFragment.h"
+#include "SDLWidget.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -43,6 +44,7 @@ private:
     };
 
 private:
+    QSDLScreenWidget* _player;
     QPushButton* _backBut;
     QTimer* _timer;
     bool _butts[(size_t)Buttons::COUNT];

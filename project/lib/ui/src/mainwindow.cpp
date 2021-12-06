@@ -6,17 +6,15 @@
 #include <QDebug>
 #include <QtGui>
 #include <fstream>
-#include <iostream>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent) //, _ui(new Ui::MainWindow)
+    , _container(new QStackedWidget)
+    , _factory(new ScreensFactory)
+    , _nav(new Navigator(_container, _factory))
 {
     //_ui->setupUi(this);
-
-    _container = new QStackedWidget;
-    _factory = new ScreensFactory;
-    _nav = new Navigator(_container, _factory);
-    
+    _container->setStyleSheet("background-color: rgb(193,243,255);");
     this->setWindowTitle("CloudSky");
     this->setCentralWidget(_container);
 }

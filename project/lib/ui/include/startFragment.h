@@ -11,13 +11,15 @@ class StartFragment : public BaseFragment {
     Q_OBJECT
 public:
     StartFragment();
-    ~StartFragment() { delete _gameBut; }
+    ~StartFragment();
 
 public slots:
     void onGame();
 
 private:
-    QPushButton* _gameBut;
+    QPushButton* _openGameBut;
+    QPushButton* _settingsBut;
+    QPushButton* _addGameBut;
 };
 
 } // namespace fragment

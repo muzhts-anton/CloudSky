@@ -4,10 +4,14 @@
 
 namespace fragment {
 
-GameFragment::GameFragment() : _backBut(new QPushButton("Go back\nStop testing"))
+GameFragment::GameFragment()
+    : _player(new QSDLScreenWidget(this))
+    , _backBut(new QPushButton("Go back\nStop testing"))
 {
-    QHBoxLayout* mainHLayout = new QHBoxLayout(this);
+    _backBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
 
+    QHBoxLayout* mainHLayout = new QHBoxLayout(this);
+    mainHLayout->addWidget(_player);
     mainHLayout->addWidget(_backBut);
     mainHLayout->setAlignment(Qt::AlignCenter);
     this->setLayout(mainHLayout);
@@ -25,7 +29,7 @@ GameFragment::GameFragment() : _backBut(new QPushButton("Go back\nStop testing")
 
 void GameFragment::timerOutEvent()
 {
-    /* TODO(all): place to merge */
+    /* TODO(Paul): place to merge */
     qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
 }
 

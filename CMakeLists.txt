@@ -11,10 +11,13 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-Wall -Werror -Wextra -Wpedantic)
+add_compile_options(-Wall -Wextra -Wpedantic)
 
 find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+
+find_package(SDL2 REQUIRED)
+include_directories(CloudSky_MyClient ${SDL2_INCLUDE_DIRS})
 
 # FIND_PACKAGE( Qt5Multimedia REQUIRED )
 # FIND_PACKAGE( Qt5MultimediaWidgets REQUIRED )
@@ -28,7 +31,7 @@ add_subdirectory(project/lib/ui)
 
 add_executable(CloudSky_MyClient project/src/main.cpp)
 
-target_link_libraries(CloudSky_MyClient Qt5::Widgets ui)
+target_link_libraries(CloudSky_MyClient Qt5::Widgets ui avcodec avformat swscale avutil ${SDL2_LIBRARIES})
 
 set_target_properties(CloudSky_MyClient PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
