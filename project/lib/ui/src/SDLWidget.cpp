@@ -45,7 +45,7 @@ void QSDLScreenWidget::changeFlags()
 {
     switch (camera) {
     case 0:
-        strcpy(link, "rtsp://192.168.1.96:554/profile2");
+        strcpy(link, "/home/anton/Documents/tmp/CloudSky/project/lib/ui/media/vid.mp4");
         isStop = false;
         break;
     case 1:
@@ -98,7 +98,6 @@ QSDLScreenWidget::QSDLScreenWidget(QWidget* parent)
     setAttribute(Qt::WA_NativeWindow, true);
     setAttribute(Qt::WA_OpaquePaintEvent);
     setMouseTracking(true);
-
     link = new char[100];
     isStop = true;
 
@@ -111,6 +110,9 @@ QSDLScreenWidget::QSDLScreenWidget(QWidget* parent)
     pFrame = NULL;
     bmp = NULL;
     sws_ctx = NULL;
+
+    this->resizeEvent(0);
+    this->paintEvent(0);
 
     avformat_network_init();
     changeCamera(camera);
@@ -178,24 +180,33 @@ void QSDLScreenWidget::paintEvent(QPaintEvent*)
     //
     XSync(QX11Info::display(), FALSE);
 #endif
-
+    std::cout << "[LOG] we are here 5"
+              << "\n";
     if (screen) {
-
+        std::cout << "[LOG] we are here 6" << bmp << pCodecCtx->width << pCodecCtx->height << "\n";
         if (bmp == NULL) {
             bmp = SDL_CreateTexture(0, SDL_PIXELFORMAT_YV12, SDL_TEXTUREACCESS_STREAMING, pCodecCtx->width, pCodecCtx->height);
         }
 
+        std::cout << "[LOG] we are here 7"
+                  << "\n";
+
         packetCount = 0;
         isEnd = 0;
         // Read frames
-        size_t yPlaneSz = pCodecCtx->width * pCodecCtx->height;
-        size_t uvPlaneSz = pCodecCtx->width * pCodecCtx->height / 4;
-        Uint8* yPlane = (Uint8*)malloc(yPlaneSz);
-        Uint8* uPlane = (Uint8*)malloc(uvPlaneSz);
-        Uint8* vPlane = (Uint8*)malloc(uvPlaneSz);
+        yPlaneSz = pCodecCtx->width * pCodecCtx->height;
+        uvPlaneSz = pCodecCtx->width * pCodecCtx->height / 4;
+        std::cout << "[LOG] we are here 8"
+                  << "\n";
+        yPlane = (Uint8*)malloc(yPlaneSz);
+        uPlane = (Uint8*)malloc(uvPlaneSz);
+        vPlane = (Uint8*)malloc(uvPlaneSz);
+        std::cout << "[LOG] we are here 4"
+                  << "\n";
         while (!isStop && isEnd >= 0 && ++packetCount < 10) {
             isEnd = av_read_frame(pFormatCtx, &packet);
-
+            std::cout << "[LOG] we are here 3"
+                      << "\n";
             if (isEnd < 0) {
                 av_packet_unref(&packet);
                 closeFfmpeg();
@@ -206,6 +217,8 @@ void QSDLScreenWidget::paintEvent(QPaintEvent*)
 
             // Is this a packet from the video stream?
             if (packet.stream_index == videoStream) {
+                std::cout << "[LOG] we are here 2"
+                          << "\n";
                 // Decode video frame
                 if (avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet) <= 0) {
                     av_packet_unref(&packet);
@@ -213,6 +226,8 @@ void QSDLScreenWidget::paintEvent(QPaintEvent*)
                 }
                 // Did we get a video frame?
                 if (frameFinished) {
+                    std::cout << "[LOG] we are here"
+                              << "\n";
                     pict.data[0] = yPlane;
                     pict.data[1] = uPlane;
                     pict.data[2] = vPlane;
@@ -303,6 +318,7 @@ bool QSDLScreenWidget::openFfmpeg(const char* link)
     }
 
     // Open video file
+    pFormatCtx = avformat_alloc_context(); // ?
     if (avformat_open_input(&pFormatCtx, link, NULL, NULL) != 0) {
         return false; // Couldn't open file
     }

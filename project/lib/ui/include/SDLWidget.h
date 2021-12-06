@@ -80,6 +80,12 @@ private:
     float aspect_ratio;
     struct SwsContext* sws_ctx;
 
+    size_t yPlaneSz;
+    size_t uvPlaneSz;
+    Uint8* yPlane;
+    Uint8* uPlane;
+    Uint8* vPlane;
+
     SDL_Texture* bmp;
     SDL_Window* screen;
     SDL_Rect rect;

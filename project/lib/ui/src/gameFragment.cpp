@@ -30,7 +30,7 @@ GameFragment::GameFragment()
 void GameFragment::timerOutEvent()
 {
     /* TODO(Paul): place to merge */
-    qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
+    //qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
 }
 
 void GameFragment::keyPressEvent(QKeyEvent* event)
