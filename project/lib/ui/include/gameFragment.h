@@ -24,6 +24,8 @@ public:
 public slots:
     void keyPressEvent(QKeyEvent* event);
     void keyReleaseEvent(QKeyEvent* event);
+    void mousePressEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void timerOutEvent();
 
     void onBack();
@@ -42,12 +44,18 @@ private:
         ESC,
         COUNT,
     };
+    enum class Mouse {
+        RIGHT = 0,
+        LEFT,
+        COUNT,
+    };
 
 private:
-    QSDLScreenWidget* _player;
+    //QSDLScreenWidget* _player;
     QPushButton* _backBut;
     QTimer* _timer;
     bool _butts[(size_t)Buttons::COUNT];
+    bool _mouse[(size_t)Mouse::COUNT];
 };
 
 } // namespace fragment

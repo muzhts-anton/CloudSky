@@ -5,19 +5,22 @@
 namespace fragment {
 
 GameFragment::GameFragment()
-    : _player(new QSDLScreenWidget(this))
-    , _backBut(new QPushButton("Go back\nStop testing"))
+    //: _player(new QSDLScreenWidget(this))
+    : _backBut(new QPushButton("Go back\nStop testing"))
 {
     _backBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
 
     QHBoxLayout* mainHLayout = new QHBoxLayout(this);
-    mainHLayout->addWidget(_player);
+    // mainHLayout->addWidget(_player);
     mainHLayout->addWidget(_backBut);
     mainHLayout->setAlignment(Qt::AlignCenter);
     this->setLayout(mainHLayout);
 
-    for (size_t i = 0; i < (size_t)GameFragment::Buttons::COUNT; ++i)
+    for (size_t i = 0; i < (size_t)Buttons::COUNT; ++i)
         _butts[i] = false;
+
+    for (size_t i = 0; i < (size_t)Mouse::COUNT; ++i)
+        _mouse[i] = false;
 
     _timer = new QTimer(this);
     _timer->setInterval(1000.f / GameFragment::fps);
@@ -30,7 +33,8 @@ GameFragment::GameFragment()
 void GameFragment::timerOutEvent()
 {
     /* TODO(Paul): place to merge */
-    //qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
+    // qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
+    qDebug() << _mouse[0] << _mouse[1];
 }
 
 void GameFragment::keyPressEvent(QKeyEvent* event)
@@ -91,6 +95,24 @@ void GameFragment::keyReleaseEvent(QKeyEvent* event)
 
     if (event->key() == Qt::Key_Escape)
         _butts[(size_t)Buttons::ESC] = false;
+}
+
+void GameFragment::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::RightButton)
+        _mouse[(size_t)Mouse::RIGHT] = true;
+
+    if (event->button() == Qt::LeftButton)
+        _mouse[(size_t)Mouse::LEFT] = true;
+}
+
+void GameFragment::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::RightButton)
+        _mouse[(size_t)Mouse::RIGHT] = false;
+
+    if (event->button() == Qt::LeftButton)
+        _mouse[(size_t)Mouse::LEFT] = false;
 }
 
 void GameFragment::onBack()
