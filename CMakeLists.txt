@@ -11,7 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-Wall -Wextra -Wpedantic)
+add_compile_options(-Wall -Wextra -Wpedantic -Wno-deprecated-declarations)
 
 find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)

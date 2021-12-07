@@ -44,7 +44,7 @@ private:
     };
 
 private:
-    QSDLScreenWidget* _player;
+    MediaPlayer* _player;
     QPushButton* _backBut;
     QTimer* _timer;
     bool _butts[(size_t)Buttons::COUNT];

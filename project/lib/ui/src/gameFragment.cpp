@@ -5,7 +5,7 @@
 namespace fragment {
 
 GameFragment::GameFragment()
-    : _player(new QSDLScreenWidget(this))
+    : _player(new MediaPlayer(this))
     , _backBut(new QPushButton("Go back\nStop testing"))
 {
     _backBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
@@ -15,6 +15,9 @@ GameFragment::GameFragment()
     mainHLayout->addWidget(_backBut);
     mainHLayout->setAlignment(Qt::AlignCenter);
     this->setLayout(mainHLayout);
+
+    _player->initInputStream("/home/konstantin/rep_cpp/tmpPlayer/CloudSky/project/lib/ui/media/vid.mp4");
+    _player->play();
 
     for (size_t i = 0; i < (size_t)GameFragment::Buttons::COUNT; ++i)
         _butts[i] = false;
