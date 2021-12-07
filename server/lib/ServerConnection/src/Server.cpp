@@ -23,6 +23,7 @@ Server::Server(const std::string& address, const std::string& port, std::size_t 
     newConnection()
 {
     this->port = std::stoi(port);
+    std::cout << this->port << "and " << htons(this->port) << std::endl;
     workerPort = this->port + 1;
     serverSignals.add(SIGINT);
     serverSignals.add(SIGTERM);

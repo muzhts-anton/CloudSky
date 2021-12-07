@@ -43,7 +43,7 @@ namespace ServerConnection {
         {
             char command[180];
             snprintf(command, 180, "docker run --rm --net=host -it -p \
-            127.0.0.1:%d:%d -e IP=127.0.0.1 -e PORT=%d \
+            0.0.0.0:%d:%d -e IP=0.0.0.0 -e PORT=%d \
             cloud-sky-worker", newPort, newPort, newPort);
             std::cout << command << std::endl;
             system(command);
