@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string>
+#include <X11/Xlib.h>
+
 #include "../lib/WorkerConnection/include/UDPWorkerSocket.h"
 #include "../lib/WorkerConnection/include/Worker.h"
-#define PACKETSIZE 4096
+
+#define PACKETSIZE 4092
 extern "C" {
 #include "libswscale/swscale.h"
 #include "libavcodec/avcodec.h"
@@ -18,7 +21,7 @@ public:
     ~ScreenRecorder();
 
     int initScreenGrabber();
-    int CaptureVideoData(Worker &worker);
+    int CaptureVideoData(Worker* worker);
 
 private:
     AVFormatContext * avFmtCtx = NULL;
@@ -32,6 +35,6 @@ private:
     long int videoIndex = -1;
     AVFrame *avYUVFrame = NULL;
 
-    unsigned int width = 1920;
-    unsigned int height = 900;
+    unsigned int width = 640;
+    unsigned int height = 480;
 };

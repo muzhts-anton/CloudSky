@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     while (true)
     {
         std::cout << "Отлавливаем...\n";
-        recorder.CaptureVideoData(worker);
+        recorder.CaptureVideoData(&worker);
         std::cout << "Отловили?\n";
         worker.getInteraction(filename);
         ReceiveInteraction ReceiveM(filename, ReceiveMessage);

@@ -13,4 +13,6 @@ target_link_libraries(VideoAudioOperations
     avutil
     avdevice
     avfilter
+    SDL2
+    X11
 )

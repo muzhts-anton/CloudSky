@@ -33,14 +33,28 @@ ScreenRecorder::~ScreenRecorder(){
 }
 
 int ScreenRecorder::initScreenGrabber(){
+    Display* serverDisplay = XOpenDisplay(NULL); 
+    Screen*  screen = DefaultScreenOfDisplay(serverDisplay); 
+    height = screen->height; 
+    width  = screen->width;
+    XCloseDisplay(serverDisplay);
     avFmtCtx = avformat_alloc_context();
     avRawPkt = (AVPacket *)malloc(sizeof(AVPacket));
-
+    
     AVInputFormat *avInputFmt = av_find_input_format("x11grab");
     if (avInputFmt == NULL)  {
         std::cout << "av_find_input_format not found......\n";
         return 0;
     }
+
+    av_dict_set(&avRawOptions, "rtbufsize ", "100M",0);
+    av_dict_set(&avRawOptions, "preset", "superfast", 0);
+    av_dict_set(&avRawOptions, "tune", "zerolatency", 0);
+    av_dict_set(&avRawOptions, "capture_cursor", "1", 0);
+    av_dict_set(&avRawOptions, "capture_mouse_clicks", "1", 0);
+    av_dict_set(&avRawOptions, "draw_mouse", "1", 0);
+    av_dict_set(&avRawOptions, "follow_mouse", "centered", 0);
+    av_dict_set(&avRawOptions, "capture_mouse", "1", 0);
 
     if(avformat_open_input(&avFmtCtx,":0.0", avInputFmt, &avRawOptions) !=0 ) {
         std::cout << "Couldn't open input stream.\n";
@@ -106,14 +120,14 @@ int ScreenRecorder::initScreenGrabber(){
     avEncoderCtx->width = width;
     avEncoderCtx->height = height;
     avEncoderCtx->time_base.num = 1;
-    avEncoderCtx->time_base.den = 75;
+    avEncoderCtx->time_base.den = 60;
     avEncoderCtx->bit_rate = 128*1024*8;
     avEncoderCtx->gop_size = 250;
     avEncoderCtx->qmin = 1;
     avEncoderCtx->qmax = 10;
 
     AVDictionary *param = 0;
-    
+    av_dict_set(&param, "rtbufsize ", "102400",0);
     av_dict_set(&param, "preset", "superfast", 0);
     av_dict_set(&param, "tune", "zerolatency", 0);
 
@@ -124,7 +138,7 @@ int ScreenRecorder::initScreenGrabber(){
     return 0;
 }
 
-int ScreenRecorder::CaptureVideoData(Worker &worker){
+int ScreenRecorder::CaptureVideoData(Worker* worker){
 
     int got_picture = 0;
     int flag = 0;
@@ -138,13 +152,8 @@ int ScreenRecorder::CaptureVideoData(Worker &worker){
     avOutFrame = av_frame_alloc();
     av_image_fill_arrays(avOutFrame->data, avOutFrame->linesize, (uint8_t *)outBuf, avEncoderCtx->pix_fmt, avEncoderCtx->width, avEncoderCtx->height,1);
     
-    AVPacket* pkt = av_packet_alloc();    
-    std::string path = "out.mp4";
-    //FILE *h264Fp = fopen("out.mp4", "wb");
-    //std::fstream file;
-    //file.open(path, std::ios::out  | std::ios::binary);
-    //int bytes = 0;
-    while (true) {
+    AVPacket* pkt = av_packet_alloc();  
+    while (worker) {
         if (av_read_frame(avFmtCtx, avRawPkt) >= 0)  {
             if (avRawPkt->stream_index == videoIndex) {
                 flag = avcodec_decode_video2(avRawCodecCtx, avOutFrame, &got_picture, avRawPkt);
@@ -160,17 +169,13 @@ int ScreenRecorder::CaptureVideoData(Worker &worker){
                             size_t len = pkt->size;
                             char* data = (char*)pkt->data;
                             while(len / PACKETSIZE){
-                                worker.sendData(data, PACKETSIZE);
+                                worker->sendData(data, PACKETSIZE);
                                 data+= PACKETSIZE;
                                 len-=PACKETSIZE;
                             }
-                            
-                            //bytes+= fwrite(pkt->data, 1,pkt->size, h264Fp);
-                            //file.write((char*)pkt->data, pkt->size);
-                            //bytes+=pkt->size;
-                            //bytes++;
+
                             if(len>0){
-                                worker.sendData(data, len);
+                                worker->sendData(data, len);
                             }
                         }
                     }
@@ -182,6 +187,5 @@ int ScreenRecorder::CaptureVideoData(Worker &worker){
 
     }
     
-    //file.close();
     return 0;
 }
