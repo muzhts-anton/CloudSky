@@ -1,7 +1,7 @@
 #ifndef MESSAGEOPERATIONS_H
 #define MESSAGEOPERATIONS_H
 
-#include "../../../build/lib/protobufOperations/KeyboardMouseMessage.pb.h"
+#include "KeyboardMouseMessage.pb.h"
 //#include "interactionOperations.h"
 //#include "receiveInteraction.h"
 //#include "sendInteraction.h"
@@ -16,6 +16,7 @@ constexpr int SUCCESS = 0;
 constexpr int ERROR_WITH_FILE = 1;
 constexpr int ERROR_PARSE_MESSAGE = 2;
 constexpr int ERROR_SERIALIZE_MESSAGE = 3;
+
 
 namespace ViktorDev {
 class InteractionOperations {
@@ -39,6 +40,7 @@ class SendInteraction : public InteractionOperations {
 public:
     SendInteraction() = delete;
     SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage);
+    //InteractionOperations(myMessage);
     SendInteraction(std::string filePath, bool buttonPressed[BUTTON_QUANITY], int coords[2]);
     ~SendInteraction();
     int sendIt();
@@ -50,9 +52,10 @@ class ReceiveInteraction : public InteractionOperations {
 public:
     ReceiveInteraction() = delete;
     ReceiveInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage);
+    //InteractionOperations(myMessage);
     ReceiveInteraction(std::string filePath, bool buttonPressed[BUTTON_QUANITY], int coords[2]);
     ~ReceiveInteraction();
-    int receiveIt();
+    int receiveIt(std::string filePath);
 };
 }
 #endif //MESSAGEOPERATIONS_H

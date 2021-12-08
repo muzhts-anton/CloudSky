@@ -1,4 +1,4 @@
-#include "messageOperations.h"
+#include "../include/messageOperations.h"
 
 //#pragma comment( MessageOperations, "Protobuf_LIBRARIES" )
 
@@ -50,26 +50,26 @@ void InteractionOperations::printMessage()
 SendInteraction::SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage)
     : InteractionOperations(myMessage, filePath)
 {
-    out.open(filePath, std::ios_base::binary);
-    if (!out) {
-        cout << "FILE DOES NOT OPENED!" << endl;
-        assert(ERROR_WITH_FILE);
-        exit(ERROR_WITH_FILE);
-    };
+    // out.open(filePath, std::ios_base::binary);
+    // if (!out) {
+    //     cout << "FILE DOES NOT OPENED!" << endl;
+    //     assert(ERROR_WITH_FILE);
+    //     exit(ERROR_WITH_FILE);
+    // };
 }
 SendInteraction::SendInteraction(std::string filePath, bool buttonPressed[BUTTON_QUANITY], int coords[2])
     : InteractionOperations(buttonPressed, coords, filePath)
 {
-    out.open(filePath, std::ios_base::binary);
-    if (!out) {
-        cout << "FILE DOES NOT OPENED!" << endl;
-        assert(ERROR_WITH_FILE);
-        exit(ERROR_WITH_FILE);
-    };
+    // out.open(filePath, std::ios_base::binary);
+    // if (!out) {
+    //     cout << "FILE DOES NOT OPENED!" << endl;
+    //     assert(ERROR_WITH_FILE);
+    //     exit(ERROR_WITH_FILE);
+    // };
 }
 SendInteraction::~SendInteraction()
 {
-    out.close();
+    // out.close();
 }
 int SendInteraction::sendIt()
 {
@@ -81,38 +81,40 @@ int SendInteraction::sendIt()
         cout << "ERRORSEND IT !" << endl;
         return ERROR_SERIALIZE_MESSAGE;
     };
+    outAddit.close();
     return SUCCESS;
 }
 
 ReceiveInteraction::ReceiveInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage)
     : InteractionOperations(myMessage, filePath)
 {
-    in.open(filePath, std::ios_base::binary);
-    if (!in) {
-        cout<<"ERROR_WITH_FILE in ReceiveInteraction constructor";
-        assert(ERROR_WITH_FILE);
-        exit(ERROR_WITH_FILE);
-        in.close();
-    };
+    // in.open(filePath, std::ios_base::binary);
+    // if (!in) {
+    //     assert(ERROR_WITH_FILE);
+    //     exit(ERROR_WITH_FILE);
+    //     in.close();
+    // };
 }
 ReceiveInteraction::ReceiveInteraction(std::string filePath, bool buttonPressed[BUTTON_QUANITY], int coords[2])
     : InteractionOperations(buttonPressed, coords, filePath)
 {
-    in.open(filePath, std::ios_base::binary);
-    if (!in) {
-        assert(ERROR_WITH_FILE);
-        exit(ERROR_WITH_FILE);
-        in.close();
-    };
+    // in.open(filePath, std::ios_base::binary);
+    // if (!in) {
+    //     assert(ERROR_WITH_FILE);
+    //     exit(ERROR_WITH_FILE);
+    //     in.close();
+    // };
 }
 ReceiveInteraction::~ReceiveInteraction()
 {
-    in.close();
+    //in.close();
 }
-int ReceiveInteraction::receiveIt()
+int ReceiveInteraction::receiveIt(std::string filePath)
 {
+    in.open(filePath, std::ios_base::binary);
     if (!message.ParseFromIstream(&in)) {
         return ERROR_PARSE_MESSAGE;
     };
+    in.close();
     return SUCCESS;
 }
