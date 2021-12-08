@@ -1,4 +1,5 @@
-#include "../include/KeyboardMouseMessage.pb.h"
+#include "../../../../build/project/lib/protobufOperations/KeyboardMouseMessage.pb.h"
+//#include "../include/KeyboardMouseMessage.pb.h"
 //#include "../include/messageOperations.h"
 #include "../include/operationEmulation.h"
 #include <fstream>
@@ -21,7 +22,8 @@ int main(int argc, char** argv)
     message.add_buttonpressed(false);
     message.set_xcoord(-50);
     message.set_ycoord(-100);
-    EmulateInter
+    
+    EmulateInteraction emulation;
     //emulation.initEmulateKbMouse();
     emulation.setKeysCoords(message);
     emulation.emulateKbMouse();

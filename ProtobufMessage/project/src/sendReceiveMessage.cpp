@@ -1,4 +1,4 @@
-#include "../include/KeyboardMouseMessage.pb.h"
+#include "../../../../build/project/lib/protobufOperations/KeyboardMouseMessage.pb.h"
 #include "../include/messageOperations.h"
 //#include "../include/operationEmulation.h"
 //#include "../include/receiveInteraction.h"

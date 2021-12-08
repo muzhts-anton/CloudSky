@@ -1,8 +1,7 @@
 #ifndef OPERATIONEMULATION_H
 #define OPERATIONEMULATION_H
 
-#include "KeyboardMouseMessage.pb.h"
-//#include "messageOperations.h"
+#include "../../../../build/project/lib/protobufOperations/KeyboardMouseMessage.pb.h"//#include "messageOperations.h"
 #include <cstdlib>
 #include <errno.h>
 #include <fcntl.h>

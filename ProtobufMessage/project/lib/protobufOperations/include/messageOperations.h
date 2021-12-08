@@ -1,7 +1,8 @@
 #ifndef MESSAGEOPERATIONS_H
 #define MESSAGEOPERATIONS_H
 
-#include "KeyboardMouseMessage.pb.h"
+//#include "KeyboardMouseMessage.pb.h"
+#include "../../../../build/project/lib/protobufOperations/KeyboardMouseMessage.pb.h"
 //#include "interactionOperations.h"
 //#include "receiveInteraction.h"
 //#include "sendInteraction.h"
