@@ -5,11 +5,11 @@
 TEST(MESSAGE_TEST, constructorMessageTest)
 {
     KeyboardMouse::ButtonsCoords message;
-    bool buttonSeq[BUTTON_QUANITY] { true, false, false };
+    bool buttonSeq[buttonQuanity] { true, false, false };
     for (int i = 0; i < 3; ++i) {
         message.add_buttonpressed(buttonSeq[i]);
     }
-    int coords[COORD_QUANITY] { 2, 45 };
+    int coords[coordQuanity] { 2, 45 };
     for (int i = 0; i < 2; ++i) {
         message.set_xcoord(coords[i]);
     }
@@ -25,8 +25,8 @@ TEST(MESSAGE_TEST, constructorMessageTest)
 
 TEST(MESSAGE_TEST, constructorCoordsTest)
 {
-    bool buttonSeq[BUTTON_QUANITY] { true, false, false };
-    int coords[COORD_QUANITY] { 2, 45 };
+    bool buttonSeq[buttonQuanity] { true, false, false };
+    int coords[coordQuanity] { 2, 45 };
     InteractionOperations interOp(buttonSeq, coords);
     int i = 0;
     for (const bool& button : interOp.getMessage().buttonPressed()) {

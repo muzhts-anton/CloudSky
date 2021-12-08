@@ -17,9 +17,10 @@
 #include <string>
 #include <time.h>
 
-constexpr int BUTTON_QUANITY = 9;
-constexpr int COORD_QUANITY = 2;
-constexpr int MOUSE_BUTTONS = 2;
+constexpr int buttonQuanity = 9;
+constexpr int coordQuanity = 2;
+constexpr int mouseButtonsQuanity = 2;
+
 
 namespace ViktorDev {
 class EmulateInteraction {
@@ -50,17 +51,18 @@ private:
     struct uinput_user_dev uidev;
     struct input_event ev;
     int coordX, coordY;
+    int previousCoordX, previousCoordY;
     int i;
 
 
     struct input_event keyInputEvent;
     int fdKeyEmulator;
     struct uinput_user_dev devFakeKeyboard;
-    int kbSet[BUTTON_QUANITY];
+    int kbSet[buttonQuanity];
 // a w s d space q e f esc leftMouseButton rightMouseButton
 // 0 1 2 3 4     5 6 7 8   9               10
-    bool kbSetBool[BUTTON_QUANITY];
-    bool mouseButtons[MOUSE_BUTTONS];
+    bool kbSetBool[buttonQuanity];
+    bool mouseButtons[mouseButtonsQuanity];
     FILE* sourceFile;
 };
 

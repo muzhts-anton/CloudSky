@@ -9,9 +9,9 @@ KeyboardMouse::ButtonsCoords& InteractionOperations::getMessage()
 {
     return message;
 }
-void InteractionOperations::setMessage(bool buttonPressed[BUTTON_QUANITY], int coords[COORD_QUANITY])
+void InteractionOperations::setMessage(bool buttonPressed[buttonQuanity], int coords[coordQuanity])
 {
-    for (int i = 0; i < BUTTON_QUANITY; ++i) {
+    for (int i = 0; i < buttonQuanity; ++i) {
         getMessage().add_buttonpressed(buttonPressed[i]);
     }
     getMessage().set_xcoord(coords[0]);
@@ -22,14 +22,14 @@ InteractionOperations::InteractionOperations(KeyboardMouse::ButtonsCoords myMess
     getMessage() = myMessage;
     this->filePath = filePath;
 }
-InteractionOperations::InteractionOperations(bool buttonPressed[BUTTON_QUANITY], int coords[2], string filePath)
+InteractionOperations::InteractionOperations(bool buttonPressed[buttonQuanity], int coords[2], string filePath)
 {
     setMessage(buttonPressed, coords);
     this->filePath = filePath;
 }
 InteractionOperations::InteractionOperations()
 {
-    for (int i = 0; i < BUTTON_QUANITY; ++i) {
+    for (int i = 0; i < buttonQuanity; ++i) {
         getMessage().add_buttonpressed(false);
     }
     getMessage().set_xcoord(0);
@@ -57,7 +57,7 @@ SendInteraction::SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoo
         exit(ERROR_WITH_FILE);
     };
 }
-SendInteraction::SendInteraction(std::string filePath, bool buttonPressed[BUTTON_QUANITY], int coords[2])
+SendInteraction::SendInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2])
     : InteractionOperations(buttonPressed, coords, filePath)
 {
     out.open(filePath, std::ios_base::binary);
@@ -95,7 +95,7 @@ ReceiveInteraction::ReceiveInteraction(std::string filePath, KeyboardMouse::Butt
         in.close();
     };
 }
-ReceiveInteraction::ReceiveInteraction(std::string filePath, bool buttonPressed[BUTTON_QUANITY], int coords[2])
+ReceiveInteraction::ReceiveInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2])
     : InteractionOperations(buttonPressed, coords, filePath)
 {
     in.open(filePath, std::ios_base::binary);

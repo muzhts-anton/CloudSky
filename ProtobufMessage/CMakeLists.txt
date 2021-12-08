@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDART 17)
 add_compile_options(-Wall -Wpedantic -g3) #  -Werror
 #add_compile_options(-lpthread) #-lpthread
 #add_link_options(-lpthread)
-
-FIND_PACKAGE(Protobuf REQUIRED)
+find_package(GTest REQUIRED)
+find_package(Protobuf REQUIRED)
 #find_package(Threads)
 
 
@@ -29,7 +29,8 @@ target_link_libraries(emulate emulation protobufOperations) # ${Protobuf_LIBRARI
 # enable_testing()
 # find_package(GTest REQUIRED)
 # include_directories(${GTEST_INCLUDE_DIR})
-# add_executable(MESSAGE_TEST project/tests/MESSAGE_TEST.cpp project/src/messageOperations.cpp)
+# add_executable( project/tests/protobufTest.cpp protobufOperations)
+# add_executable(messageTest project/tests/MESSAGE_TEST.cpp project/src/messageOperations.cpp)
 
 # target_link_libraries(MESSAGE_TEST ${GTEST_LIBRARIES} MessageOperations)
 # target_link_libraries(MESSAGE_TEST gtest pthread) #!
