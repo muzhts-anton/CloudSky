@@ -11,7 +11,7 @@ int main()
 {
     std::string filePath = "buttonsCoords.bin";
     KeyboardMouse::ButtonsCoords message;
-    message.add_buttonpressed(true);
+    message.add_buttonpressed(false);
     message.add_buttonpressed(false);
     message.add_buttonpressed(false);
     message.add_buttonpressed(false);
@@ -22,6 +22,8 @@ int main()
     message.add_buttonpressed(false);
     message.set_xcoord(5);
     message.set_ycoord(10);
+    message.add_mousebuttons(true);
+    message.add_mousebuttons(true);
     //bool arrInit[2] { true, true };
     //int arriInit[2] { 100, 200 };
 

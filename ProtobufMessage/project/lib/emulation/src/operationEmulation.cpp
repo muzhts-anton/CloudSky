@@ -31,7 +31,6 @@ EmulateInteraction::~EmulateInteraction()
     
     if (ioctl(fd, UI_DEV_DESTROY) < 0)
         die("error: cannot destroy uinput device ");
-    cout<<"BEFORE CLOSE!!";
     close(fd);
     //fclose(sourceFile);
 };
@@ -39,6 +38,9 @@ EmulateInteraction::~EmulateInteraction()
 void ViktorDev::EmulateInteraction::initEmulateMouse() {
     coordX = 0;
     coordY = 0;
+    for(int i = 0; i < MOUSE_BUTTONS; ++i){
+        mouseButtons[i]=0;
+    }
     fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
     if (fd < 0)
         die("error: open");
@@ -88,7 +90,7 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
         gettimeofday(&ev.time, 0);
         ev.type = EV_KEY;
         ev.code = BTN_LEFT;
-        ev.value = 0;
+        ev.value = mouseButtons[0];
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
         memset(&ev, 0, sizeof(struct input_event));
@@ -108,7 +110,7 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
         memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_KEY;
         ev.code = BTN_RIGHT;
-        ev.value = 0;
+        ev.value = mouseButtons[1];
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
         
@@ -223,7 +225,8 @@ void ViktorDev::EmulateInteraction::setKeysCoords(const KeyboardMouse::ButtonsCo
     for (int i = 0; i< BUTTON_QUANITY; ++i){
         cout<<(kbSetBool[i]);
     }
-    cout<<endl;
+    mouseButtons[0] = (message.mousebuttons())[0];
+    mouseButtons[1] = (message.mousebuttons())[1];
 }
 void ViktorDev::EmulateInteraction::setKeyboard(int keyCode, bool isPressed){
     memset(&keyInputEvent, 0, sizeof(input_event));
