@@ -25,6 +25,7 @@ constexpr int MOUSE_BUTTONS = 2;
 namespace ViktorDev {
 class EmulateInteraction {
 public:
+    EmulateInteraction();
     ~EmulateInteraction();
     int readInteraction();
     int emulateInteraction(bool* pressedKeys, int coordX, int coordY);

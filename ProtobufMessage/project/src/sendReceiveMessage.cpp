@@ -10,9 +10,7 @@ using namespace ViktorDev;
 int main()
 {
     std::string filePath = "buttonsCoords.bin";
-    cout<<"Before creating message"<<endl;
     KeyboardMouse::ButtonsCoords message;
-    cout<<"After creating message"<<endl;
     message.add_buttonpressed(true);
     message.add_buttonpressed(false);
     message.add_buttonpressed(false);

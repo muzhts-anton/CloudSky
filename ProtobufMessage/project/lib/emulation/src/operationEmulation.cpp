@@ -23,10 +23,15 @@ void ViktorDev::EmulateInteraction::printEm(){
     cout<<"Hello from operationEmulation";
 }
 
+EmulateInteraction::EmulateInteraction(){
+    initEmulateKbMouse();
+}
 EmulateInteraction::~EmulateInteraction()
 {
+    
     if (ioctl(fd, UI_DEV_DESTROY) < 0)
-        die("error: ioctl");
+        die("error: cannot destroy uinput device ");
+    cout<<"BEFORE CLOSE!!";
     close(fd);
     //fclose(sourceFile);
 };
@@ -34,11 +39,9 @@ EmulateInteraction::~EmulateInteraction()
 void ViktorDev::EmulateInteraction::initEmulateMouse() {
     coordX = 0;
     coordY = 0;
-
     fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
     if (fd < 0)
         die("error: open");
-
     if (ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0)
         die("error: ioctl");
     if (ioctl(fd, UI_SET_KEYBIT, BTN_LEFT) < 0)
@@ -103,21 +106,18 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
             die("error: write");
 
         memset(&ev, 0, sizeof(struct input_event));
-        ev.type = EV_SYN;
-        ev.code = 0;
-        ev.value = 0;
-        if (write(fd, &ev, sizeof(struct input_event)) < 0)
-            die("error: write");
-
-        memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_KEY;
         ev.code = BTN_RIGHT;
         ev.value = 0;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
-
-
-
+        
+        memset(&ev, 0, sizeof(struct input_event));
+        ev.type = EV_SYN;
+        ev.code = 0;
+        ev.value = 0;
+        if (write(fd, &ev, sizeof(struct input_event)) < 0)
+            die("error: write");
     return;
 };
 
@@ -202,7 +202,7 @@ void ViktorDev::EmulateInteraction::initEmulateKeyboard(){
 
 
     // struct member for input events
-    struct input_event keyInputEvent;
+    //struct input_event keyInputEvent;
 
     cout<<endl;
 

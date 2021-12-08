@@ -72,28 +72,21 @@ int main(void)
         gettimeofday(&ev.time, 0);
         ev.type = EV_KEY;
         ev.code = BTN_LEFT;
-        ev.value = 1;
+        ev.value = 0;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
 
         memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_REL;
         ev.code = REL_X;
-        ev.value = 200;
+        ev.value = -50;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
 
         memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_REL;
         ev.code = REL_Y;
-        ev.value = 200;
-        if (write(fd, &ev, sizeof(struct input_event)) < 0)
-            die("error: write");
-
-        memset(&ev, 0, sizeof(struct input_event));
-        ev.type = EV_SYN;
-        ev.code = 0;
-        ev.value = 0;
+        ev.value = -50;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
 
@@ -104,10 +97,19 @@ int main(void)
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
 
+        memset(&ev, 0, sizeof(struct input_event));
+        ev.type = EV_SYN;
+        ev.code = 0;
+        ev.value = 0;
+        if (write(fd, &ev, sizeof(struct input_event)) < 0)
+            die("error: write");
+
+
+
         usleep(15000);
     }
 
-    sleep(1);
+    //sleep(1);
 
     if (ioctl(fd, UI_DEV_DESTROY) < 0)
         die("error: ioctl");
