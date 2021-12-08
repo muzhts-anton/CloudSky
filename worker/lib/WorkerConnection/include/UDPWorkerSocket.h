@@ -3,8 +3,7 @@
 #define UDPWORKERSOCKET_HPP_
 
 #include <iostream>
-
-#include <iostream>
+#include <vector>
 
 #include <arpa/inet.h>
 #include <fstream>
@@ -33,7 +32,7 @@ public:
 
     void transmitFile(std::string filename);
 
-    void transmitData(const char* data, size_t size);
+    void transmitData(const char* data, size_t size) const;
 
 private:
     std::fstream file;

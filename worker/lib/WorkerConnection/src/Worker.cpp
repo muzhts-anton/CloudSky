@@ -70,7 +70,7 @@ void Worker::sendFile(std::string filename)
     }
 }
 
-void Worker::sendData(const char* data, size_t size)
+void Worker::sendData(const char* data, size_t size) const
 {
     try {
         UDPSocket->transmitData(data, size);

@@ -31,7 +31,7 @@ public:
 
     void sendFile(std::string filename);
 
-    void sendData(const char* data, size_t size);
+    void sendData(const char* data, size_t size) const;
 
 private:
     TCPWorkerSocket* TCPSocket;
