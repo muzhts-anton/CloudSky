@@ -12,9 +12,9 @@ MediaPlayer::MediaPlayer()
     avformat_network_init();
 }
 
-void MediaPlayer::start()
+void MediaPlayer::start(QString path)
 {
-    this->initInputStream("/home/anton/Documents/tmp/CloudSky/project/lib/ui/media/vid.mp4");
+    this->initInputStream(path.toStdString());
     this->play();
 }
 

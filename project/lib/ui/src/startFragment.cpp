@@ -1,10 +1,11 @@
 #include "startFragment.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QVBoxLayout>
 #include <QPixmap>
+#include <QVBoxLayout>
 
 namespace fragment {
 
@@ -17,24 +18,27 @@ StartFragment::StartFragment()
     _addGameBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
     _settingsBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
 
+    QDir logofile;
+    logofile.cd("project/lib/ui/media/");
+
     QLabel* logo = new QLabel(this);
-    QPixmap piclogo("/home/anton/Documents/tmp/CloudSky/project/lib/ui/media/CloudSky.png");
+    QPixmap piclogo(logofile.absoluteFilePath("CloudSky.png"));
     logo->setPixmap(piclogo);
     logo->setScaledContents(true);
     logo->setFixedHeight(135);
     logo->setFixedWidth(135);
 
     QHBoxLayout* mainHL = new QHBoxLayout(this);
-    QVBoxLayout* buttonsVL = new QVBoxLayout(this);
+    QVBoxLayout* buttonsVL = new QVBoxLayout;
     mainHL->addWidget(logo);
     mainHL->addLayout(buttonsVL);
-    
+
     buttonsVL->addWidget(_openGameBut);
     buttonsVL->addWidget(_addGameBut);
     buttonsVL->addWidget(_settingsBut);
     buttonsVL->setAlignment(Qt::AlignCenter);
-    this->setLayout(buttonsVL);
-
+    mainHL->setAlignment(Qt::AlignCenter);
+    // this->setLayout(buttonsVL);
 
     connect(_openGameBut, &QPushButton::clicked, this, &StartFragment::onGame);
 }

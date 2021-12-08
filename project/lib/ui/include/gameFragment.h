@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QtGui>
 #include <QThread>
+#include <QString>
 
 namespace fragment {
 
@@ -28,10 +29,10 @@ public slots:
     void onBack();
 
 signals:
-    void play();
+    void play(QString path);
 
 private:
-    MediaPlayer* _player;
+    media::MediaPlayer* _player;
     QPushButton* _backBut;
     QTimer* _timer;
 };

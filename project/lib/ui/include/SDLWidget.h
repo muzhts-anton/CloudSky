@@ -10,10 +10,12 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 #include <QWidget>
+#include <QString>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+
 
 namespace media {
 
@@ -37,7 +39,7 @@ private:
     void onRightMouseButtonRelease();
 
 public slots:
-    void start();
+    void start(QString path);
 
 signals:
     void finished();

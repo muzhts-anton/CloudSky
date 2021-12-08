@@ -1,6 +1,8 @@
 #include "gameFragment.h"
 
 #include <QHBoxLayout>
+#include <QString>
+#include <QDir>
 
 namespace fragment {
 
@@ -20,7 +22,11 @@ GameFragment::GameFragment()
     connect(this, &GameFragment::play, _player, &media::MediaPlayer::start);
     connect(_player, &media::MediaPlayer::finished, this, &GameFragment::onBack);
     playerThread.start();
-    emit play();
+
+    QDir vidfile;
+    vidfile.cd("project/lib/ui/media/");
+
+    emit play(vidfile.absoluteFilePath("vid.mp4"));
 
     _timer = new QTimer(this);
     _timer->setInterval(1000.f / GameFragment::fps);

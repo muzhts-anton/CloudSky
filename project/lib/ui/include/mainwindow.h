@@ -20,7 +20,6 @@ public:
     ~MainWindow();
 
 private:
-    //Ui::MainWindow* _ui;
     QStackedWidget* _container;
     ScreensFactory* _factory;
     Navigator* _nav;
