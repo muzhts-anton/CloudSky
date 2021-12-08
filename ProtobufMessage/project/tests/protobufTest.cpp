@@ -1,47 +1,58 @@
 #include <gtest/gtest.h>
 
+#include "../../../../build/project/lib/protobufOperations/KeyboardMouseMessage.pb.h"
 #include "../include/messageOperations.h"
+
+#include <fstream>
+#include <iostream>
+using namespace std;
+using namespace ViktorDev;
 
 TEST(MESSAGE_TEST, constructorMessageTest)
 {
     KeyboardMouse::ButtonsCoords message;
+    std::string filePath = "buttonsCoords.bin";
     bool buttonSeq[buttonQuanity] { true, false, false };
     for (int i = 0; i < 3; ++i) {
         message.add_buttonpressed(buttonSeq[i]);
     }
     int coords[coordQuanity] { 2, 45 };
-    for (int i = 0; i < 2; ++i) {
-        message.set_xcoord(coords[i]);
-    }
-    InteractionOperations interOp(message);
+    message.set_xcoord(coords[0]);
+    message.set_ycoord(coords[1]);
+    InteractionOperations interOp(message, filePath);
     int i = 0;
-    for (const bool& button : interOp.getMessage().buttonPressed()) {
+    for (const bool& button : interOp.getMessage().buttonpressed()) {
         EXPECT_EQ(buttonSeq[i], button);
         ++i;
     };
-    EXPECT_EQ(interOp.getMessage().xCoord(), coords[0]);
-    EXPECT_EQ(interOp.getMessage().yCoord(), coords[1]);
+    cout<<"interOp.getMessage().xcoord() = "<<interOp.getMessage().xcoord()<<endl;
+    cout<<"interOp.getMessage().ycoord() = "<<interOp.getMessage().ycoord()<<endl;
+    cout<<"coords[0] = "<<coords[0]<<endl;
+    cout<<"coords[1] = "<<coords[1]<<endl;
+    EXPECT_EQ(interOp.getMessage().xcoord(), coords[0]);
+    EXPECT_EQ(interOp.getMessage().ycoord(), coords[1]);
 }
 
 TEST(MESSAGE_TEST, constructorCoordsTest)
 {
     bool buttonSeq[buttonQuanity] { true, false, false };
     int coords[coordQuanity] { 2, 45 };
-    InteractionOperations interOp(buttonSeq, coords);
+    std::string filePath = "buttonsCoords.bin";
+    InteractionOperations interOp(buttonSeq, coords, filePath);
     int i = 0;
-    for (const bool& button : interOp.getMessage().buttonPressed()) {
+    for (const bool& button : interOp.getMessage().buttonpressed()) {
         EXPECT_EQ(buttonSeq[i], button);
         ++i;
     };
-    EXPECT_EQ(interOp.getMessage().xCoord(), coords[0]);
-    EXPECT_EQ(interOp.getMessage().yCoord(), coords[1]);
+    EXPECT_EQ(interOp.getMessage().xcoord(), coords[0]);
+    EXPECT_EQ(interOp.getMessage().ycoord(), coords[1]);
 }
 
 TEST(MESSAGE_TEST, defaultConstructorTest)
 {
     InteractionOperations interOp;
-    EXPECT_EQ(interOp.getMessage().xCoord(), 0);
-    EXPECT_EQ(interOp.getMessage().yCoord(), 0);
+    EXPECT_EQ(interOp.getMessage().xcoord(), 0);
+    EXPECT_EQ(interOp.getMessage().ycoord(), 0);
 }
 
 TEST(MESSAGE_TEST, sendReceiveTest)
@@ -68,11 +79,12 @@ TEST(MESSAGE_TEST, sendReceiveTest)
         cout << "Error wint receiving";
     receiveMessangeHandler.printMessage();
     int i = 0;
-    for (const bool& button : sendMessageHandler.getMessage().buttonPressed()) {
-        EXPECT_EQ(button, receiveMessangeHandler.getMessage().buttonPressed()[i]);
+    for (const bool& button : sendMessageHandler.getMessage().buttonpressed()) {
+        EXPECT_EQ(button, receiveMessangeHandler.getMessage().buttonpressed()[i]);
+        ++i;
     };
-    EXPECT_EQ(sendMessageHandler.getMessage().xCoord(), receiveMessangeHandler.getMessage().xCoord());
-    EXPECT_EQ(sendMessageHandler.getMessage().yCoord(), receiveMessangeHandler.getMessage().yCoord());
+    EXPECT_EQ(sendMessageHandler.getMessage().xcoord(), receiveMessangeHandler.getMessage().xcoord());
+    EXPECT_EQ(sendMessageHandler.getMessage().ycoord(), receiveMessangeHandler.getMessage().ycoord());
 }
 
 int main(int argc, char** argv)
