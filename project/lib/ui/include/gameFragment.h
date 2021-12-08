@@ -9,11 +9,13 @@
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QtGui>
+#include <QThread>
 
 namespace fragment {
 
 class GameFragment : public BaseFragment {
     Q_OBJECT
+    QThread playerThread;
 public:
     GameFragment();
     ~GameFragment();
@@ -27,6 +29,9 @@ public slots:
     void timerOutEvent();
 
     void onBack();
+
+signals:
+    void go();
 
 private:
     static constexpr short fps = 80;

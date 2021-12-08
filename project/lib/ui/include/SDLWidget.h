@@ -1,26 +1,36 @@
-extern "C"{
+#ifndef SDLWIDGET_H
+#define SDLWIDGET_H
 
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-#include <libavutil/imgutils.h>
+extern "C" {
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_thread.h>
-
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavutil/imgutils.h>
+#include <libswscale/swscale.h>
 }
-#include <vector>
-#include <string>
+#include <QWidget>
 #include <fstream>
 #include <iostream>
-#include <QWidget>
+#include <string>
+#include <vector>
 
-class MediaPlayer : public QWidget{
+class MediaPlayer : public QObject {
+    Q_OBJECT
 public:
-    MediaPlayer(QWidget* parent);
+    MediaPlayer();
     ~MediaPlayer();
     void initInputStream(const std::string path);
     void play();
     void saveFrame(AVFrame* frame, size_t width, size_t height, std::string path);
+
+signals:
+    void finished();
+
+public slots:
+    void go();
+
 private:
     AVFormatContext* pFormatCtx = NULL;
     AVCodecContext* pCodecCtx = NULL;
@@ -32,9 +42,10 @@ private:
     AVPacket* pPacket = NULL;
     std::vector<uint8_t> buffer;
     int videoStream = -1;
-    SDL_Window * screen = NULL;
+    SDL_Window* screen = NULL;
     SDL_Renderer* renderer = NULL;
     SDL_Texture* texture = NULL;
     SDL_Event event;
-
 };
+
+#endif

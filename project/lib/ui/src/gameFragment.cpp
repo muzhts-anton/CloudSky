@@ -5,20 +5,23 @@
 namespace fragment {
 
 GameFragment::GameFragment()
-    : _player(new MediaPlayer(this))
+    : _player(new MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
 {
     _backBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
 
     QHBoxLayout* mainHLayout = new QHBoxLayout(this);
-    mainHLayout->addWidget(_player);
     mainHLayout->addWidget(_backBut);
     mainHLayout->setAlignment(Qt::AlignCenter);
     this->setLayout(mainHLayout);
 
-    _player->initInputStream("/home/konstantin/rep_cpp/tmpPlayer/CloudSky/project/lib/ui/media/vid.mp4");
-    _player->play();
-
+    _player->moveToThread(&playerThread);
+    connect(&playerThread, &QThread::finished, _player, &QObject::deleteLater);
+    connect(this, &GameFragment::go, _player, &MediaPlayer::go);
+    connect(_player, &MediaPlayer::finished, this, &GameFragment::onBack);
+    playerThread.start();
+    emit go();
+    
     for (size_t i = 0; i < (size_t)GameFragment::Buttons::COUNT; ++i)
         _butts[i] = false;
 
@@ -33,11 +36,13 @@ GameFragment::GameFragment()
 void GameFragment::timerOutEvent()
 {
     /* TODO(Paul): place to merge */
-    //qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
+    qDebug() << cursor().pos().x() << ":" << cursor().pos().y();
+    qDebug() << _butts[0] << _butts[1];
 }
 
 void GameFragment::keyPressEvent(QKeyEvent* event)
 {
+    qDebug() << "\n\nLOOOL\n\n";
     if (event->key() == Qt::Key_A)
         _butts[(size_t)Buttons::A] = true;
 
@@ -103,6 +108,8 @@ void GameFragment::onBack()
 
 GameFragment::~GameFragment()
 {
+    playerThread.quit();
+    playerThread.wait();
     delete _backBut;
     delete _timer;
 }
