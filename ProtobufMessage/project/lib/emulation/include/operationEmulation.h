@@ -21,7 +21,7 @@ constexpr int buttonQuanity = 9;
 constexpr int coordQuanity = 2;
 constexpr int mouseButtonsQuanity = 2;
 
-
+using namespace std;
 namespace ViktorDev {
 class EmulateInteraction {
 public:
@@ -58,6 +58,7 @@ private:
     struct input_event keyInputEvent;
     int fdKeyEmulator;
     struct uinput_user_dev devFakeKeyboard;
+    //map();
     int kbSet[buttonQuanity];
 // a w s d space q e f esc leftMouseButton rightMouseButton
 // 0 1 2 3 4     5 6 7 8   9               10

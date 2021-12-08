@@ -36,8 +36,7 @@ EmulateInteraction::~EmulateInteraction()
 };
 
 void ViktorDev::EmulateInteraction::initEmulateMouse() {
-    coordX = 0;
-    coordY = 0;
+    coordX = coordY = 0;
     previousCoordX = previousCoordY = 0;
     for(int i = 0; i < mouseButtonsQuanity; ++i){
         mouseButtons[i]=0;
@@ -48,6 +47,8 @@ void ViktorDev::EmulateInteraction::initEmulateMouse() {
     if (ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0)
         die("error: ioctl");
     if (ioctl(fd, UI_SET_KEYBIT, BTN_LEFT) < 0)
+        die("error: ioctl");
+    if (ioctl(fd, UI_SET_KEYBIT, BTN_RIGHT) < 0)
         die("error: ioctl");
 
     if (ioctl(fd, UI_SET_EVBIT, EV_REL) < 0)
@@ -226,8 +227,9 @@ void ViktorDev::EmulateInteraction::setKeysCoords(const KeyboardMouse::ButtonsCo
     };
     cout<<"Readed bools: ";
     for (int i = 0; i< buttonQuanity; ++i){
-        cout<<(kbSetBool[i]);
+        cout<<(kbSetBool[i])<<' ';
     }
+    cout<<endl;
     mouseButtons[0] = (message.mousebuttons())[0];
     mouseButtons[1] = (message.mousebuttons())[1];
 }

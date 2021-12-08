@@ -1,8 +1,5 @@
 #include "messageOperations.h"
 
-//#pragma comment( MessageOperations, "Protobuf_LIBRARIES" )
-
-
 using namespace ViktorDev;
 
 KeyboardMouse::ButtonsCoords& InteractionOperations::getMessage()
@@ -77,7 +74,6 @@ int SendInteraction::sendIt()
     outAddit.open(filePath, std::ios_base::binary);
 
     if (!message.SerializePartialToOstream(&outAddit)) {
-        //if (!message.SerializePartialToOstream(&out)) {
         cout << "ERRORSEND IT !" << endl;
         return ERROR_SERIALIZE_MESSAGE;
     };
