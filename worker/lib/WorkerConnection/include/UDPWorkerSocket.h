@@ -33,6 +33,8 @@ public:
 
     void transmitFile(std::string filename);
 
+    void transmitData(const char* data, size_t size);
+
 private:
     std::fstream file;
     int PORT;

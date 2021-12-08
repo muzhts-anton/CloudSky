@@ -69,3 +69,17 @@ void UDPWorker::UDPWorkerSocket::transmitFile(std::string filename)
         std::cout << "[LOG] : UPD File Transfer Complete.\n";
     }
 }
+
+void UDPWorker::UDPWorkerSocket::transmitData(const char* data, size_t size)
+{
+    if (debug)
+        std::cout << "[LOG] : UDP Sending...\n";
+
+    int bytesSent = sendto(generalSocketDescriptor, data, size, MSG_DONTWAIT,
+        (struct sockaddr*)&address, sizeof(address));
+        
+    if (debug) {
+        std::cout << "[LOG] : UDP Transmitted Data Size " << bytesSent << " Bytes.\n";
+        std::cout << "[LOG] : UDP Data Transfer Complete.\n";
+    }
+}

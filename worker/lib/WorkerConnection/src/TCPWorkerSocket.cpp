@@ -22,7 +22,6 @@ TCPWorkerSocket& TCPWorkerSocket::operator=(TCPWorkerSocket& that)
     PORT = that.PORT;
     IP = that.IP;
     address.sin_family = AF_INET;
-    //address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
     addressLength = sizeof(address);
     return *this;
@@ -98,13 +97,6 @@ void TCPWorkerSocket::acceptConnection()
     }
     if (debug)
         std::cout << "[LOG] : TCP Connected to Server.\n";
-}
-
-void TCPWorkerSocket::sendNewWorkerPort(int newPort)
-{
-    char buffer[20] = { 0 };
-    int length = std::snprintf(buffer, 20, "%d", newPort);
-    send(newSocketDescriptor, buffer, length, 0);
 }
 
 void TCPWorkerSocket::receiveFile(std::string filename)
