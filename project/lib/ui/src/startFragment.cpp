@@ -25,8 +25,8 @@ StartFragment::StartFragment()
     QPixmap piclogo(logofile.absoluteFilePath("CloudSky.png"));
     logo->setPixmap(piclogo);
     logo->setScaledContents(true);
-    logo->setFixedHeight(135);
-    logo->setFixedWidth(135);
+    logo->setFixedHeight(235);
+    logo->setFixedWidth(235);
 
     QHBoxLayout* mainHL = new QHBoxLayout(this);
     QVBoxLayout* buttonsVL = new QVBoxLayout;
