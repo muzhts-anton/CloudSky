@@ -9,45 +9,31 @@
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QtGui>
+#include <QThread>
 
 namespace fragment {
 
 class GameFragment : public BaseFragment {
     Q_OBJECT
+    QThread playerThread;
+
+    static constexpr short fps = 80;
+
 public:
     GameFragment();
     ~GameFragment();
 
-    // void onPause() override;
-    // void onResume() override;
-
 public slots:
-    void keyPressEvent(QKeyEvent* event);
-    void keyReleaseEvent(QKeyEvent* event);
     void timerOutEvent();
-
     void onBack();
 
-private:
-    static constexpr short fps = 80;
-    enum class Buttons {
-        A = 0,
-        W,
-        S,
-        D,
-        SPACE,
-        Q,
-        E,
-        F,
-        ESC,
-        COUNT,
-    };
+signals:
+    void play();
 
 private:
     MediaPlayer* _player;
     QPushButton* _backBut;
     QTimer* _timer;
-    bool _butts[(size_t)Buttons::COUNT];
 };
 
 } // namespace fragment
