@@ -20,7 +20,7 @@ public:
     ~MediaPlayer();
     void initInputStream(const std::string path);
     void play();
-    void saveFrame(AVFrame* frame, size_t width, size_t height, std::string path);
+    
 private:
     AVFormatContext* pFormatCtx = NULL;
     AVCodecContext* pCodecCtx = NULL;
@@ -36,5 +36,7 @@ private:
     SDL_Renderer* renderer = NULL;
     SDL_Texture* texture = NULL;
     SDL_Event event;
+    bool quit;
+    AVDictionary* opts = NULL;
 
 };

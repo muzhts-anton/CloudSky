@@ -10,7 +10,10 @@ MediaPlayer::~MediaPlayer(){
     avcodec_close(pCodecCtx);
     avformat_close_input(&pFormatCtx);
     SDL_DestroyRenderer(renderer);
+    SDL_DestroyTexture(texture);
+    SDL_DestroyWindow(screen);
     SDL_Quit();
+
 }
 
 void MediaPlayer::initInputStream(const std::string path){
@@ -19,7 +22,11 @@ void MediaPlayer::initInputStream(const std::string path){
         std::cout << "Cannot not initialize. " << SDL_GetError() << std::endl;
     }
     std::cout << "before\n";
-    ret = avformat_open_input(&pFormatCtx, path.c_str(), NULL, NULL);
+    pFormatCtx = avformat_alloc_context();
+
+    av_dict_set(&opts, "buffer_size", "204800", 0);
+    av_dict_set(&opts, "max_interleave_delta", "1", 0);
+    ret = avformat_open_input(&pFormatCtx, path.c_str(), NULL, &opts);
     std::cout << "after\n";
 
     if(ret < 0){
@@ -63,17 +70,20 @@ void MediaPlayer::initInputStream(const std::string path){
 }
 
 void MediaPlayer::play(){
+
     pFrame = av_frame_alloc();
     if(pFrame == NULL){
         std::cout << "Cannot allocate frame\n";
     }
 
+    //pCodecCtx->width = 1024;
+    //pCodecCtx->height = 768;
     screen = SDL_CreateWindow(
                             "SDL Video Player",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
-                            pCodecCtx->width*2,
-                            pCodecCtx->height,
+                            1024,
+                            768,
                             SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI
     );
 
@@ -81,7 +91,7 @@ void MediaPlayer::play(){
         std::cout << "Cannot set video mode\n";
     }
 
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(0);
 
     renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
 
@@ -127,12 +137,26 @@ void MediaPlayer::play(){
         32
     );
 
-    //int maxFramesToDecode;
-    //std::cout << "Write frames count:\n";
-    //std::cin >> maxFramesToDecode;
-    //int i = 0;
-    while (av_read_frame(pFormatCtx, pPacket) >= 0) 
+    quit = false;
+    while (av_read_frame(pFormatCtx, pPacket) >= 0 && !quit) 
     {
+        SDL_PollEvent(&event);
+        switch(event.type)
+        {
+            case SDL_QUIT:
+            {
+                quit = true;
+                SDL_VideoQuit();
+                SDL_Quit();
+            }
+            break;
+
+            default:
+            {
+            }
+            break;
+        }
+
         if (pPacket->stream_index == videoStream)
         {
             int ret = avcodec_send_packet(pCodecCtx, pPacket);    
@@ -166,104 +190,52 @@ void MediaPlayer::play(){
                     pict->linesize
                 );
 
-                if (true) ///////
-                {
-                    double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
-
-                    double sleep_time = 1.0/(double)fps;
-
-                    SDL_Delay((1000 * sleep_time) - 10);
-
-                    SDL_Rect rect;
-                    rect.x = 0;
-                    rect.y = 0;
-                    rect.w = pCodecCtx->width;
-                    rect.h = pCodecCtx->height;
-
-                    printf(
-                        "Frame %c (%d) pts %ld dts %ld key_frame %d [coded_picture_number %d, display_picture_number %d, %dx%d]\n",
-                        av_get_picture_type_char(pFrame->pict_type),
-                        pCodecCtx->frame_number,
-                        pFrame->pts,
-                        pFrame->pkt_dts,
-                        pFrame->key_frame,
-                        pFrame->coded_picture_number,
-                        pFrame->display_picture_number,
-                        pCodecCtx->width,
-                        pCodecCtx->height
-                    );
-
-                    SDL_UpdateYUVTexture(
-                        texture,            
-                        &rect,                
-                        pict->data[0],       
-                        pict->linesize[0],    
-                        pict->data[1],       
-                        pict->linesize[1],    
-                        pict->data[2],       
-                        pict->linesize[2]     
-                    );
-
-                    SDL_RenderClear(renderer);
-
-                    SDL_RenderCopy(
-                        renderer,   
-                        texture,  
-                        NULL,       
-                        NULL
-                    );
-
-                    SDL_RenderPresent(renderer);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            if (1==2)
-            {
-                break;
+                //double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
+                //std::cout << fps << std::endl;
+                //double sleep_time = 1.0/(double)fps;
+                //SDL_Delay((1000 * sleep_time));
+                SDL_Rect rect;
+                rect.x = 0;
+                rect.y = 0;
+                rect.w = pCodecCtx->width;
+                rect.h = pCodecCtx->height;
+                // printf(
+                //     "Frame %c (%d) pts %ld dts %ld key_frame %d [coded_picture_number %d, display_picture_number %d, %dx%d]\n",
+                //     av_get_picture_type_char(pFrame->pict_type),
+                //     pCodecCtx->frame_number,
+                //     pFrame->pts,
+                //     pFrame->pkt_dts,
+                //     pFrame->key_frame,
+                //     pFrame->coded_picture_number,
+                //     pFrame->display_picture_number,
+                //     pCodecCtx->width,
+                //     pCodecCtx->height
+                // );
+                SDL_UpdateYUVTexture(
+                    texture,            
+                    &rect,                
+                    pict->data[0],       
+                    pict->linesize[0],    
+                    pict->data[1],       
+                    pict->linesize[1],    
+                    pict->data[2],       
+                    pict->linesize[2]     
+                );
+                SDL_RenderClear(renderer);
+                SDL_RenderCopy(
+                    renderer,   
+                    texture,  
+                    NULL,       
+                    NULL
+                );
+                SDL_ShowCursor(SDL_ENABLE);
+                SDL_RenderPresent(renderer);           
             }
         }
         av_packet_unref(pPacket);
     }
 
-    SDL_PollEvent(&event);
-        switch(event.type)
-        {
-            case SDL_QUIT:
-            {
-                SDL_Quit();
-                exit(0);
-            }
-            break;
-
-            default:
-            {
-            }
-            break;
-        }
-
     av_frame_free(&pict);
     av_free(pict);
 
-}
-
-void MediaPlayer::saveFrame(AVFrame* frame, size_t width, size_t height, std::string path){
-    std::fstream file;
-    file.open(path.c_str(), std::ios::out | std::ios::binary);
-    if(!file.is_open()){
-        std:: cout << "Error while open file\n";
-    }
-
-    file << width <<  height;
-    for(int y = 0; y < (int)height; y++){
-        file.write((const char*)frame->data[0]+y*frame->linesize[0],width*3);
-    }
-    file.close();
-
-    if(file.is_open()){
-        std:: cout << "Error while close file\n";
-    }
 }

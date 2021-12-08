@@ -16,7 +16,7 @@ GameFragment::GameFragment()
     mainHLayout->setAlignment(Qt::AlignCenter);
     this->setLayout(mainHLayout);
 
-    _player->initInputStream("/home/konstantin/rep_cpp/tmpPlayer/CloudSky/project/lib/ui/media/vid.mp4");
+    _player->initInputStream("udp://127.0.0.1:8080");
     _player->play();
 
     for (size_t i = 0; i < (size_t)GameFragment::Buttons::COUNT; ++i)
