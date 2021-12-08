@@ -15,6 +15,7 @@ add_compile_options(-Wall -Werror -Wextra -Wpedantic)
 
 
 add_subdirectory(lib/ClientConnection)
+add_subdirectory(tests/testClientConnection)
 
 add_executable(CloudSky_MyClient src/main.cpp)
 

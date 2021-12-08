@@ -9,7 +9,6 @@ int main()
     TCPSocket1.activateSocket();
     int newPort = TCPSocket1.receivePortNumber();
     std::cout << "Переключаемся на порт " << newPort << std::endl;
-    // TCPSocket.changePort(newPort);
     usleep(1000000);
     TCPClient::TCPClientSocket TCPSocket(newPort, "10.147.18.164");
     TCPSocket.activateSocket();
