@@ -77,7 +77,7 @@ void UDPClientSocket::bindSocket()
 
 void UDPClientSocket::receiveFile(std::string fileToReceivePath)
 {
-    file.open(fileToReceivePath, std::ios::out | std::ios::trunc | std::ios::binary);
+    file.open(fileToReceivePath, std::ios::out | std::ios::app | std::ios::binary);
     if (file.is_open()) {
         if (debug)
             std::cout << "[LOG] : UPD File Created.\n";
@@ -86,16 +86,16 @@ void UDPClientSocket::receiveFile(std::string fileToReceivePath)
             std::cout << "[ERROR] : UPD File creation failed. Maybe I should exit..." << std::endl;
         throw std::invalid_argument("[ERROR] : UPD File creation failed. Maybe I should exit...");
     }
-    char buffer[2048] = {};
+    char buffer[4096] = {};
     unsigned len = 0;
-    int valread = recvfrom(generalSocketDescriptor, buffer, 2048, MSG_DONTWAIT,
+    int valread = recvfrom(generalSocketDescriptor, buffer, 4096, MSG_DONTWAIT,
         (struct sockaddr*)&address, &len);
     if (debug) {
         std::cout << "[LOG] : UPD Data received " << valread << " bytes\n";
         std::cout << "[LOG] : UPD Saving data to file.\n";
     }
-    for (int i = 0; i < valread; i++)
-        file.write(buffer + i, 1);
+    //for (int i = 0; i < valread; i++)
+    file.write(buffer, valread);
     file.close();
     if (debug)
         std::cout << "[LOG] : UPD File Saved.\n";

@@ -11,10 +11,12 @@ namespace fragment {
 
 GameFragment::GameFragment()
     : TCPSocket(8080, "10.147.18.164")
+    , UDPSocket(8080, "10.147.18.164")
     , _player(new media::MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
 {
     TCPSocket.activateSocket();
+    UDPSocket.activateSocket();
     _backBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
 
     QHBoxLayout* mainHLayout = new QHBoxLayout(this);
@@ -28,11 +30,18 @@ GameFragment::GameFragment()
     connect(_player, &media::MediaPlayer::finished, this, &GameFragment::onBack);
     playerThread.start();
 
-    // QDir vidfile;
-    // vidfile.cdUp();
-    // vidfile.cd("lib/ui/media/");
+    QDir vidfile;
+    vidfile.cdUp();
+    vidfile.cd("lib/ui/media/");
     usleep(1000000);
-    emit play(QString("udp://10.147.18.164:8080"));
+    // std::fstream file2;
+    // file2.open(vidfile.absoluteFilePath("output.mp4").toStdString(), std::ios::trunc);
+    // file2.close();
+
+    QFile file(vidfile.absoluteFilePath("output.mp4"));
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        file.close();
+    emit play(vidfile.absoluteFilePath("output.mp4"));
 
     _timer = new QTimer(this);
     _timer->setInterval(1000.f / GameFragment::fps);
@@ -66,6 +75,12 @@ void GameFragment::timerOutEvent()
     } catch (const std::invalid_argument& e) {
     std::cerr << e.what() << std::endl;
     }
+
+    QDir vidfile;
+    vidfile.cdUp();
+    vidfile.cd("lib/ui/media/");
+    qDebug()<<vidfile.absoluteFilePath("output.mp4");
+    UDPSocket.receiveFile(vidfile.absoluteFilePath("output.mp4").toStdString());
 }
 
 void GameFragment::onBack()

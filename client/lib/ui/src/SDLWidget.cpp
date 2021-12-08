@@ -41,6 +41,7 @@ void MediaPlayer::initInputStream(const std::string path)
 
     av_dict_set(&opts, "buffer_size", "204800", 0);
     av_dict_set(&opts, "max_interleave_delta", "1", 0);
+    av_dict_set(&opts, "delay", "1000", 0);
     ret = avformat_open_input(&pFormatCtx, path.c_str(), NULL, &opts);
     std::cout << "after\n";
 
@@ -221,10 +222,11 @@ void MediaPlayer::play()
                     pict->data,
                     pict->linesize);
 
-                // double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
-                // std::cout << fps << std::endl;
-                // double sleep_time = 1.0/(double)fps;
-                // SDL_Delay((1000 * sleep_time));
+                double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
+                std::cout << fps << std::endl;
+                double sleep_time = 1.0/(double)fps;
+                SDL_Delay((1000 * sleep_time));
+
                 SDL_Rect rect;
                 rect.x = 0;
                 rect.y = 0;
