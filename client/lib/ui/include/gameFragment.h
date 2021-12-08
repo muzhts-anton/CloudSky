@@ -3,6 +3,8 @@
 
 #include "baseFragment.h"
 #include "SDLWidget.h"
+#include "TCPClientSocket.h"
+#include "UDPClientSocket.h"
 
 #include <QLabel>
 #include <QPushButton>
@@ -32,6 +34,7 @@ signals:
     void play(QString path);
 
 private:
+    TCPClient::TCPClientSocket TCPSocket;
     media::MediaPlayer* _player;
     QPushButton* _backBut;
     QTimer* _timer;

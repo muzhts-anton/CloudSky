@@ -24,4 +24,4 @@ add_library(ui STATIC ${UI_SRC} ${UI_HDR})
 
 target_include_directories(ui PUBLIC include)
 
-target_link_libraries(ui PUBLIC Qt5::Widgets protobufOperations)
+target_link_libraries(ui PUBLIC Qt5::Widgets protobufOperations clientConnection)
