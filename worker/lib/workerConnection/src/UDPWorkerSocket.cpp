@@ -60,7 +60,7 @@ void UDPWorker::UDPWorkerSocket::transmitFile(std::string filename)
     if (debug)
         std::cout << "[LOG] : UPD Sending...\n";
 
-    int bytesSent = sendto(generalSocketDescriptor, buffer, length, MSG_DONTWAIT,
+    int bytesSent = sendto(generalSocketDescriptor, buffer, length - 1, MSG_DONTWAIT,
         (struct sockaddr*)&address, sizeof(address));
 
     file.close();

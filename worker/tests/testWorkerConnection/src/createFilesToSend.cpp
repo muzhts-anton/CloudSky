@@ -7,9 +7,9 @@
 #include <map>
 #include <unordered_map>
 #include <unordered_set>
-#include "gtest/gtest.h"
 
 #include "createFilesToSend.h"
+#include "gtest/gtest.h"
 
 void createFileWithList(std::vector<std::string> *filesToSend);
 

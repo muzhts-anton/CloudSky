@@ -4,7 +4,6 @@
 #include <sys/socket.h>
 #include <thread>
 
-#include "Interactions.h"
 #include "Worker.h"
 #include "constants.h"
 
