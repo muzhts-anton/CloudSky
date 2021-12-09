@@ -3,10 +3,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}) #
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS src/KeyboardMouseMessage.proto) #
 
 add_library(protobufOperations STATIC src/messageOperations.cpp include/messageOperations.h  ${PROTO_SRCS} ${PROTO_HDRS})
-#add_library(operationEmulation STATIC src/operationEmulation.cpp include/operationEmulation.h src/messageOperations.cpp include/messageOperations.h ${PROTO_SRCS} ${PROTO_HDRS} ) # src/messageOperations.cpp include/messageOperations.h
 
 target_include_directories(protobufOperations PUBLIC include)
-#target_include_directories(operationEmulation PUBLIC include)
 
 target_link_libraries(protobufOperations PUBLIC ${Protobuf_LIBRARIES}) # MessageOperations
-#target_link_libraries(operationEmulation PUBLIC ${Protobuf_LIBRARIES}) # ${Protobuf_LIBRARIES} MessageOperations

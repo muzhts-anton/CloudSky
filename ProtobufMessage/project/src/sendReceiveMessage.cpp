@@ -1,8 +1,5 @@
 #include "../../../../build/project/lib/protobufOperations/KeyboardMouseMessage.pb.h"
 #include "../include/messageOperations.h"
-//#include "../include/operationEmulation.h"
-//#include "../include/receiveInteraction.h"
-//#include "../include/sendInteraction.h"
 #include <fstream>
 #include <iostream>
 using namespace std;
@@ -24,8 +21,6 @@ int main()
     message.set_ycoord(10);
     message.add_mousebuttons(true);
     message.add_mousebuttons(true);
-    //bool arrInit[2] { true, true };
-    //int arriInit[2] { 100, 200 };
 
     SendInteraction sendMessageHandler(filePath, message); 
     sendMessageHandler.printMessage();
@@ -35,13 +30,9 @@ int main()
         cout << "Error with sending";
     KeyboardMouse::ButtonsCoords parsedButtonsCoords;
     ReceiveInteraction receiveMessangeHandler(filePath, parsedButtonsCoords);
-    //ifstream inp;
-    //KeyboardMouse::ButtonsCoords parsedButtonsCoords;
 
     if (receiveMessangeHandler.receiveIt())
         cout << "Error with receiving";
     receiveMessangeHandler.printMessage();
-    //printEm();
-
     return SUCCESS;
 }
