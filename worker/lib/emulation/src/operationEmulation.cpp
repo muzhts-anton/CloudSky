@@ -13,47 +13,68 @@
 using namespace std;
 using namespace ViktorDev;
 
-#define die(str)   \
+#define die(str, ...)   \
     do {                    \
         perror(str);        \
         exit(EXIT_FAILURE); \
     } while (0)
 
-void ViktorDev::EmulateInteraction::printEm(){
-    cout<<"Hello from operationEmulation";
+int& EmulateInteraction::getFdKeyEmulator(){
+    return fdKeyEmulator;
+}
+input_event& EmulateInteraction::getKeyInputEvent(){
+    return keyInputEvent;
 }
 
+EmulateInteraction::EmulateInteraction(){
+    initEmulateKbMouse();
+}
 EmulateInteraction::~EmulateInteraction()
 {
+    
     if (ioctl(fd, UI_DEV_DESTROY) < 0)
-        die("error: ioctl");
+        die("error: cannot destroy uinput device ");
     close(fd);
     //fclose(sourceFile);
 }
 
 void ViktorDev::EmulateInteraction::initEmulateMouse() {
-    coordX = 0;
-    coordY = 0;
-    previousCoordX = 0;
-    previousCoordY = 0;
+    coords.first = coords.second = 0;
+    previousCoords.first = previousCoords.second = 0;
+    mouseButtons.reserve(2);
+    for(auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it){
+        it->second = 0;
+    }
     fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
     if (fd < 0)
         die("error: open");
+    auto setSignal = [&](int signalType,int signal){
+        if (ioctl(fd, _IOW(UINPUT_IOCTL_BASE, signalType, int), signal) < 0)
+            die("error: ioctl");
+    };
+    setSignal(100,EV_KEY);
+    setSignal(101,BTN_LEFT);
+    setSignal(101,BTN_RIGHT);
+    setSignal(100,EV_REL);
+    setSignal(102,REL_X);
+    setSignal(102,REL_Y);
+    setSignal(101,BTN_MOUSE);
+    // if (ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0)
+    //     die("error: ioctl");
+    // if (ioctl(fd, UI_SET_KEYBIT, BTN_LEFT) < 0)
+    //     die("error: ioctl");
+    // if (ioctl(fd, UI_SET_KEYBIT, BTN_RIGHT) < 0)
+    //     die("error: ioctl");
 
-    if (ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0)
-        die("error: ioctl");
-    if (ioctl(fd, UI_SET_KEYBIT, BTN_LEFT) < 0)
-        die("error: ioctl");
+    // if (ioctl(fd, UI_SET_EVBIT, EV_REL) < 0)
+    //     die("error: ioctl");
+    // if (ioctl(fd, UI_SET_RELBIT, REL_X) < 0)
+    //     die("error: ioctl");
+    // if (ioctl(fd, UI_SET_RELBIT, REL_Y) < 0)
+    //     die("error: ioctl");
 
-    if (ioctl(fd, UI_SET_EVBIT, EV_REL) < 0)
-        die("error: ioctl");
-    if (ioctl(fd, UI_SET_RELBIT, REL_X) < 0)
-        die("error: ioctl");
-    if (ioctl(fd, UI_SET_RELBIT, REL_Y) < 0)
-        die("error: ioctl");
-
-    if (ioctl(fd, UI_SET_KEYBIT, BTN_MOUSE) < 0)
-        die("error: ioctl");
+    // if (ioctl(fd, UI_SET_KEYBIT, BTN_MOUSE) < 0)
+    //     die("error: ioctl");
 
     memset(&uidev, 0, sizeof(uidev));
     snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, "uinput-sample");
@@ -70,70 +91,81 @@ void ViktorDev::EmulateInteraction::initEmulateMouse() {
 
     usleep(150000);
 
+    // int coords[5][2];
+    // for (int i = 0; i < 5; ++i) {
+    //     coords[i][0] = 200;
+    //     coords[i][1] = 200;
+    // }
+
     return;
 }
 void ViktorDev::EmulateInteraction::emulateMouseMovement() {
 
-        int deltaX = coordX - previousCoordX;
-        int deltaY = coordY - previousCoordY;
+        pair<int, int> delta;
+        delta.first = coords.first - previousCoords.first;
+        delta.second = coords.second - previousCoords.second;
+
+        // for(auto it = mouseButtons.cbegin(); it != mouseButtons.cend(); ++it){
+        //     memset(&ev, 0, sizeof(struct input_event));
+        //     gettimeofday(&ev.time, 0);
+        //     ev.type = EV_KEY;
+        //     ev.code = BTN_LEFT;
+        //     ev.value = it->second;
+        // }
+        cout<<mouseButtons[0].second<<" MOUSE0"<<endl;
+        cout<<mouseButtons[1].second<<" MOUSE1"<<endl;
         memset(&ev, 0, sizeof(struct input_event));
         gettimeofday(&ev.time, 0);
         ev.type = EV_KEY;
         ev.code = BTN_LEFT;
-        ev.value = 0;
+        ev.value = mouseButtons[0].second;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
         memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_REL;
         ev.code = REL_X;
-        ev.value = deltaX;
+        ev.value = delta.first;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
 
         memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_REL;
         ev.code = REL_Y;
-        ev.value = deltaY;
-        if (write(fd, &ev, sizeof(struct input_event)) < 0)
-            die("error: write");
-
-        memset(&ev, 0, sizeof(struct input_event));
-        ev.type = EV_SYN;
-        ev.code = 0;
-        ev.value = 0;
+        ev.value = delta.second;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
 
         memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_KEY;
         ev.code = BTN_RIGHT;
+        ev.value = mouseButtons[1].second;
+        if (write(fd, &ev, sizeof(struct input_event)) < 0)
+            die("error: write");
+        
+        memset(&ev, 0, sizeof(struct input_event));
+        ev.type = EV_SYN;
+        ev.code = 0;
         ev.value = 0;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
-
-    previousCoordX = coordX;
-    previousCoordY = coordY;
-
+        previousCoords.first = coords.first;        
+        previousCoords.second = coords.second;
     return;
 }
 
 
 
 void ViktorDev::EmulateInteraction::initEmulateKeyboard(){
-    for(int i = 0; i < EMULATE_BUTTON_QUANITY;i++){
-        kbSetBool[i] = 0;
-    }
-    kbSet[0] = KEY_A;
-    kbSet[1] = KEY_W;
-    kbSet[2] = KEY_S;
-    kbSet[3] = KEY_D;
-    kbSet[4] = KEY_SPACE;
-    kbSet[5] = KEY_Q;
-    kbSet[6] = KEY_E;
-    kbSet[7] = KEY_F;
-    kbSet[8] = KEY_ESC;
-    // create uinput file descriptor
-    //int fdKeyEmulator;                                                                    
+    encoding.reserve(buttonQuanityEm);
+    encoding.push_back({KEY_A, false});
+    encoding.push_back({KEY_W, false});
+    encoding.push_back({KEY_S, false});
+    encoding.push_back({KEY_D, false});
+    encoding.push_back({KEY_SPACE, false});
+    encoding.push_back({KEY_Q, false});
+    encoding.push_back({KEY_E, false});
+    encoding.push_back({KEY_F, false});
+    encoding.push_back({KEY_ESC, false});                                                                  
 
     // open file descriptor
     /*
@@ -165,14 +197,12 @@ void ViktorDev::EmulateInteraction::initEmulateKeyboard(){
     {
         std::cout << "Error in ioctl : UI_SET_EVBIT : EV_KEY : " << strerror(errno) << std::endl;
     }
-    //int kbSet[3]{KEY_A, KEY_B, KEY_C};
-
 
     // enable set of KEY events here
-    for(int i = 0; i < EMULATE_BUTTON_QUANITY; ++i){
-      if(ioctl(fdKeyEmulator, UI_SET_KEYBIT, kbSet[i]))
+    for(auto it = encoding.cbegin();it != encoding.cend(); ++it){
+      if(ioctl(fdKeyEmulator, UI_SET_KEYBIT, it->first))
       {
-          std::cout << "Error in ioctl : UI_SET_KEYBIT : KEY_A : " << strerror(errno) << std::endl;
+          std::cout << "Error in ioctl : UI_SET_KEYBIT : " << strerror(errno) << std::endl;
       }
     }
 
@@ -196,30 +226,39 @@ void ViktorDev::EmulateInteraction::initEmulateKeyboard(){
     sleep (1);
     // now fdKeyEmulator represents the end-point file descriptor of the new input device. 
 
+
+
     cout<<endl;
 
 }
 
+void ViktorDev::EmulateInteraction::initEmulateKbMouse(){
+    initEmulateMouse();
+    initEmulateKeyboard();
+}
 void ViktorDev::EmulateInteraction::setKeysCoords(const KeyboardMouse::ButtonsCoords &message){
-    coordX = message.xcoord();
-    coordY = message.ycoord();
-
-    for (int i =0; i < EMULATE_BUTTON_QUANITY; i++) {
-        kbSetBool[i] = (message.buttonpressed())[i];
+    coords.first = message.xcoord();
+    coords.second = message.ycoord();
+    int i = 0;
+    for (auto it = encoding.begin(); it != encoding.end(); ++it, ++i) {
+        it->second = (message.buttonpressed())[i];
     };
     cout<<"Readed bools: ";
-    for (int i = 0; i< EMULATE_BUTTON_QUANITY; ++i){
-        cout<<(kbSetBool[i]);
+    for (auto it = encoding.cbegin(); it != encoding.cend(); ++it){
+        cout<<it->second<<' ';
     }
     cout<<endl;
+    i =0;
+    for(auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it,++i){
+        it->second = (message.mousebuttons())[i];
+    }
 }
 void ViktorDev::EmulateInteraction::setKeyboard(int keyCode, bool isPressed){
     memset(&keyInputEvent, 0, sizeof(input_event));
 
-    // key press event for 'a'
     keyInputEvent.type = EV_KEY;
-    keyInputEvent.code = keyCode; //kbSet[i];
-    keyInputEvent.value = isPressed; //kbSetBool[i];
+    keyInputEvent.code = keyCode; 
+    keyInputEvent.value = isPressed;
 
     // now write to the file descriptor
     if(write(fdKeyEmulator, &keyInputEvent, sizeof(input_event)) < 0)
@@ -227,10 +266,8 @@ void ViktorDev::EmulateInteraction::setKeyboard(int keyCode, bool isPressed){
         std::cout << "Error write : KEY_A press : " << strerror(errno) << std::endl;
     }
 }
-
 void ViktorDev::EmulateInteraction::synKeyboard(){
     memset(&keyInputEvent, 0, sizeof(input_event));
-    // EV_SYN for key press event
     keyInputEvent.type = EV_SYN;
     keyInputEvent.code = SYN_REPORT;
     keyInputEvent.value = 0;
@@ -243,17 +280,24 @@ void ViktorDev::EmulateInteraction::synKeyboard(){
 }
 
 void ViktorDev::EmulateInteraction::emulateKeyboard(){ 
-    for(int i = 0; i < EMULATE_BUTTON_QUANITY; ++i){
-        setKeyboard(kbSet[i], kbSetBool[i]);
-    }
+    auto setKeyboard= [&](pair<int,bool> codeValue){
+        memset(&keyInputEvent, 0, sizeof(input_event));
+        keyInputEvent.type = EV_KEY;
+        keyInputEvent.code = codeValue.first;
+        keyInputEvent.value = codeValue.second; 
+
+        // now write to the file descriptor
+        if(write(fdKeyEmulator, &keyInputEvent, sizeof(input_event)) < 0)
+        {
+            std::cout << "Error write : KEY_A press : " << strerror(errno) << std::endl;
+        }
+    };
+
+    for_each(encoding.begin(), encoding.end(),setKeyboard);
     synKeyboard();
+    sleep(1); // time between ticks
 }
 void ViktorDev::EmulateInteraction::emulateKbMouse(){
     emulateKeyboard();
     emulateMouseMovement();
-}
-
-void ViktorDev::EmulateInteraction::initEmulateKbMouse(){
-    initEmulateMouse();
-    initEmulateKeyboard();
 }

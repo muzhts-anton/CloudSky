@@ -109,7 +109,7 @@ int ScreenRecorder::captureVideoData(Worker* worker){
         worker->getInteraction(filename);
         ReceiveInteraction ReceiveM(filename, ReceiveMessage);
 
-        if (ReceiveM.receiveIt(filename))
+        if (ReceiveM.receiveIt())
             cout << "Error wint receiving";
         ReceiveM.printMessage();
         emulation.setKeysCoords(ReceiveM.getMessage());
