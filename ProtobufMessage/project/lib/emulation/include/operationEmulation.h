@@ -41,29 +41,54 @@ public:
     void emulateKbMouse();
     int getCurrentXCoord();
     int getCurrentYCoord();
+    input_event& getKeyInputEvent();
+    int& getFdKeyEmulator();
     bool getCurrentButtonState(char button_symbol);
     void initFD(int kbSet[3]);
     void readFile();
-
     void printEm();
+     //{ move to private
+    //     {KEY_A, false},
+    //     {KEY_W, false},
+    //     {KEY_S, false},
+    //     {KEY_D, false},
+    //     {KEY_SPACE, false},
+    //     {KEY_Q, false},
+    //     {KEY_E, false},
+    //     {KEY_F, false},
+    //     {KEY_ESC, false}
+    // };
 private:
     int fd;
     struct uinput_user_dev uidev;
     struct input_event ev;
-    int coordX, coordY;
-    int previousCoordX, previousCoordY;
-    int i;
+    vector<pair<int, bool>> encoding;
+    pair<int,int> coords, previousCoords;
+    
+    //int i;
 
 
     struct input_event keyInputEvent;
     int fdKeyEmulator;
     struct uinput_user_dev devFakeKeyboard;
-    //map();
-    int kbSet[buttonQuanity];
-// a w s d space q e f esc leftMouseButton rightMouseButton
-// 0 1 2 3 4     5 6 7 8   9               10
-    bool kbSetBool[buttonQuanity];
-    bool mouseButtons[mouseButtonsQuanity];
+
+    // map<char, bool> encoding = {
+    //     {'a', KEY_A},
+    //     {'w', KEY_W},
+    //     {'s', KEY_S},
+    //     {'d', KEY_D},
+    //     {' ', KEY_SPACE},
+    //     {'q', KEY_Q},
+    //     {'e', KEY_E},
+    //     {'f', KEY_F},
+    //     {'`', KEY_ESC}
+    // };
+    //int kbSet[buttonQuanity];
+// a w s d space q e f esc
+// 0 1 2 3 4     5 6 7 8   
+    //bool kbSetBool[buttonQuanity];
+    vector<pair<int, bool>> mouseButtons;
+    //bool mouseButtons[mouseButtonsQuanity];
     FILE* sourceFile;
 };
 

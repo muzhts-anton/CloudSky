@@ -10,9 +10,9 @@ constexpr int buttonQuanity = 9;
 constexpr int coordQuanity = 2;
 
 constexpr int SUCCESS = 0;
-constexpr int ERROR_WITH_FILE = 1;
-constexpr int ERROR_PARSE_MESSAGE = 2;
-constexpr int ERROR_SERIALIZE_MESSAGE = 3;
+constexpr int errorWithFile = 1;
+constexpr int errorParseMessage = 2;
+constexpr int errorSerializeMessage = 3;
 
 namespace ViktorDev {
 class InteractionOperations {
@@ -21,7 +21,7 @@ public:
     KeyboardMouse::ButtonsCoords& getMessage();
     void setMessage(bool buttonPressed[buttonQuanity], int coords[coordQuanity]);
     InteractionOperations(KeyboardMouse::ButtonsCoords myMessage, string filePath);
-    InteractionOperations(bool buttonPressed[buttonQuanity], int coords[2], string filePath);
+    InteractionOperations(bool buttonPressed[buttonQuanity], int coords[coordQuanity], string filePath);
     InteractionOperations();
     void printMessage();
 
@@ -31,12 +31,11 @@ protected:
 
 class SendInteraction : public InteractionOperations {
     std::ofstream out;
-    int socket;
 
 public:
     SendInteraction() = delete;
     SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage);
-    SendInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2]);
+    SendInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[coordQuanity]);
     ~SendInteraction();
     int sendIt();
 };
@@ -47,7 +46,7 @@ class ReceiveInteraction : public InteractionOperations {
 public:
     ReceiveInteraction() = delete;
     ReceiveInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage);
-    ReceiveInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2]);
+    ReceiveInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[coordQuanity]);
     ~ReceiveInteraction();
     int receiveIt();
 };

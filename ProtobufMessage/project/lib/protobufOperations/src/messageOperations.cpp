@@ -50,8 +50,8 @@ SendInteraction::SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoo
     out.open(filePath, std::ios_base::binary);
     if (!out) {
         cout << "FILE DOES NOT OPENED!" << endl;
-        assert(ERROR_WITH_FILE);
-        exit(ERROR_WITH_FILE);
+        assert(errorWithFile);
+        exit(errorWithFile);
     };
 }
 SendInteraction::SendInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2])
@@ -60,8 +60,8 @@ SendInteraction::SendInteraction(std::string filePath, bool buttonPressed[button
     out.open(filePath, std::ios_base::binary);
     if (!out) {
         cout << "FILE DOES NOT OPENED!" << endl;
-        assert(ERROR_WITH_FILE);
-        exit(ERROR_WITH_FILE);
+        assert(errorWithFile);
+        exit(errorWithFile);
     };
 }
 SendInteraction::~SendInteraction()
@@ -75,7 +75,7 @@ int SendInteraction::sendIt()
 
     if (!message.SerializePartialToOstream(&outAddit)) {
         cout << "ERRORSEND IT !" << endl;
-        return ERROR_SERIALIZE_MESSAGE;
+        return errorSerializeMessage;
     };
     return SUCCESS;
 }
@@ -85,9 +85,9 @@ ReceiveInteraction::ReceiveInteraction(std::string filePath, KeyboardMouse::Butt
 {
     in.open(filePath, std::ios_base::binary);
     if (!in) {
-        cout<<"ERROR_WITH_FILE in ReceiveInteraction constructor";
-        assert(ERROR_WITH_FILE);
-        exit(ERROR_WITH_FILE);
+        cout<<"errorWithFile in ReceiveInteraction constructor";
+        assert(errorWithFile);
+        exit(errorWithFile);
         in.close();
     };
 }
@@ -96,8 +96,8 @@ ReceiveInteraction::ReceiveInteraction(std::string filePath, bool buttonPressed[
 {
     in.open(filePath, std::ios_base::binary);
     if (!in) {
-        assert(ERROR_WITH_FILE);
-        exit(ERROR_WITH_FILE);
+        assert(errorWithFile);
+        exit(errorWithFile);
         in.close();
     };
 }
@@ -108,7 +108,7 @@ ReceiveInteraction::~ReceiveInteraction()
 int ReceiveInteraction::receiveIt()
 {
     if (!message.ParseFromIstream(&in)) {
-        return ERROR_PARSE_MESSAGE;
+        return errorParseMessage;
     };
     return SUCCESS;
 }
