@@ -50,13 +50,13 @@ void GameFragment::timerOutEvent()
     bool *mouse = _player->getmouse();
     KeyboardMouse::ButtonsCoords message;
 
-    for (size_t i = 0; i < BUTTON_QUANITY; ++i)
+    for (size_t i = 0; i < buttonQuanity; ++i)
         (butts[i]) ? message.add_buttonpressed(true) : message.add_buttonpressed(false);
  
     message.set_xcoord(cursor().pos().x());
     message.set_ycoord(cursor().pos().y());
     
-    for (size_t i = 0; i < COORD_QUANITY; ++i)
+    for (size_t i = 0; i < coordQuanity; ++i)
         (mouse[i]) ? message.add_mousebuttons(true) : message.add_mousebuttons(false);
 
     ViktorDev::SendInteraction SendM(fileToSendPath, message);

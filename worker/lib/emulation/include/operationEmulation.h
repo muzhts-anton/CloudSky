@@ -17,14 +17,15 @@
 
 #include <string>
 #include <time.h>
+constexpr int buttonQuanityEm = 9;
+constexpr int coordQuanityEm = 2;
+constexpr int mouseButtonsQuanityEm = 2;
 
-constexpr int EMULATE_BUTTON_QUANITY = 9;
-constexpr int EMULATE_COORD_QUANITY = 2;
-constexpr int MOUSE_BUTTONS = 2;
-
+using namespace std;
 namespace ViktorDev {
 class EmulateInteraction {
 public:
+    EmulateInteraction();
     ~EmulateInteraction();
     int readInteraction();
     int emulateInteraction(bool* pressedKeys, int coordX, int coordY);
@@ -40,28 +41,27 @@ public:
     void emulateKbMouse();
     int getCurrentXCoord();
     int getCurrentYCoord();
+    input_event& getKeyInputEvent();
+    int& getFdKeyEmulator();
     bool getCurrentButtonState(char button_symbol);
     void initFD(int kbSet[3]);
     void readFile();
-
     void printEm();
+
 private:
     int fd;
     struct uinput_user_dev uidev;
     struct input_event ev;
-    int previousCoordX, previousCoordY;
-    int coordX, coordY;
-    int i;
-
+    vector<pair<int, bool>> encoding;
+    pair<int,int> coords, previousCoords;
 
     struct input_event keyInputEvent;
     int fdKeyEmulator;
     struct uinput_user_dev devFakeKeyboard;
-    int kbSet[EMULATE_BUTTON_QUANITY];
-// a w s d space q e f esc leftMouseButton rightMouseButton
-// 0 1 2 3 4     5 6 7 8   9               10
-    bool kbSetBool[EMULATE_BUTTON_QUANITY];
-    bool mouseButtons[MOUSE_BUTTONS];
+    //int kbSet[buttonQuanity];
+// a w s d space q e f esc
+// 0 1 2 3 4     5 6 7 8   
+    vector<pair<int, bool>> mouseButtons;
     FILE* sourceFile;
 };
 

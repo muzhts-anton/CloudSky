@@ -44,3 +44,9 @@ project/src/mouse_move
 *.swp
 buttons_coords.bin
 *.user
+*.sh
+ProtobufMessage/readme.txt
+ProtobufMessage/ButtonsCoords1.bin
+ProtobufMessage/project/build.sh
+ButtonsCoords1.bin
+EmulateKBMouse/

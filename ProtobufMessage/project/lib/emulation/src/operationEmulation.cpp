@@ -154,7 +154,7 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
 
 
 void ViktorDev::EmulateInteraction::initEmulateKeyboard(){
-    encoding.reserve(coordQuanityEm);
+    encoding.reserve(buttonQuanity);
     encoding.push_back({KEY_A, false});
     encoding.push_back({KEY_W, false});
     encoding.push_back({KEY_S, false});
