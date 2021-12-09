@@ -118,6 +118,7 @@ void TCPWorkerSocket::receiveFile(std::string filename)
     }
     if (valread == 0) {
         std::cerr << "[LOG] : TCP Client is not connected anymore. Maybe I should exit...\n";
+        exit(0);
     }
     for (int i = 0; i < valread; i++)
         file.write(buffer + i, 1);
