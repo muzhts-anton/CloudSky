@@ -68,6 +68,7 @@ private:
     AVFrame* pFrame = NULL;
     AVFrame* pFrameRGB = NULL;
     size_t buffer_size;
+    AVFrame* pict = NULL;
     struct SwsContext* swsCtx = NULL;
     AVPacket* pPacket = NULL;
     std::vector<uint8_t> buffer;
@@ -78,6 +79,10 @@ private:
     SDL_Event event;
     bool quit;
     AVDictionary* opts = NULL;
+
+    void initAndCreateWindowSDL();
+    void updateScreen(); 
+    void close();
 
     bool _butts[(size_t)Buttons::COUNT];
     bool _mouse[(size_t)Mouse::COUNT];

@@ -31,7 +31,7 @@ signals:
     void play();
 
 private:
-    MediaPlayer* _player;
+    media::MediaPlayer* _player;
     QPushButton* _backBut;
     QTimer* _timer;
 };
