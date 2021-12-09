@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 using namespace ViktorDev;
 
@@ -57,11 +58,17 @@ TEST(MESSAGE_TEST, defaultConstructorTest)
 
 TEST(MESSAGE_TEST, sendReceiveTest)
 {
+    const int number =20;
     std::string filePath = "ButtonsCoords.bin";
     KeyboardMouse::ButtonsCoords message;
-    message.add_buttonpressed(true);
-    message.add_buttonpressed(false);
-    message.add_buttonpressed(false);
+    vector<bool> vecKb(number);
+    vector<bool> vecMouse(number);
+    fill(vecKb.begin(),vecKb.end(), true);
+    fill(vecMouse.begin(),vecMouse.end(), false);
+    for(auto it = vecKb.begin(), itM = vecMouse.begin(); it!=vecKb.end() || itM != vecMouse.end(); ++it, ++itM{
+        message.add_buttonpressed(*it);
+        message.add_mousebuttons(*itM);
+    }
     message.set_xcoord(5);
     message.set_ycoord(10);
 
@@ -83,6 +90,12 @@ TEST(MESSAGE_TEST, sendReceiveTest)
         EXPECT_EQ(button, receiveMessangeHandler.getMessage().buttonpressed()[i]);
         ++i;
     };
+    
+    for (const bool& button : sendMessageHandler.getMessage().mouseButtons()) {
+        EXPECT_EQ(button, receiveMessangeHandler.getMessage().mouseButtons()mak);
+        ++i;
+    };
+
     EXPECT_EQ(sendMessageHandler.getMessage().xcoord(), receiveMessangeHandler.getMessage().xcoord());
     EXPECT_EQ(sendMessageHandler.getMessage().ycoord(), receiveMessangeHandler.getMessage().ycoord());
 }
