@@ -13,7 +13,7 @@
 using namespace std;
 using namespace ViktorDev;
 
-#define die(str, args...)   \
+#define die(str, ...)   \
     do {                    \
         perror(str);        \
         exit(EXIT_FAILURE); \
@@ -36,7 +36,7 @@ EmulateInteraction::~EmulateInteraction()
         die("error: cannot destroy uinput device ");
     close(fd);
     //fclose(sourceFile);
-};
+}
 
 void ViktorDev::EmulateInteraction::initEmulateMouse() {
     coords.first = coords.second = 0;
@@ -151,7 +151,7 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
         previousCoords.first = coords.first;        
         previousCoords.second = coords.second;
     return;
-};
+}
 
 
 
@@ -257,7 +257,7 @@ void ViktorDev::EmulateInteraction::setKeyboard(int keyCode, bool isPressed){
     memset(&keyInputEvent, 0, sizeof(input_event));
 
     keyInputEvent.type = EV_KEY;
-    keyInputEvent.code = keyCode; /
+    keyInputEvent.code = keyCode; 
     keyInputEvent.value = isPressed;
 
     // now write to the file descriptor
@@ -296,7 +296,7 @@ void ViktorDev::EmulateInteraction::emulateKeyboard(){
     for_each(encoding.begin(), encoding.end(),setKeyboard);
     synKeyboard();
     sleep(1); // time between ticks
-};
+}
 void ViktorDev::EmulateInteraction::emulateKbMouse(){
     emulateKeyboard();
     emulateMouseMovement();
