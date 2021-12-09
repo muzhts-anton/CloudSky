@@ -112,8 +112,6 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
         //     ev.code = BTN_LEFT;
         //     ev.value = it->second;
         // }
-        cout<<mouseButtons[0].second<<" MOUSE0"<<endl;
-        cout<<mouseButtons[1].second<<" MOUSE1"<<endl;
         memset(&ev, 0, sizeof(struct input_event));
         gettimeofday(&ev.time, 0);
         ev.type = EV_KEY;
