@@ -61,12 +61,12 @@ void GameFragment::timerOutEvent()
         (mouse[i]) ? message.add_mousebuttons(true) : message.add_mousebuttons(false);
 
     ViktorDev::SendInteraction SendM(fileToSendPath, message);
-    SendM.sendIt();
-    try {
-        TCPSocket.transmitFile(fileToSendPath);
-    } catch (const std::invalid_argument& e) {
-    std::cerr << e.what() << std::endl;
-    }
+    // SendM.sendIt();
+    // try {
+    //     TCPSocket.transmitFile(fileToSendPath);
+    // } catch (const std::invalid_argument& e) {
+    // std::cerr << e.what() << std::endl;
+    // }
 }
 
 void GameFragment::onBack()
