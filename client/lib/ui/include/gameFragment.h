@@ -35,6 +35,7 @@ signals:
 
 private:
     TCPClient::TCPClientSocket TCPSocket;
+    UDPClient::UDPClientSocket UDPSocket;
     media::MediaPlayer* _player;
     QPushButton* _backBut;
     QTimer* _timer;

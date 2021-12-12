@@ -10,7 +10,8 @@
 namespace fragment {
 
 GameFragment::GameFragment()
-    : TCPSocket(8080, "10.147.18.164")
+    : TCPSocket(8080, "192.168.56.102")
+    , UDPSocket(8080, "192.168.56.102")
     , _player(new media::MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
 {
@@ -32,7 +33,7 @@ GameFragment::GameFragment()
     // vidfile.cdUp();
     // vidfile.cd("lib/ui/media/");
     usleep(1000000);
-    emit play(QString("udp://10.147.18.164:8080"));
+    emit play(QString("udp://192.168.56.102:8080"));
 
     _timer = new QTimer(this);
     _timer->setInterval(1000.f / GameFragment::fps);

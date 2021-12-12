@@ -38,10 +38,17 @@ void MediaPlayer::initInputStream(const std::string path)
     }
     std::cout << "before\n";
     pFormatCtx = avformat_alloc_context();
+    
+    //AVInputFormat* input = av_find_input_format("mp4");
+    
 
-    av_dict_set(&opts, "buffer_size", "204800", 0);
-    av_dict_set(&opts, "max_interleave_delta", "1", 0);
-    ret = avformat_open_input(&pFormatCtx, path.c_str(), NULL, &opts);
+    //AVInputFormat *pMjpegFormat = av_find_input_format("mp.4");
+    //av_dict_set(&opts, "buffer_size", "204800", 0);
+    // av_dict_set(&opts, "protocol_whitelist", "udp", 0);
+    // av_dict_set(&opts, "rtsp_transport", "udp", 0);
+    //std::string path2 = path.c_str() + (std::string)"mode=listener";
+    //std::cout << path.c_str();
+    std::cout << avformat_open_input(&pFormatCtx, path.c_str(), 0, &opts);
     std::cout << "after\n";
 
     if (ret < 0) {
@@ -221,10 +228,10 @@ void MediaPlayer::play()
                     pict->data,
                     pict->linesize);
 
-                // double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
-                // std::cout << fps << std::endl;
-                // double sleep_time = 1.0/(double)fps;
-                // SDL_Delay((1000 * sleep_time));
+                double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
+                std::cout << fps << std::endl;
+                double sleep_time = 1.0/(double)fps;
+                SDL_Delay((1000 * sleep_time));
                 SDL_Rect rect;
                 rect.x = 0;
                 rect.y = 0;
