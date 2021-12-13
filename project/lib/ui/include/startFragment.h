@@ -14,12 +14,12 @@ public:
     ~StartFragment();
 
 public slots:
-    void onGame();
+    void onAuth();
+    void onReg();
 
 private:
-    QPushButton* _openGameBut;
-    QPushButton* _settingsBut;
-    QPushButton* _addGameBut;
+    QPushButton* _authBut;
+    QPushButton* _regBut;
 };
 
 } // namespace fragment

@@ -6,6 +6,7 @@ src/navigator.cpp
 src/screensFactory.cpp
 src/startFragment.cpp
 src/SDLWidget.cpp
+src/mainFragment.cpp
 )
 
 set(UI_HDR
@@ -18,6 +19,7 @@ include/screensFactory.h
 include/screenNames.h
 include/startFragment.h
 include/SDLWidget.h
+include/mainFragment.h
 )
 
 add_library(ui STATIC ${UI_SRC} ${UI_HDR})

@@ -10,13 +10,11 @@
 namespace fragment {
 
 StartFragment::StartFragment()
-    : _openGameBut(new QPushButton("Go to game screen"))
-    , _settingsBut(new QPushButton("open soon"))
-    , _addGameBut(new QPushButton("open soon"))
+    : _authBut(new QPushButton("Authorization"))
+    , _regBut(new QPushButton("Registration"))
 {
-    _openGameBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
-    _addGameBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
-    _settingsBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
+    _authBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
+    _regBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
 
     QDir logofile;
     logofile.cd("project/lib/ui/media/");
@@ -33,27 +31,30 @@ StartFragment::StartFragment()
     mainHL->addWidget(logo);
     mainHL->addLayout(buttonsVL);
 
-    buttonsVL->addWidget(_openGameBut);
-    buttonsVL->addWidget(_addGameBut);
-    buttonsVL->addWidget(_settingsBut);
+    buttonsVL->addWidget(_regBut);
+    buttonsVL->addWidget(_authBut);
     buttonsVL->setAlignment(Qt::AlignCenter);
     mainHL->setAlignment(Qt::AlignCenter);
-    // this->setLayout(buttonsVL);
 
-    connect(_openGameBut, &QPushButton::clicked, this, &StartFragment::onGame);
+    connect(_authBut, &QPushButton::clicked, this, &StartFragment::onAuth);
+    connect(_regBut, &QPushButton::clicked, this, &StartFragment::onReg);
 }
 
 StartFragment::~StartFragment()
 {
-    delete _openGameBut;
-    delete _settingsBut;
-    delete _addGameBut;
+    delete _authBut;
+    delete _regBut;
 }
 
 // slots
-void StartFragment::onGame()
+void StartFragment::onAuth()
 {
-    emit navigateTo(screens::ScreenNames::GAME);
+    emit navigateTo(screens::ScreenNames::MAIN);
+}
+
+void StartFragment::onReg()
+{
+    emit navigateTo(screens::ScreenNames::MAIN);
 }
 
 } // namespace fragment
