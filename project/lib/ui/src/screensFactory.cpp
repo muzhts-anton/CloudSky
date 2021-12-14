@@ -3,6 +3,7 @@
 #include "mainFragment.h"
 #include "gameFragment.h"
 #include "startFragment.h"
+#include "authFragment.h"
 
 fragment::BaseFragment* ScreensFactory::create(screens::ScreenNames tag)
 {
@@ -13,6 +14,8 @@ fragment::BaseFragment* ScreensFactory::create(screens::ScreenNames tag)
         return new fragment::StartFragment;
     case screens::ScreenNames::MAIN:
         return new fragment::MainFragment;
+    case screens::ScreenNames::LOGIN:
+        return new fragment::AuthFragment;
     default:
         return nullptr;
     }

@@ -1,9 +1,6 @@
-#include <watcherHoverBut.h>
+#include "watcherHoverBut.h"
 
-ButtonHoverWatcher::ButtonHoverWatcher(QObject* parent)
-    : QObject(parent)
-{
-}
+namespace secondfit {
 
 bool ButtonHoverWatcher::eventFilter(QObject* watched, QEvent* event)
 {
@@ -18,3 +15,5 @@ bool ButtonHoverWatcher::eventFilter(QObject* watched, QEvent* event)
 
     return false;
 }
+
+} // namespace secondfit

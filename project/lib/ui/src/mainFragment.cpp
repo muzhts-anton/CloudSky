@@ -1,5 +1,4 @@
 #include "mainFragment.h"
-#include "watcherHoverBut.h"
 
 #include <QDebug>
 #include <QDir>
@@ -11,19 +10,16 @@ namespace fragment {
 
 MainFragment::MainFragment()
     : _pic(new QLabel(this))
+    , _watcher(new secondfit::ButtonHoverWatcher(this))
     , _openGameBut(new QPushButton("Go to game screen"))
     , _settingsBut(new QPushButton("open soon"))
-//, _addGameBut(new QPushButton("open soon"))
+//  , _addGameBut(new QPushButton("open soon"))
 {
     _openGameBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
-    //_addGameBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
     _settingsBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
+//  _addGameBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
 
-    QDir logofile;
-    logofile.cd("project/lib/ui/media/");
-
-    QPixmap piclogo(logofile.absoluteFilePath("CloudSky.png"));
-    _pic->setPixmap(piclogo);
+    _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("CloudSky.png")));
     _pic->setScaledContents(true);
     _pic->setFixedHeight(235);
     _pic->setFixedWidth(235);
@@ -34,26 +30,27 @@ MainFragment::MainFragment()
     mainHL->addWidget(_pic);
 
     buttonsVL->addWidget(_openGameBut);
-    // buttonsVL->addWidget(_addGameBut);
     buttonsVL->addWidget(_settingsBut);
+//  buttonsVL->addWidget(_addGameBut);
+
     buttonsVL->setAlignment(Qt::AlignCenter);
     mainHL->setAlignment(Qt::AlignCenter);
 
-    ButtonHoverWatcher* watcher = new ButtonHoverWatcher(this);
-    _openGameBut->installEventFilter(watcher);
-    //_addGameBut->installEventFilter(watcher);
-    _settingsBut->installEventFilter(watcher);
+    _openGameBut->installEventFilter(_watcher);
+//  _addGameBut->installEventFilter(watcher);
+    _settingsBut->installEventFilter(_watcher);
 
-    connect(watcher, &ButtonHoverWatcher::onButHovered, this, &MainFragment::onButHovered);
+    connect(_watcher, &secondfit::ButtonHoverWatcher::onButHovered, this, &MainFragment::onButHovered);
     connect(_openGameBut, &QPushButton::clicked, this, &MainFragment::onGame);
 }
 
 MainFragment::~MainFragment()
 {
     delete _pic;
+    delete _watcher;
     delete _openGameBut;
     delete _settingsBut;
-    // delete _addGameBut;
+//  delete _addGameBut;
 }
 
 // slots
@@ -64,19 +61,10 @@ void MainFragment::onGame()
 
 void MainFragment::onButHovered(QPushButton* obj)
 {
-    if (obj == _settingsBut) {
-        QDir picfile;
-        picfile.cd("project/lib/ui/media/");
-
-        QPixmap piclogo(picfile.absoluteFilePath("settings.png"));
-        _pic->setPixmap(piclogo);
-    } else if (obj == _openGameBut) {
-        QDir picfile;
-        picfile.cd("project/lib/ui/media/");
-
-        QPixmap piclogo(picfile.absoluteFilePath("controller.png"));
-        _pic->setPixmap(piclogo);
-    }
+    if (obj == _settingsBut)
+        _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("settings.png")));
+    else if (obj == _openGameBut)
+        _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("controller.png")));
 }
 
 } // namespace fragment

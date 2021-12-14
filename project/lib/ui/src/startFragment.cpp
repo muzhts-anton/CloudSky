@@ -49,7 +49,7 @@ StartFragment::~StartFragment()
 // slots
 void StartFragment::onAuth()
 {
-    emit navigateTo(screens::ScreenNames::MAIN);
+    emit navigateTo(screens::ScreenNames::LOGIN);
 }
 
 void StartFragment::onReg()

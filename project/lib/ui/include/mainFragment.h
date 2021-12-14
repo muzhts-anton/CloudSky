@@ -2,6 +2,7 @@
 #define MAINFRAGMENT_H
 
 #include "baseFragment.h"
+#include "watcherHoverBut.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -16,11 +17,11 @@ public:
 
 public slots:
     void onGame();
-
     void onButHovered(QPushButton* obj);
 
 private:
     QLabel* _pic;
+    secondfit::ButtonHoverWatcher* _watcher;
     QPushButton* _openGameBut;
     QPushButton* _settingsBut;
     //QPushButton* _addGameBut;
