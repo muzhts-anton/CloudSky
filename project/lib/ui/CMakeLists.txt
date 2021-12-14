@@ -7,6 +7,7 @@ src/screensFactory.cpp
 src/startFragment.cpp
 src/SDLWidget.cpp
 src/mainFragment.cpp
+src/watcherHoverBut.cpp
 )
 
 set(UI_HDR
@@ -20,6 +21,7 @@ include/screenNames.h
 include/startFragment.h
 include/SDLWidget.h
 include/mainFragment.h
+include/watcherHoverBut.h
 )
 
 add_library(ui STATIC ${UI_SRC} ${UI_HDR})
