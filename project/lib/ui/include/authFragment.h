@@ -29,4 +29,4 @@ private:
 
 } // namespace fragment
 
-#endif
+#endif // AUTHFRAGMENT_H

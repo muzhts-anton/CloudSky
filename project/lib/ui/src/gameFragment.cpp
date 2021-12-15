@@ -1,4 +1,5 @@
 #include "gameFragment.h"
+#include "fragmentThemeStyle.h"
 
 #include <QHBoxLayout>
 #include <QString>
@@ -10,7 +11,7 @@ GameFragment::GameFragment()
     : _player(new media::MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
 {
-    _backBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
+    _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
 
     QHBoxLayout* mainHLayout = new QHBoxLayout(this);
     mainHLayout->addWidget(_backBut);

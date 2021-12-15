@@ -1,4 +1,5 @@
 #include "startFragment.h"
+#include "fragmentThemeStyle.h"
 
 #include <QDebug>
 #include <QDir>
@@ -13,8 +14,8 @@ StartFragment::StartFragment()
     : _authBut(new QPushButton("Authorization"))
     , _regBut(new QPushButton("Registration"))
 {
-    _authBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
-    _regBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
+    _authBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
+    _regBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
 
     QDir logofile;
     logofile.cd("project/lib/ui/media/");
@@ -54,7 +55,7 @@ void StartFragment::onAuth()
 
 void StartFragment::onReg()
 {
-    emit navigateTo(screens::ScreenNames::MAIN);
+    emit navigateTo(screens::ScreenNames::REGISTER);
 }
 
 } // namespace fragment

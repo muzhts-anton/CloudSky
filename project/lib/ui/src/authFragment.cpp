@@ -1,4 +1,5 @@
 #include "authFragment.h"
+#include "fragmentThemeStyle.h"
 
 #include <QVBoxLayout>
 
@@ -9,9 +10,9 @@ AuthFragment::AuthFragment()
     , _userPassword(new QLineEdit(this))
     , _authBut(new QPushButton("Authorization"))
 {
-    _userName->setStyleSheet("QLineEdit { background-color: rgb(154,154,154); color: white; } QLineEdit:active { border: none; border-radius: 7px; padding: 10px; color: white; }");
-    _userPassword->setStyleSheet("QLineEdit { background-color: rgb(154,154,154); color: white; } QLineEdit:active { border: none; border-radius: 7px; padding: 10px; color: white; }");
-    _authBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
+    _userName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
+    _userPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
+    _authBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
 
     _userName->setPlaceholderText("User Name");
     _userPassword->setPlaceholderText("Password");

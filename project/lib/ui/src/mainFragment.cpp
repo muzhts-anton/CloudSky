@@ -1,4 +1,5 @@
 #include "mainFragment.h"
+#include "fragmentThemeStyle.h"
 
 #include <QDebug>
 #include <QDir>
@@ -12,11 +13,11 @@ MainFragment::MainFragment()
     : _pic(new QLabel(this))
     , _watcher(new secondfit::ButtonHoverWatcher(this))
     , _openGameBut(new QPushButton("Go to game screen"))
-    , _settingsBut(new QPushButton("open soon"))
+    , _settingsBut(new QPushButton("Settings [open soon]"))
 //  , _addGameBut(new QPushButton("open soon"))
-{
-    _openGameBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
-    _settingsBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
+{ 
+    _openGameBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
+    _settingsBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
 //  _addGameBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
 
     _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("CloudSky.png")));
