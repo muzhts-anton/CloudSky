@@ -18,13 +18,16 @@ public:
 public slots:
     void onGame();
     void onButHovered(QPushButton* obj);
+    void onLogOut();
 
 private:
+    QLabel* _greetingLabel;
     QLabel* _pic;
     secondfit::ButtonHoverWatcher* _watcher;
     QPushButton* _openGameBut;
     QPushButton* _settingsBut;
     //QPushButton* _addGameBut;
+    QPushButton* _logOutBut;
 };
 
 } // namespace fragment

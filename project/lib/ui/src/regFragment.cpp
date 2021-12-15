@@ -3,6 +3,7 @@
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QtGui>
 
 namespace fragment {
 
