@@ -22,17 +22,23 @@ public slots:
     void onBack();
 
 private:
+    void onResume() override;
+
+private:
     bool checkData();
 
 private:
     QLabel* _explanLabel;
     QLineEdit* _userFirstName;
     QLineEdit* _userSecondName;
+    QLineEdit* _userCountry;
+    QLineEdit* _userEmail;
     QLineEdit* _userNickName;
     QLineEdit* _userFirstPassword;
     QLineEdit* _userSecondPassword;
     QLabel* _ageTxt;
     QSpinBox* _userAge;
+    QLabel* _errorLabel;
     QPushButton* _regBut;
     QPushButton* _backBut;
 };

@@ -20,11 +20,12 @@ namespace theme {
 
     const QString maincolor("rgb(193,243,255);"); // ligthblue #c1f3ff
     const QString secondcolor("rgb(189,144,255);"); // ~pink #bd90ff
-    const QString thirdcolor("rgb(133, 232, 125);"); // ~green #85e87d
+    const QString thirdcolor("rgb(255,125,98);"); // ~orange #FF7D62
+    const QString attentioncolor("red;");
     const QString fontcolor("white;");
     const QString backraoundcolor("rgb(154,154,154);"); // ~grey
 
-    const QString lowerfontsize("16px;");
+    const QString lowerfontsize("14px;");
     const QString capitalfontsize("24px;");
 
     const QString padding("10px;");

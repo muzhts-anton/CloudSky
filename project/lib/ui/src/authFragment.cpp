@@ -55,6 +55,11 @@ bool AuthFragment::checkData()
     return true;
 }
 
+void AuthFragment::onResume()
+{
+    emit back();
+}
+
 // slots
 void AuthFragment::onAuth()
 {

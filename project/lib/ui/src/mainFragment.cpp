@@ -24,15 +24,13 @@ MainFragment::MainFragment()
 //  _addGameBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
     _logOutBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::SECONDBUTTON));
 
-    _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("CloudSky.png")));
+    _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("logout.png")));
     _pic->setScaledContents(true);
     _pic->setFixedHeight(235);
     _pic->setFixedWidth(235);
 
     QHBoxLayout* mainHL = new QHBoxLayout(this);
     QVBoxLayout* buttonsVL = new QVBoxLayout;
-    mainHL->addLayout(buttonsVL);
-    mainHL->addWidget(_pic);
 
     buttonsVL->addWidget(_greetingLabel);
     buttonsVL->addWidget(_openGameBut);
@@ -40,12 +38,16 @@ MainFragment::MainFragment()
 //  buttonsVL->addWidget(_addGameBut);
     buttonsVL->addWidget(_logOutBut);
 
+    mainHL->addLayout(buttonsVL);
+    mainHL->addWidget(_pic);
+    
     buttonsVL->setAlignment(Qt::AlignCenter);
     mainHL->setAlignment(Qt::AlignCenter);
 
     _openGameBut->installEventFilter(_watcher);
 //  _addGameBut->installEventFilter(watcher);
     _settingsBut->installEventFilter(_watcher);
+    _logOutBut->installEventFilter(_watcher);
 
     connect(_watcher, &secondfit::ButtonHoverWatcher::onButHovered, this, &MainFragment::onButHovered);
     connect(_openGameBut, &QPushButton::clicked, this, &MainFragment::onGame);
@@ -75,11 +77,14 @@ void MainFragment::onButHovered(QPushButton* obj)
         _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("settings.png")));
     else if (obj == _openGameBut)
         _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("controller.png")));
+    else if (obj == _logOutBut)
+        _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("logout.png")));
+
 }
 
 void MainFragment::onLogOut()
 {
-    //emit 
+    emit back();
 }
 
 } // namespace fragment

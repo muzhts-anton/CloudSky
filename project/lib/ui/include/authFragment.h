@@ -21,6 +21,9 @@ public slots:
     void onBack();
 
 private:
+    void onResume() override;
+
+private:
     bool checkData();
 
 private:
