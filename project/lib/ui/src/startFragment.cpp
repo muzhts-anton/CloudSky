@@ -14,8 +14,8 @@ StartFragment::StartFragment()
     : _authBut(new QPushButton("Authorization"))
     , _regBut(new QPushButton("Registration"))
 {
-    _authBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
-    _regBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
+    _authBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
+    _regBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
 
     QDir logofile;
     logofile.cd("project/lib/ui/media/");

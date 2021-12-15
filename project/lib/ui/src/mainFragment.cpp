@@ -16,8 +16,8 @@ MainFragment::MainFragment()
     , _settingsBut(new QPushButton("Settings [open soon]"))
 //  , _addGameBut(new QPushButton("open soon"))
 { 
-    _openGameBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
-    _settingsBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
+    _openGameBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
+    _settingsBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
 //  _addGameBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
 
     _pic->setPixmap(QPixmap(QDir("project/lib/ui/media/").absoluteFilePath("CloudSky.png")));

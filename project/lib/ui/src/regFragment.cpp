@@ -7,7 +7,8 @@
 namespace fragment {
 
 RegFragment::RegFragment()
-    : _userFirstName(new QLineEdit)
+    : _explanLabel(new QLabel("Input your data to confirm registration"))
+    , _userFirstName(new QLineEdit)
     , _userSecondName(new QLineEdit)
     , _userNickName(new QLineEdit)
     , _userFirstPassword(new QLineEdit)
@@ -15,6 +16,7 @@ RegFragment::RegFragment()
     , _ageTxt(new QLabel("Enter your age"))
     , _userAge(new QSpinBox)
     , _regBut(new QPushButton("Confirm registration"))
+    , _backBut(new QPushButton("Back"))
 {
     _userFirstName->setPlaceholderText("First Name");
     _userSecondName->setPlaceholderText("Second Name");
@@ -25,34 +27,45 @@ RegFragment::RegFragment()
     _userFirstPassword->setEchoMode(QLineEdit::Password);
     _userSecondPassword->setEchoMode(QLineEdit::Password);
     _userAge->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    _userAge->setFixedWidth(75);
+    _backBut->setFixedWidth(75);
 
+    _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
     _userFirstName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userSecondName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userNickName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userFirstPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userSecondPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
-    _ageTxt->setStyleSheet(themestyle::fixed.value(themestyle::Type::LABEL));
+    _ageTxt->setStyleSheet(themestyle::fixed.value(themestyle::Type::LOWERLABEL));
     _userAge->setStyleSheet(themestyle::fixed.value(themestyle::Type::SPINBOX) + themestyle::active.value(themestyle::Type::SPINBOX));
-    _regBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
+    _regBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
+    _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::SECONDBUTTON));
 
     QHBoxLayout* ageHL = new QHBoxLayout;
     ageHL->addWidget(_userAge);
     ageHL->addWidget(_ageTxt);
 
+    QHBoxLayout* buttsHL = new QHBoxLayout;
+    buttsHL->addWidget(_backBut);
+    buttsHL->addWidget(_regBut);
+
     QVBoxLayout* mainVL = new QVBoxLayout(this);
+    mainVL->addWidget(_explanLabel);
     mainVL->addWidget(_userFirstName);
     mainVL->addWidget(_userSecondName);
     mainVL->addWidget(_userNickName);
     mainVL->addWidget(_userFirstPassword);
     mainVL->addWidget(_userSecondPassword);
     mainVL->addLayout(ageHL);
-    mainVL->addWidget(_regBut);
+    mainVL->addLayout(buttsHL);
 
     connect(_regBut, &QPushButton::clicked, this, &RegFragment::onReg);
+    connect(_backBut, &QPushButton::clicked, this, &RegFragment::onBack);
 }
 
 RegFragment::~RegFragment()
 {
+    delete _explanLabel;
     delete _userFirstName;
     delete _userSecondName;
     delete _userNickName;
@@ -61,12 +74,24 @@ RegFragment::~RegFragment()
     delete _ageTxt;
     delete _userAge;
     delete _regBut;
+    delete _backBut;
+}
+
+bool RegFragment::checkData()
+{
+    return true;
 }
 
 // slots
 void RegFragment::onReg()
 {
-    emit navigateTo(screens::ScreenNames::MAIN);
+    if (this->checkData())
+        emit navigateTo(screens::ScreenNames::MAIN);
+}
+
+void RegFragment::onBack()
+{
+    emit back();
 }
 
 } // namespace fragment

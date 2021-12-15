@@ -5,6 +5,7 @@
 
 #include <QPushButton>
 #include <QLineEdit>
+#include <QLabel>
 #include <QString>
 
 namespace fragment {
@@ -17,14 +18,17 @@ public:
 
 public slots:
     void onAuth();
+    void onBack();
 
 private:
-    bool checkData(QString username, QString password);
+    bool checkData();
 
 private:
+    QLabel* _explanLabel;
     QLineEdit* _userName;
     QLineEdit* _userPassword;
     QPushButton* _authBut;
+    QPushButton* _backBut;
 };
 
 } // namespace fragment

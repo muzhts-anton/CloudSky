@@ -19,11 +19,13 @@ public:
 
 public slots:
     void onReg();
+    void onBack();
 
 private:
-    bool checkData(QString username, QString password);
+    bool checkData();
 
 private:
+    QLabel* _explanLabel;
     QLineEdit* _userFirstName;
     QLineEdit* _userSecondName;
     QLineEdit* _userNickName;
@@ -32,6 +34,7 @@ private:
     QLabel* _ageTxt;
     QSpinBox* _userAge;
     QPushButton* _regBut;
+    QPushButton* _backBut;
 };
 
 } // namespace fragment

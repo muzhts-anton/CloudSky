@@ -11,7 +11,7 @@ GameFragment::GameFragment()
     : _player(new media::MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
 {
-    _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::BUTTON));
+    _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
 
     QHBoxLayout* mainHLayout = new QHBoxLayout(this);
     mainHLayout->addWidget(_backBut);
