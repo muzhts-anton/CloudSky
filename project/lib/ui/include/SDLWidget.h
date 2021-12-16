@@ -15,6 +15,7 @@ extern "C" {
 #include <iostream>
 #include <string>
 #include <vector>
+#include <array>
 
 
 namespace media {
@@ -26,23 +27,6 @@ public:
     ~MediaPlayer();
     void initInputStream(const std::string path);
     void play();
-
-    bool* getbutts() { return _butts; }
-    bool* getmouse() { return _mouse; }
-
-private:
-    void onKeyDown(SDL_Keycode sym);
-    void onKeyUp(SDL_Keycode sym);
-    void onLeftMouseButtonPress();
-    void onRightMouseButtonPress();
-    void onLeftMouseButtonRelease();
-    void onRightMouseButtonRelease();
-
-public slots:
-    void start(QString path);
-
-signals:
-    void finished();
 
 private:
     enum class Buttons {
@@ -63,6 +47,24 @@ private:
         COUNT,
     };
 
+    std::array<bool, (size_t)Buttons::COUNT> getbutts() { return butts; }
+    std::array<bool, (size_t)Mouse::COUNT> getmouse() { return mouse; }
+
+private:
+    void onKeyDown(SDL_Keycode sym);
+    void onKeyUp(SDL_Keycode sym);
+    void onLeftMouseButtonPress();
+    void onRightMouseButtonPress();
+    void onLeftMouseButtonRelease();
+    void onRightMouseButtonRelease();
+
+public slots:
+    void start(QString path);
+
+signals:
+    void finished();
+
+
 private:
     AVFormatContext* pFormatCtx = NULL;
     AVCodecContext* pCodecCtx = NULL;
@@ -81,8 +83,8 @@ private:
     bool quit;
     AVDictionary* opts = NULL;
 
-    bool _butts[(size_t)Buttons::COUNT];
-    bool _mouse[(size_t)Mouse::COUNT];
+    std::array<bool, (size_t)Buttons::COUNT> butts;
+    std::array<bool, (size_t)Mouse::COUNT> mouse;
 };
 
 } // namespace media

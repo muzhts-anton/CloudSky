@@ -4,18 +4,20 @@
 
 namespace media {
 
+// NOT MY CODE START (until 275)
+
 MediaPlayer::MediaPlayer()
 {
     for (size_t i = 0; i < (size_t)Buttons::COUNT; ++i)
-        _butts[i] = false;
+        butts[i] = false;
 
     avformat_network_init();
 }
 
 void MediaPlayer::start(QString path)
 {
-    this->initInputStream(path.toStdString());
-    this->play();
+    initInputStream(path.toStdString());
+    play();
 }
 
 MediaPlayer::~MediaPlayer()
@@ -268,44 +270,48 @@ void MediaPlayer::play()
     av_free(pict);
 }
 
+// NOT MY CODE END
+
+// MY CODE BEGIN:
+
 // tracing
 void MediaPlayer::onKeyDown(SDL_Keycode sym)
 {
     switch (sym) {
     case SDLK_a: {
-        _butts[(size_t)Buttons::A] = true;
+        butts[(size_t)Buttons::A] = true;
         break;
     }
     case SDLK_w: {
-        _butts[(size_t)Buttons::W] = true;
+        butts[(size_t)Buttons::W] = true;
         break;
     }
     case SDLK_s: {
-        _butts[(size_t)Buttons::S] = true;
+        butts[(size_t)Buttons::S] = true;
         break;
     }
     case SDLK_d: {
-        _butts[(size_t)Buttons::D] = true;
+        butts[(size_t)Buttons::D] = true;
         break;
     }
     case SDLK_SPACE: {
-        _butts[(size_t)Buttons::SPACE] = true;
+        butts[(size_t)Buttons::SPACE] = true;
         break;
     }
     case SDLK_q: {
-        _butts[(size_t)Buttons::Q] = true;
+        butts[(size_t)Buttons::Q] = true;
         break;
     }
     case SDLK_e: {
-        _butts[(size_t)Buttons::E] = true;
+        butts[(size_t)Buttons::E] = true;
         break;
     }
     case SDLK_f: {
-        _butts[(size_t)Buttons::F] = true;
+        butts[(size_t)Buttons::F] = true;
         break;
     }
     case SDLK_ESCAPE: {
-        _butts[(size_t)Buttons::ESC] = true;
+        butts[(size_t)Buttons::ESC] = true;
         break;
     }
     default:
@@ -317,39 +323,39 @@ void MediaPlayer::onKeyUp(SDL_Keycode sym)
 {
     switch (sym) {
     case SDLK_a: {
-        _butts[(size_t)Buttons::A] = false;
+        butts[(size_t)Buttons::A] = false;
         break;
     }
     case SDLK_w: {
-        _butts[(size_t)Buttons::W] = false;
+        butts[(size_t)Buttons::W] = false;
         break;
     }
     case SDLK_s: {
-        _butts[(size_t)Buttons::S] = false;
+        butts[(size_t)Buttons::S] = false;
         break;
     }
     case SDLK_d: {
-        _butts[(size_t)Buttons::D] = false;
+        butts[(size_t)Buttons::D] = false;
         break;
     }
     case SDLK_SPACE: {
-        _butts[(size_t)Buttons::SPACE] = false;
+        butts[(size_t)Buttons::SPACE] = false;
         break;
     }
     case SDLK_q: {
-        _butts[(size_t)Buttons::Q] = false;
+        butts[(size_t)Buttons::Q] = false;
         break;
     }
     case SDLK_e: {
-        _butts[(size_t)Buttons::E] = false;
+        butts[(size_t)Buttons::E] = false;
         break;
     }
     case SDLK_f: {
-        _butts[(size_t)Buttons::F] = false;
+        butts[(size_t)Buttons::F] = false;
         break;
     }
     case SDLK_ESCAPE: {
-        _butts[(size_t)Buttons::ESC] = false;
+        butts[(size_t)Buttons::ESC] = false;
         break;
     }
     default:
@@ -359,22 +365,24 @@ void MediaPlayer::onKeyUp(SDL_Keycode sym)
 
 void MediaPlayer::onLeftMouseButtonPress()
 {
-    _mouse[(size_t)Mouse::LEFT] = true;
+    mouse[(size_t)Mouse::LEFT] = true;
 }
 
 void MediaPlayer::onRightMouseButtonPress()
 {
-    _mouse[(size_t)Mouse::RIGHT] = true;
+    mouse[(size_t)Mouse::RIGHT] = true;
 }
 
 void MediaPlayer::onLeftMouseButtonRelease()
 {
-    _mouse[(size_t)Mouse::LEFT] = false;
+    mouse[(size_t)Mouse::LEFT] = false;
 }
 
 void MediaPlayer::onRightMouseButtonRelease()
 {
-    _mouse[(size_t)Mouse::RIGHT] = false;
+    mouse[(size_t)Mouse::RIGHT] = false;
 }
+
+// MY CODE END
 
 } // namespace media
