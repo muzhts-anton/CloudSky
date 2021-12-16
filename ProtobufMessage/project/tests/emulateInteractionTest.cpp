@@ -3,14 +3,12 @@
 #include "../include/messageOperations.h"
 #include "../include/operationEmulation.h"
 
-using namespace std;
-
 TEST(EMULATE_TEST, coordsTest)
 {
-    string filePath = "";
+    std::string filePath = "";
     bool buttonSeq[buttonQuanity] { true, false, false };
     int coords[coordQuanity] { 2, 45 };
-    EmulateInteraction emulate(filePath, buttonSeq, coords);
+    ViktorDev::EmulateInteraction emulate(filePath, buttonSeq, coords);
     int coordX = emulate.getCurrentXCoord();
     int coordY = emulate.getCurrentYCoord();
     emulate.emulateInteraction(buttonSeq, coords[0], coords[1]);
@@ -20,10 +18,15 @@ TEST(EMULATE_TEST, coordsTest)
 
 TEST(EMULATE_TEST, buttonTest)
 {
-    string filePath = "";
+    KeyboardMouse::ButtonsCoords message;
+    message.add_buttonpressed(true);
+    message.add_buttonpressed(false);
+    message.add_buttonpressed(false);
+    std::string filePath = "";
     bool buttonSeq[buttonQuanity] { true, false, false };
-     int coords[coordQuanity] { 100, 886 };
-    EmulateInteraction emulate(filePath, buttonSeq, coords);
+    int coords[coordQuanity] { 100, 886 };
+    ViktorDev::EmulateInteraction emulate();
+    emulate.setKeysCoords(message);
 
     EXPECT_EQ(true, emulate.getCurrentButtonState('a'));
     EXPECT_EQ(true, emulate.getCurrentButtonState('b'));

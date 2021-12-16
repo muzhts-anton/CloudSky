@@ -10,26 +10,23 @@
 #include <unistd.h>
 #include "operationEmulation.h"
 
-using namespace std;
-using namespace ViktorDev;
-
 #define die(str, ...)   \
     do {                    \
         perror(str);        \
         exit(EXIT_FAILURE); \
     } while (0)
 
-int& EmulateInteraction::getFdKeyEmulator(){
+int& ViktorDev::EmulateInteraction::getFdKeyEmulator(){
     return fdKeyEmulator;
 }
-input_event& EmulateInteraction::getKeyInputEvent(){
+input_event& ViktorDev::EmulateInteraction::getKeyInputEvent(){
     return keyInputEvent;
 }
 
-EmulateInteraction::EmulateInteraction(){
+ViktorDev::EmulateInteraction::EmulateInteraction(){
     initEmulateKbMouse();
 }
-EmulateInteraction::~EmulateInteraction()
+ViktorDev::EmulateInteraction::~EmulateInteraction()
 {
     
     if (ioctl(fd, UI_DEV_DESTROY) < 0)
@@ -63,8 +60,8 @@ void ViktorDev::EmulateInteraction::initEmulateMouse() {
     //     die("error: ioctl");
     // if (ioctl(fd, UI_SET_KEYBIT, BTN_LEFT) < 0)
     //     die("error: ioctl");
-    // if (ioctl(fd, UI_SET_KEYBIT, BTN_RIGHT) < 0)
-    //     die("error: ioctl");
+    //if (ioctl(fd, UI_SET_KEYBIT, BTN_RIGHT) < 0)
+    //    die("error: ioctl");
 
     // if (ioctl(fd, UI_SET_EVBIT, EV_REL) < 0)
     //     die("error: ioctl");
@@ -101,7 +98,7 @@ void ViktorDev::EmulateInteraction::initEmulateMouse() {
 }
 void ViktorDev::EmulateInteraction::emulateMouseMovement() {
 
-        pair<int, int> delta;
+        std::pair<int, int> delta;
         delta.first = coords.first - previousCoords.first;
         delta.second = coords.second - previousCoords.second;
 
@@ -116,7 +113,9 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
         gettimeofday(&ev.time, 0);
         ev.type = EV_KEY;
         ev.code = BTN_LEFT;
-        ev.value = mouseButtons[0].second;
+        std::cout<<"Left button bool = "<<mouseButtons[0].second<<std::endl;
+        std::cout<<"Left button bool (first) = "<<mouseButtons[0].first<<std::endl;
+        ev.value = true;//mouseButtons[0].second;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
         memset(&ev, 0, sizeof(struct input_event));
@@ -226,7 +225,7 @@ void ViktorDev::EmulateInteraction::initEmulateKeyboard(){
 
 
 
-    cout<<endl;
+    std::cout<<std::endl;
 
 }
 
@@ -241,14 +240,15 @@ void ViktorDev::EmulateInteraction::setKeysCoords(const KeyboardMouse::ButtonsCo
     for (auto it = encoding.begin(); it != encoding.end(); ++it, ++i) {
         it->second = (message.buttonpressed())[i];
     };
-    cout<<"Readed bools: ";
+    std::cout<<"Readed bools: ";
     for (auto it = encoding.cbegin(); it != encoding.cend(); ++it){
-        cout<<it->second<<' ';
+        std::cout<<it->second<<' ';
     }
-    cout<<endl;
+    std::cout<<std::endl;
     i =0;
     for(auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it,++i){
         it->second = (message.mousebuttons())[i];
+        std::cout<<"mouseButtons[i].first = "<<mouseButtons[i].second<<std::endl;
     }
 }
 void ViktorDev::EmulateInteraction::setKeyboard(int keyCode, bool isPressed){
@@ -278,7 +278,7 @@ void ViktorDev::EmulateInteraction::synKeyboard(){
 }
 
 void ViktorDev::EmulateInteraction::emulateKeyboard(){ 
-    auto setKeyboard= [&](pair<int,bool> codeValue){
+    auto setKeyboard= [&](std::pair<int,bool> codeValue){
         memset(&keyInputEvent, 0, sizeof(input_event));
         keyInputEvent.type = EV_KEY;
         keyInputEvent.code = codeValue.first;
@@ -291,7 +291,7 @@ void ViktorDev::EmulateInteraction::emulateKeyboard(){
         }
     };
 
-    for_each(encoding.begin(), encoding.end(),setKeyboard);
+    std::for_each(encoding.begin(), encoding.end(),setKeyboard);
     synKeyboard();
     sleep(1); // time between ticks
 }

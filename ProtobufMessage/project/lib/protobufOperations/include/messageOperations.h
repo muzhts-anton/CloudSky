@@ -1,11 +1,10 @@
 #ifndef MESSAGEOPERATIONS_H
 #define MESSAGEOPERATIONS_H
 
-#include "../../../../build/project/lib/protobufOperations/KeyboardMouseMessage.pb.h"
+#include "KeyboardMouseMessage.pb.h"
 #include <fstream>
 #include <iostream>
 
-using namespace std;
 constexpr int buttonQuanity = 9;
 constexpr int coordQuanity = 2;
 
@@ -20,13 +19,13 @@ public:
     KeyboardMouse::ButtonsCoords message;
     KeyboardMouse::ButtonsCoords& getMessage();
     void setMessage(bool buttonPressed[buttonQuanity], int coords[coordQuanity]);
-    InteractionOperations(KeyboardMouse::ButtonsCoords myMessage, string filePath);
-    InteractionOperations(bool buttonPressed[buttonQuanity], int coords[coordQuanity], string filePath);
+    InteractionOperations(KeyboardMouse::ButtonsCoords myMessage, std::string filePath);
+    InteractionOperations(bool buttonPressed[buttonQuanity], int coords[coordQuanity], std::string filePath);
     InteractionOperations();
     void printMessage();
 
 protected:
-    string filePath;
+    std::string filePath;
 };
 
 class SendInteraction : public InteractionOperations {

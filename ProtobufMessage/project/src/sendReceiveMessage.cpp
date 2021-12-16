@@ -1,9 +1,8 @@
-#include "../../../../build/project/lib/protobufOperations/KeyboardMouseMessage.pb.h"
-#include "../include/messageOperations.h"
+#include "KeyboardMouseMessage.pb.h"
+#include "messageOperations.h"
 #include <fstream>
 #include <iostream>
-using namespace std;
-using namespace ViktorDev;
+
 int main()
 {
     std::string filePath = "buttonsCoords.bin";
@@ -22,17 +21,17 @@ int main()
     message.add_mousebuttons(true);
     message.add_mousebuttons(true);
 
-    SendInteraction sendMessageHandler(filePath, message); 
+    ViktorDev::SendInteraction sendMessageHandler(filePath, message); 
     sendMessageHandler.printMessage();
 
     std::ofstream out;
     if (sendMessageHandler.sendIt())
-        cout << "Error with sending";
+        std::cout << "Error with sending";
     KeyboardMouse::ButtonsCoords parsedButtonsCoords;
-    ReceiveInteraction receiveMessangeHandler(filePath, parsedButtonsCoords);
+    ViktorDev::ReceiveInteraction receiveMessangeHandler(filePath, parsedButtonsCoords);
 
     if (receiveMessangeHandler.receiveIt())
-        cout << "Error with receiving";
+        std::cout << "Error with receiving";
     receiveMessangeHandler.printMessage();
     return SUCCESS;
 }
