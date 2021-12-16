@@ -27,17 +27,17 @@ public:
 
 private:
 
-    AVFormatContext * recorderFmtCtx = NULL;
-    AVInputFormat *avInputFmt = NULL;
-    AVCodecContext * avVideoCodecCtx = NULL;
-    AVCodecContext * avVideoEncoderCtx = NULL;
-    AVDictionary * avInputDeviceOptions = NULL;
-    AVCodec * avVideoDecodec = NULL;
-    AVCodec * avVideoEncodec = NULL;
-    struct SwsContext *swsVideoCtx = NULL;
-    AVPacket* avRecorderPkt = NULL;
+    AVFormatContext * recorderFmtCtx = nullptr;
+    AVInputFormat *avInputFmt = nullptr;
+    AVCodecContext * avVideoCodecCtx = nullptr;
+    AVCodecContext * avVideoEncoderCtx = nullptr;
+    AVDictionary * avInputDeviceOptions = nullptr;
+    AVCodec * avVideoDecodec = nullptr;
+    AVCodec * avVideoEncodec = nullptr;
+    struct SwsContext *swsVideoCtx = nullptr;
+    AVPacket* avRecorderPkt = nullptr;
     long int videoIndex = -1;
-    AVFrame *avYUVFrame = NULL;
+    AVFrame *avYUVFrame = nullptr;
     std::vector<uint8_t> videoBuffer;
 
     unsigned int width;

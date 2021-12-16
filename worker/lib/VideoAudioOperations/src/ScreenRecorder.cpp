@@ -13,7 +13,7 @@ ScreenRecorder::~ScreenRecorder(){
 }
 
 int ScreenRecorder::initScreenGrabber(){
-    Display* serverDisplay = XOpenDisplay(NULL); 
+    Display* serverDisplay = XOpenDisplay(nullptr); 
     Screen*  screen = DefaultScreenOfDisplay(serverDisplay); 
     height = screen->height; 
     width  = screen->width;
@@ -23,12 +23,12 @@ int ScreenRecorder::initScreenGrabber(){
     
     avVideoCodecCtx = recorderFmtCtx->streams[videoIndex]->codec;
     avVideoDecodec = avcodec_find_decoder(avVideoCodecCtx->codec_id);
-    if (avVideoDecodec == NULL) {
+    if (avVideoDecodec == nullptr) {
         std::cerr << "Codec not found.\n";
         throw std::invalid_argument("Codec not found.\n");
     }
     
-    if (avcodec_open2(avVideoCodecCtx, avVideoDecodec, NULL) < 0) {
+    if (avcodec_open2(avVideoCodecCtx, avVideoDecodec, nullptr) < 0) {
         std::cout << "Could not open decodec . \n";
         throw std::invalid_argument("Could not open decodec .");
     }	
@@ -39,7 +39,7 @@ int ScreenRecorder::initScreenGrabber(){
         avVideoCodecCtx->width,
         avVideoCodecCtx->height,
         AV_PIX_FMT_YUV420P,
-        SWS_BICUBIC, NULL, NULL, NULL);
+        SWS_BICUBIC, nullptr, nullptr, nullptr);
 
     
     avYUVFrame = av_frame_alloc();
@@ -110,7 +110,7 @@ int ScreenRecorder::captureVideoData(Worker* worker){
                     if (flag >= 0) {
                         if (got_picture > 0) {
                             size_t len = pkt->size;
-                            char* data = (char*)pkt->data;
+                            char* data = reinterpret_cast<char*>(pkt->data);
                             while(len / PACKETSIZE){
                                 worker->sendData(data, PACKETSIZE);
                                 data+= PACKETSIZE;
@@ -136,7 +136,7 @@ void ScreenRecorder::openInputDevices(){
 
     recorderFmtCtx = avformat_alloc_context();
     avInputFmt = av_find_input_format("x11grab");
-    if (avInputFmt == NULL)  {
+    if (avInputFmt == nullptr)  {
         std::cerr << "av_find_input_format not found.\n";
         throw std::invalid_argument("av_find_input_format not found.\n");
     }
