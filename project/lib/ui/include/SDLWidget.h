@@ -62,23 +62,23 @@ private:
     };
 
 private:
-    AVFormatContext* pFormatCtx = NULL;
-    AVCodecContext* pCodecCtx = NULL;
-    AVCodec* pCodec = NULL;
-    AVFrame* pFrame = NULL;
-    AVFrame* pFrameRGB = NULL;
-    size_t buffer_size;
-    AVFrame* pict = NULL;
-    struct SwsContext* swsCtx = NULL;
-    AVPacket* pPacket = NULL;
-    std::vector<uint8_t> buffer;
-    int videoStream = -1;
-    SDL_Window* screen = NULL;
-    SDL_Renderer* renderer = NULL;
-    SDL_Texture* texture = NULL;
-    SDL_Event event;
-    bool quit;
-    AVDictionary* opts = NULL;
+    AVFormatContext* _pFormatCtx = nullptr;
+    AVCodecContext* _pCodecCtx = nullptr;
+    AVCodec* _pCodec = nullptr;
+    AVFrame* _pFrame = nullptr;
+    AVFrame* _pFrameRGB = nullptr;
+    size_t _buffer_size;
+    AVFrame* _pict = nullptr;
+    struct SwsContext* _swsCtx = nullptr;
+    AVPacket* _pPacket = nullptr;
+    std::vector<uint8_t> _buffer;
+    int _videoStream = -1;
+    SDL_Window* _screen = nullptr;
+    SDL_Renderer* _renderer = nullptr;
+    SDL_Texture* _texture = nullptr;
+    SDL_Event _event;
+    bool _quit;
+    AVDictionary* _opts = nullptr;
 
     void initAndCreateWindowSDL();
     void updateScreen(); 

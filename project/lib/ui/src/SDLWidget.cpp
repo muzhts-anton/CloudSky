@@ -20,13 +20,13 @@ void MediaPlayer::start()
 
 MediaPlayer::~MediaPlayer()
 {
-    av_frame_free(&pFrame);
-    av_free(pFrame);
-    avcodec_close(pCodecCtx);
-    avformat_close_input(&pFormatCtx);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyTexture(texture);
-    SDL_DestroyWindow(screen);
+    av_frame_free(&_pFrame);
+    av_free(_pFrame);
+    avcodec_close(_pCodecCtx);
+    avformat_close_input(&_pFormatCtx);
+    SDL_DestroyRenderer(_renderer);
+    SDL_DestroyTexture(_texture);
+    SDL_DestroyWindow(_screen);
     SDL_Quit();
 }
 
@@ -35,47 +35,48 @@ void MediaPlayer::initInputStream(const std::string path)
     int ret = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
     if (ret != 0) {
         std::cerr << "[ERROR] Cannot not initialize. " << SDL_GetError() << std::endl;
+        return;
     }
     std::cout << "before\n";
-    pFormatCtx = avformat_alloc_context();
+    _pFormatCtx = avformat_alloc_context();
 
-    av_dict_set(&opts, "buffer_size", "204800", 0);
-    av_dict_set(&opts, "max_interleave_delta", "1", 0);
-    ret = avformat_open_input(&pFormatCtx, path.c_str(), NULL, &opts);
+    av_dict_set(&_opts, "buffer_size", "204800", 0);
+    av_dict_set(&_opts, "max_interleave_delta", "1", 0);
+    ret = avformat_open_input(&_pFormatCtx, path.c_str(), nullptr, &_opts);
     std::cout << "after\n";
 
     if (ret < 0) {
         std::cerr << "[ERROR] Error while open file: " << path << std::endl;
     }
 
-    ret = avformat_find_stream_info(pFormatCtx, NULL);
+    ret = avformat_find_stream_info(_pFormatCtx, nullptr);
     if (ret < 0) {
         std::cerr << "[ERROR] Could not find stream information %s\n";
     }
 
-    av_dump_format(pFormatCtx, 0, path.c_str(), 0);
-    for (int i = 0; i < (int)pFormatCtx->nb_streams; i++) {
-        if (pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
-            videoStream = i;
+    av_dump_format(_pFormatCtx, 0, path.c_str(), 0);
+    for (int i = 0; i < (int)_pFormatCtx->nb_streams; i++) {
+        if (_pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+            _videoStream = i;
             break;
         }
     }
-    if (videoStream == -1) {
+    if (_videoStream == -1) {
         std::cerr << "[ERROR] Didnt find video stream\n";
     }
 
-    pCodec = avcodec_find_decoder(pFormatCtx->streams[videoStream]->codecpar->codec_id);
-    if (pCodec == NULL) {
+    _pCodec = avcodec_find_decoder(_pFormatCtx->streams[_videoStream]->codecpar->codec_id);
+    if (_pCodec == nullptr) {
         std::cerr << "[ERROR] Unsupported codec!\n";
     }
 
-    pCodecCtx = avcodec_alloc_context3(pCodec);
-    ret = avcodec_parameters_to_context(pCodecCtx, pFormatCtx->streams[videoStream]->codecpar);
+    _pCodecCtx = avcodec_alloc_context3(_pCodec);
+    ret = avcodec_parameters_to_context(_pCodecCtx, _pFormatCtx->streams[_videoStream]->codecpar);
     if (ret != 0) {
         std::cerr << "[ERROR] Could not copy codec context\n";
     }
 
-    ret = avcodec_open2(pCodecCtx, pCodec, NULL);
+    ret = avcodec_open2(_pCodecCtx, _pCodec, nullptr);
     if (ret < 0) {
         std::cerr << "[ERROR] Could not open codec.\n";
     }
@@ -84,40 +85,41 @@ void MediaPlayer::initInputStream(const std::string path)
 void MediaPlayer::play()
 {
 
-    pFrame = av_frame_alloc();
-    if (pFrame == NULL) {
+    _pFrame = av_frame_alloc();
+    if (_pFrame == nullptr) {
         std::cerr << "[ERROR] Cannot allocate frame\n";
+        return;
     }
 
-    pict = av_frame_alloc();
+    _pict = av_frame_alloc();
 
     // pCodecCtx->width = 1024;
     // pCodecCtx->height = 768;
     initAndCreateWindowSDL();
 
-    quit = false;
-    while (av_read_frame(pFormatCtx, pPacket) >= 0 && !quit) {
-        SDL_PollEvent(&event);
-        switch (event.type) {
+    _quit = false;
+    while (av_read_frame(_pFormatCtx, _pPacket) >= 0 && !_quit) {
+        SDL_PollEvent(&_event);
+        switch (_event.type) {
         case SDL_QUIT: {
-            quit = true;
+            _quit = true;
             SDL_VideoQuit();
             SDL_Quit();
             emit finished();
             break;
         }
         case SDL_KEYDOWN: {
-            onKeyDown(event.key.keysym.sym);
+            onKeyDown(_event.key.keysym.sym);
             break;
         }
 
         case SDL_KEYUP: {
-            onKeyUp(event.key.keysym.sym);
+            onKeyUp(_event.key.keysym.sym);
             break;
         }
 
         case SDL_MOUSEBUTTONDOWN: {
-            switch (event.button.button) {
+            switch (_event.button.button) {
             case SDL_BUTTON_LEFT: {
                 onLeftMouseButtonPress();
                 break;
@@ -131,7 +133,7 @@ void MediaPlayer::play()
         }
 
         case SDL_MOUSEBUTTONUP: {
-            switch (event.button.button) {
+            switch (_event.button.button) {
             case SDL_BUTTON_LEFT: {
                 onLeftMouseButtonRelease();
                 break;
@@ -147,14 +149,14 @@ void MediaPlayer::play()
             break;
         }
 
-        if (pPacket->stream_index == videoStream) {
-            int ret = avcodec_send_packet(pCodecCtx, pPacket);
+        if (_pPacket->stream_index == _videoStream) {
+            int ret = avcodec_send_packet(_pCodecCtx, _pPacket);
             if (ret < 0) {
                 std::cerr << "[ERROR] Error sending packet for decoding.\n";
             }
 
             while (ret >= 0) {
-                ret = avcodec_receive_frame(pCodecCtx, pFrame);
+                ret = avcodec_receive_frame(_pCodecCtx, _pFrame);
 
                 if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
                     break;
@@ -163,28 +165,28 @@ void MediaPlayer::play()
                 }
 
                 sws_scale(
-                    swsCtx,
-                    (uint8_t const* const*)pFrame->data,
-                    pFrame->linesize,
+                    _swsCtx,
+                    const_cast<uint8_t const* const*>(_pFrame->data),
+                    _pFrame->linesize,
                     0,
-                    pCodecCtx->height,
-                    pict->data,
-                    pict->linesize);
+                    _pCodecCtx->height,
+                    _pict->data,
+                    _pict->linesize);
 
                 updateScreen();
                 
                 
             }
         }
-        av_packet_unref(pPacket);
+        av_packet_unref(_pPacket);
     }
 
-    av_frame_free(&pict);
-    av_free(pict);
+    av_frame_free(&_pict);
+    av_free(_pict);
 }
 
 void MediaPlayer::initAndCreateWindowSDL(){
-    screen = SDL_CreateWindow(
+    _screen = SDL_CreateWindow(
         "SDL Video Player",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
@@ -192,89 +194,90 @@ void MediaPlayer::initAndCreateWindowSDL(){
         768,
         SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
 
-    if (!screen) {
+    if (!_screen) {
         std::cerr << "[ERROR] Cannot set video mode\n";
+        return;
     }
 
     SDL_GL_SetSwapInterval(0);
 
-    renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
+    _renderer = SDL_CreateRenderer(_screen, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
 
-    texture = SDL_CreateTexture(
-        renderer,
+    _texture = SDL_CreateTexture(
+        _renderer,
         SDL_PIXELFORMAT_YV12,
         SDL_TEXTUREACCESS_STREAMING,
-        pCodecCtx->width,
-        pCodecCtx->height);
+        _pCodecCtx->width,
+        _pCodecCtx->height);
 
-    pPacket = av_packet_alloc();
-    if (pPacket == NULL) {
+    _pPacket = av_packet_alloc();
+    if (_pPacket == nullptr) {
         std::cerr << "[ERROR] Could not alloc packet,\n";
     }
 
-    swsCtx = sws_getContext(
-        pCodecCtx->width,
-        pCodecCtx->height,
-        pCodecCtx->pix_fmt,
-        pCodecCtx->width,
-        pCodecCtx->height,
+    _swsCtx = sws_getContext(
+        _pCodecCtx->width,
+        _pCodecCtx->height,
+        _pCodecCtx->pix_fmt,
+        _pCodecCtx->width,
+        _pCodecCtx->height,
         AV_PIX_FMT_YUV420P,
         SWS_BILINEAR,
-        NULL,
-        NULL,
-        NULL);
+        nullptr,
+        nullptr,
+        nullptr);
 
-    buffer_size = av_image_get_buffer_size(AV_PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height, 32);
-    buffer.reserve(buffer_size * sizeof(uint8_t));
+    _buffer_size = av_image_get_buffer_size(AV_PIX_FMT_YUV420P, _pCodecCtx->width, _pCodecCtx->height, 32);
+    _buffer.reserve(_buffer_size * sizeof(uint8_t));
 
     av_image_fill_arrays(
-        pict->data,
-        pict->linesize,
-        buffer.data(),
+        _pict->data,
+        _pict->linesize,
+        _buffer.data(),
         AV_PIX_FMT_YUV420P,
-        pCodecCtx->width,
-        pCodecCtx->height,
+        _pCodecCtx->width,
+        _pCodecCtx->height,
         32);
 }
 
 void MediaPlayer::updateScreen(){
-    double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
+    double fps = av_q2d(_pFormatCtx->streams[_videoStream]->r_frame_rate);
     double sleep_time = 1.0/(double)fps;
     SDL_Delay((1000 * sleep_time));
     SDL_Rect rect;
                 rect.x = 0;
                 rect.y = 0;
-                rect.w = pCodecCtx->width;
-                rect.h = pCodecCtx->height;
+                rect.w = _pCodecCtx->width;
+                rect.h = _pCodecCtx->height;
                 // printf(
                 //     "Frame %c (%d) pts %ld dts %ld key_frame %d [coded_picture_number %d, display_picture_number %d, %dx%d]\n",
                 //     av_get_picture_type_char(pFrame->pict_type),
-                //     pCodecCtx->frame_number,
+                //     _pCodecCtx->frame_number,
                 //     pFrame->pts,
                 //     pFrame->pkt_dts,
                 //     pFrame->key_frame,
                 //     pFrame->coded_picture_number,
                 //     pFrame->display_picture_number,
-                //     pCodecCtx->width,
-                //     pCodecCtx->height
+                //     _pCodecCtx->width,
+                //     _pCodecCtx->height
                 // );
                 SDL_UpdateYUVTexture(
-                    texture,
+                    _texture,
                     &rect,
-                    pict->data[0],
-                    pict->linesize[0],
-                    pict->data[1],
-                    pict->linesize[1],
-                    pict->data[2],
-                    pict->linesize[2]);
-                SDL_RenderClear(renderer);
+                    _pict->data[0],
+                    _pict->linesize[0],
+                    _pict->data[1],
+                    _pict->linesize[1],
+                    _pict->data[2],
+                    _pict->linesize[2]);
+                SDL_RenderClear(_renderer);
                 SDL_RenderCopy(
-                    renderer,
-                    texture,
-                    NULL,
-                    NULL);
+                    _renderer,
+                    _texture,
+                    nullptr,
+                    nullptr);
                 SDL_ShowCursor(SDL_ENABLE);
-                SDL_RenderPresent(renderer);
+                SDL_RenderPresent(_renderer);
 }
 
 // tracing
