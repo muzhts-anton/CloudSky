@@ -16,21 +16,21 @@
 #include <unistd.h>
 
 
-Server::Server(const std::string& address, const std::string& port, std::size_t threadPoolSize):
+Server::Server(const std::string& address, const std::string& initPort, std::size_t threadPoolSize):
     serverThreadPoolSize(threadPoolSize),
     serverSignals(serverContext),
     serverTCPAcceptor(serverContext),
     newConnection()
 {
-    this->port = std::stoi(port);
-    std::cout << this->port << "and " << htons(this->port) << std::endl;
-    workerPort = this->port + 1;
+    port = std::stoi(initPort);
+    std::cout << port << "and " << htons(port) << std::endl;
+    workerPort = port + 1;
     serverSignals.add(SIGINT);
     serverSignals.add(SIGTERM);
     serverSignals.async_wait(boost::bind(&Server::handleStop, this));
     
     boost::asio::ip::tcp::resolver resolver(serverContext);
-    boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(address, port).begin();
+    boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(address, initPort).begin();
     serverTCPAcceptor.open(endpoint.protocol());
     serverTCPAcceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
     serverTCPAcceptor.bind(endpoint);
@@ -41,10 +41,10 @@ Server::Server(const std::string& address, const std::string& port, std::size_t 
 
 void Server::run()
 {
-    std::vector<boost::shared_ptr<std::thread> > threads;
+    std::vector<std::shared_ptr<std::thread> > threads;
     for (std::size_t i = 0; i < serverThreadPoolSize; ++i)
     {
-        boost::shared_ptr<std::thread> thread(new std::thread(
+        std::shared_ptr<std::thread> thread(new std::thread(
                 boost::bind(&boost::asio::io_context::run, &serverContext)));
         threads.push_back(thread);
     }

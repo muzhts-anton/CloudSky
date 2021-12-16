@@ -37,6 +37,7 @@ void createFileWithList(std::vector<std::string> *filesToSend)
     std::string filename = "fileToSendWithList.bin";
     fileWithList.open(filename, std::ios::out);
     std::list<int> myList = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 6, 7 };
+    // создаём файл, записывая в него данные при помощи std::list
     myList.sort();
     myList.unique();
     for (int number : myList)
