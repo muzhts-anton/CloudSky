@@ -76,6 +76,7 @@ int ViktorDev::SendInteraction::sendIt()
         std::cout << "ERRORSEND IT !" << std::endl;
         return errorSerializeMessage;
     };
+    outAddit.close();
     return SUCCESS;
 }
 

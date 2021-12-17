@@ -32,13 +32,14 @@ ViktorDev::EmulateInteraction::~EmulateInteraction()
     if (ioctl(fd, UI_DEV_DESTROY) < 0)
         die("error: cannot destroy uinput device ");
     close(fd);
+    close(fdKeyEmulator);
     //fclose(sourceFile);
 }
 
 void ViktorDev::EmulateInteraction::initEmulateMouse() {
     coords.first = coords.second = 0;
     previousCoords.first = previousCoords.second = 0;
-    mouseButtons.reserve(2);
+    mouseButtons.resize(2);
     for(auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it){
         it->second = 0;
     }
@@ -64,7 +65,7 @@ void ViktorDev::EmulateInteraction::initEmulateMouse() {
     //    die("error: ioctl");
 
     // if (ioctl(fd, UI_SET_EVBIT, EV_REL) < 0)
-    //     die("error: ioctl");
+    //     die("error: ioctl");d
     // if (ioctl(fd, UI_SET_RELBIT, REL_X) < 0)
     //     die("error: ioctl");
     // if (ioctl(fd, UI_SET_RELBIT, REL_Y) < 0)
@@ -109,15 +110,10 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
         //     ev.code = BTN_LEFT;
         //     ev.value = it->second;
         // }
-        memset(&ev, 0, sizeof(struct input_event));
-        gettimeofday(&ev.time, 0);
-        ev.type = EV_KEY;
-        ev.code = BTN_LEFT;
-        std::cout<<"Left button bool = "<<mouseButtons[0].second<<std::endl;
-        std::cout<<"Left button bool (first) = "<<mouseButtons[0].first<<std::endl;
-        ev.value = true;//mouseButtons[0].second;
-        if (write(fd, &ev, sizeof(struct input_event)) < 0)
-            die("error: write");
+        // int i =0;
+        // for(auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it,++i){
+        //     std::cout<<"mouseButtons[i].first = "<<mouseButtons[i].second<<std::endl;
+        // }
         memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_REL;
         ev.code = REL_X;
@@ -133,8 +129,17 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
             die("error: write");
 
         memset(&ev, 0, sizeof(struct input_event));
+        gettimeofday(&ev.time, 0);
+        ev.type = EV_KEY;
+        ev.code = BTN_LEFT;
+        std::cout<<"mouseButtons[0].second = "<<mouseButtons[0].second<<std::endl;
+        ev.value = mouseButtons[0].second;
+        if (write(fd, &ev, sizeof(struct input_event)) < 0)
+            die("error: write");
+        memset(&ev, 0, sizeof(struct input_event));
         ev.type = EV_KEY;
         ev.code = BTN_RIGHT;
+        std::cout<<"mouseButtons[0].second = "<<mouseButtons[1].second<<std::endl;
         ev.value = mouseButtons[1].second;
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
@@ -222,9 +227,6 @@ void ViktorDev::EmulateInteraction::initEmulateKeyboard(){
     }
     sleep (1);
     // now fdKeyEmulator represents the end-point file descriptor of the new input device. 
-
-
-
     std::cout<<std::endl;
 
 }
@@ -246,6 +248,7 @@ void ViktorDev::EmulateInteraction::setKeysCoords(const KeyboardMouse::ButtonsCo
     }
     std::cout<<std::endl;
     i =0;
+    std::cout<<"IN setKeysCoords"<<std::endl;
     for(auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it,++i){
         it->second = (message.mousebuttons())[i];
         std::cout<<"mouseButtons[i].first = "<<mouseButtons[i].second<<std::endl;
