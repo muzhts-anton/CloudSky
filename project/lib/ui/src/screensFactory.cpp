@@ -4,6 +4,7 @@
 #include "baseFragment.h"
 #include "gameFragment.h"
 #include "mainFragment.h"
+#include "openGameFragment.h"
 #include "regFragment.h"
 #include "startFragment.h"
 
@@ -22,6 +23,8 @@ fragment::BaseFragment* ScreensFactory::create(screens::ScreenNames tag)
         return new fragment::RegFragment;
     case screens::ScreenNames::ADDGAME:
         return new fragment::AddGameFragment;
+    case screens::ScreenNames::OPENGAME:
+        return new fragment::OpenGameFragment;
     default:
         return nullptr;
     }

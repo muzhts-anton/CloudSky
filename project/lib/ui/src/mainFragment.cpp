@@ -62,14 +62,14 @@ MainFragment::~MainFragment()
     delete _watcher;
     delete _openGameBut;
     delete _settingsBut;
-//  delete _addGameBut;
+    delete _addGameBut;
     delete _logOutBut;
 }
 
 // slots
 void MainFragment::onGame()
 {
-    emit navigateTo(screens::ScreenNames::GAME);
+    emit navigateTo(screens::ScreenNames::OPENGAME);
 }
 
 void MainFragment::onAddGame()
