@@ -6,21 +6,21 @@
 int main(int argc, char** argv)
 {
     KeyboardMouse::ButtonsCoords message;
-    message.add_buttonpressed(false);
-    message.add_buttonpressed(false);
-    message.add_buttonpressed(true);
-    message.add_buttonpressed(true);
-    message.add_buttonpressed(false);
-    message.add_buttonpressed(false);
-    message.add_buttonpressed(false);
-    message.add_buttonpressed(false);
-    message.add_buttonpressed(false);
+    bool pressedButton[buttonQuanity]{false,false,true,true,false,false,false,false,false};
+    for(int i = 0; i < buttonQuanity; ++i){
+        message.add_buttonpressed(pressedButton[i]);
+    };
     message.set_xcoord(-50);
     message.set_ycoord(-100);
     message.add_mousebuttons(false);
     message.add_mousebuttons(true);
     
-    ViktorDev::EmulateInteraction emulation;
-    emulation.setKeysCoords(message);
-    emulation.emulateKbMouse();
+    ViktorDev::EmelationKeyBoard kbEmulation;
+    kbEmulation.setKeyboard(message);
+    kbEmulation.emulateKeyboard();
+
+    ViktorDev::EmulationMouse mouseEmulation;
+    mouseEmulation.setCoordsButtons(message);
+    mouseEmulation.emulateMouse();
+
 }
