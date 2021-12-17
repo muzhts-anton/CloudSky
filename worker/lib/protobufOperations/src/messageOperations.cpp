@@ -42,6 +42,7 @@ void InteractionOperations::printMessage()
     cout << endl;
     cout << "xCoord = " << getMessage().xcoord() << endl;
     cout << "yCoord = " << getMessage().ycoord() << endl;
+    cout << "mouseButtons = " << ((getMessage()).mousebuttons())[0] <<" " << ((getMessage()).mousebuttons())[1]<< endl;
 }
 
 SendInteraction::SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage)

@@ -4,7 +4,7 @@
 #include "operationEmulation.h"
 
 ScreenRecorder::ScreenRecorder()
-	: output_filename_("udp://10.147.18.164:8080") {
+	: output_filename_("udp://10.147.18.218:8080") {
     AVCodecContext video_encoder_codec_context;
 
 	video_encoder_codec_context.bit_rate = 400000;
@@ -44,8 +44,8 @@ int ScreenRecorder::InitWriter(){
 	
 	AVDictionary* options = nullptr;
 	// av_dict_set(&options, "framerate", "60", 0);
-	// av_dict_set(&options, "probesize", "32", 0);
-	// av_dict_set(&options, "rtbufsize", "32", 0);
+	av_dict_set(&options, "probesize", "32", 0);
+	av_dict_set(&options, "rtbufsize", "32", 0);
 	av_dict_set(&options,"preset", "fast",0);
 	av_dict_set(&options,"tune", "zerolatency", 0);
 
@@ -183,33 +183,48 @@ ScreenRecorder::~ScreenRecorder() {
 void ScreenRecorder::Start(Worker *initWorker) {
 	isRecord = true;
 	worker=initWorker;
-	DecodeVideo();
+	worker->start();
+	EmulateClientInput();
+	//threads.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
+	//threads.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
 }
 
 void ScreenRecorder::Stop() {
 	isRecord = false;
+	for (auto i = threads.begin(); i != threads.end(); ++i) {
+        if ((*i)->joinable()) {
+            (*i)->join();
+        }
+    }
 }
 
-void ScreenRecorder::DecodeVideo() {
-	int frame_number = 0;
-	std::string filename = "receivedButtonsCoords.bin";
-    KeyboardMouse::ButtonsCoords ReceiveMessage;
+void ScreenRecorder::EmulateClientInput()
+{
+	KeyboardMouse::ButtonsCoords ReceiveMessage;
     ViktorDev::EmulateInteraction emulation;
-    emulation.initEmulateKbMouse();
-	worker->start();
+    //emulation.initEmulateKbMouse();
+    std::string filename = "receivedButtonsCoords.bin";
+    //double fps = 100;
 
-	while (isRecord ) {
-		std::cout << "Отлавливаем ...\n";
-		worker->getInteraction(filename);
-		std::cout << "???\n";
+    while (true)
+    {
+        worker->getInteraction(filename);
         ViktorDev::ReceiveInteraction ReceiveM(filename, ReceiveMessage);
-
         if (ReceiveM.receiveIt())
             cout << "Error wint receiving";
         ReceiveM.printMessage();
         emulation.setKeysCoords(ReceiveM.getMessage());
         emulation.emulateKbMouse();
+		std::cout << "Законч принимать\n";
+        //usleep(1000.0 / fps);
+    }
+}
 
+void ScreenRecorder::DecodeVideo() {
+	int frame_number = 0;
+
+	while (isRecord ) {
+		
 		AVPacket* input_packet = av_packet_alloc();
 		av_read_frame(input_video_format_context_, input_packet);
 		int ret;
@@ -266,7 +281,6 @@ void ScreenRecorder::ScaleVideo(AVFrame* decoded_frame) {
 	EncodeVideo(scaled_frame);
 	av_frame_free(&decoded_frame);
 	video_outbuf.clear();
-		std::cout << "return from scaled\n";
 	return;
 }
 

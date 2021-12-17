@@ -13,6 +13,10 @@ extern "C" {
 #include <libswresample/swresample.h>
 }
 
+#include <list>
+#include <thread>
+#include <memory>
+
 #include <iostream>
 #include <vector>
 #include "Worker.h"
@@ -32,6 +36,8 @@ private:
 	int InitVideo(AVCodecContext* video_encoder_codec_context);
 	
 	int InitWriter();
+
+	void EmulateClientInput();
 
 	void DecodeVideo();
 	void ScaleVideo(AVFrame* decoded_frame);
@@ -62,7 +68,7 @@ private:
 	bool isRecord = false;
 
 	Worker *worker = nullptr;
-	
+	std::list<std::shared_ptr<std::thread>> threads;
 };
 
 #endif

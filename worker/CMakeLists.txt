@@ -21,9 +21,9 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(${GTEST_INCLUDE_DIRS}/inc/)
 
+add_subdirectory(lib/emulation)
 add_subdirectory(lib/workerConnection)
 add_subdirectory(lib/protobufOperations)
-add_subdirectory(lib/emulation)
 add_subdirectory(lib/videoAudioOperations)
 
 add_executable(CloudSky_MyWorker src/main.cpp)

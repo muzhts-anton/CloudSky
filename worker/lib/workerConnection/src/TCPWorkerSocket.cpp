@@ -101,7 +101,6 @@ void TCPWorkerSocket::acceptConnection()
 
 void TCPWorkerSocket::receiveFile(std::string filename)
 {
-    std::cout << "!!!!!!!!!!!!!!\n";
     file.open(filename, std::ios::out | std::ios::trunc | std::ios::binary);
     if (file.is_open()) {
         if (debug)

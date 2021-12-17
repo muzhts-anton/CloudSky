@@ -42,9 +42,6 @@ void Worker::start()
 void Worker::getInteraction(std::string filename)
 {
     try {
-        std::cout << "????????????????\n";
-        if (TCPSocket == nullptr)
-            std::cout << "HERE\n";
         TCPSocket->receiveFile(filename);
     }
     catch (const std::invalid_argument& e) {

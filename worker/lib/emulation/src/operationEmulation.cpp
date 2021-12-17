@@ -41,8 +41,8 @@ EmulateInteraction::~EmulateInteraction()
 void ViktorDev::EmulateInteraction::initEmulateMouse() {
     coords.first = coords.second = 0;
     previousCoords.first = previousCoords.second = 0;
-    mouseButtons.reserve(2);
-    for(auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it){
+    mouseButtons.resize(2);
+    for (auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it) {
         it->second = 0;
     }
     fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
@@ -243,15 +243,20 @@ void ViktorDev::EmulateInteraction::setKeysCoords(const KeyboardMouse::ButtonsCo
     for (auto it = encoding.begin(); it != encoding.end(); ++it, ++i) {
         it->second = (message.buttonpressed())[i];
     };
-    cout<<"Readed bools: ";
+    cout<<"Readed bools (size = " << encoding.size() << "): ";
+    cout << "1\n";
     for (auto it = encoding.cbegin(); it != encoding.cend(); ++it){
         cout<<it->second<<' ';
     }
+    cout << "2\n";
     cout<<endl;
     i =0;
+    cout << mouseButtons.size() << " " << (message.mousebuttons()).size() << "\n";
     for(auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it,++i){
+        cout << i << "\n";
         it->second = (message.mousebuttons())[i];
     }
+    cout << "3\n";
 }
 void ViktorDev::EmulateInteraction::setKeyboard(int keyCode, bool isPressed){
     memset(&keyInputEvent, 0, sizeof(input_event));
@@ -295,7 +300,6 @@ void ViktorDev::EmulateInteraction::emulateKeyboard(){
 
     for_each(encoding.begin(), encoding.end(),setKeyboard);
     synKeyboard();
-    sleep(1); // time between ticks
 }
 void ViktorDev::EmulateInteraction::emulateKbMouse(){
     emulateKeyboard();
