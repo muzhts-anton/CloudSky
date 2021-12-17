@@ -1,6 +1,5 @@
 #include "messageOperations.h"
 
-
 KeyboardMouse::ButtonsCoords& ViktorDev::InteractionOperations::getMessage()
 {
     return message;
@@ -85,7 +84,7 @@ ViktorDev::ReceiveInteraction::ReceiveInteraction(std::string filePath, Keyboard
 {
     in.open(filePath, std::ios_base::binary);
     if (!in) {
-        std::cout<<"errorWithFile in ReceiveInteraction constructor";
+        std::cout << "errorWithFile in ReceiveInteraction constructor";
         assert(errorWithFile);
         exit(errorWithFile);
         in.close();

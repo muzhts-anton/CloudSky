@@ -5,32 +5,48 @@
 
 TEST(EMULATE_TEST, coordsTest)
 {
-    std::string filePath = "";
-    bool buttonSeq[buttonQuanity] { true, false, false };
-    int coords[coordQuanity] { 2, 45 };
-    ViktorDev::EmulateInteraction emulate(filePath, buttonSeq, coords);
-    int coordX = emulate.getCurrentXCoord();
-    int coordY = emulate.getCurrentYCoord();
-    emulate.emulateInteraction(buttonSeq, coords[0], coords[1]);
-    EXPECT_EQ(coordX, emulate.getCurrentXCoord());
-    EXPECT_EQ(coordY, emulate.getCurrentYCoord());
+    KeyboardMouse::ButtonsCoords message;
+    bool pressedButton[buttonQuanity] { false, false, true, true, false, false, false, false, false };
+    for (int i = 0; i < buttonQuanity; ++i) {
+        message.add_buttonpressed(pressedButton[i]);
+    };
+    message.set_xcoord(-50);
+    message.set_ycoord(-100);
+    message.add_mousebuttons(false);
+    message.add_mousebuttons(true);
+    ViktorDev::EmulationMouse mouseEmulation;
+    mouseEmulation.setCoordsButtons(message);
+    int coordX = mouseEmulation.getCurrentXCoord();
+    int coordY = mouseEmulation.getCurrentYCoord();
+    mouseEmulation.emulateMouse();
+    EXPECT_EQ(coordX, mouseEmulation.getCurrentXCoord());
+    EXPECT_EQ(coordY, mouseEmulation.getCurrentYCoord());
 }
 
 TEST(EMULATE_TEST, buttonTest)
 {
     KeyboardMouse::ButtonsCoords message;
-    message.add_buttonpressed(true);
-    message.add_buttonpressed(false);
-    message.add_buttonpressed(false);
-    std::string filePath = "";
-    bool buttonSeq[buttonQuanity] { true, false, false };
-    int coords[coordQuanity] { 100, 886 };
-    ViktorDev::EmulateInteraction emulate();
-    emulate.setKeysCoords(message);
+    bool pressedButton[buttonQuanity] { false, false, true, true, false, false, false, false, false };
+    for (int i = 0; i < buttonQuanity; ++i) {
+        message.add_buttonpressed(pressedButton[i]);
+    };
 
-    EXPECT_EQ(true, emulate.getCurrentButtonState('a'));
-    EXPECT_EQ(true, emulate.getCurrentButtonState('b'));
-    EXPECT_EQ(true, emulate.getCurrentButtonState('c'));
+    message.set_xcoord(-50);
+    message.set_ycoord(-100);
+    message.add_mousebuttons(false);
+    message.add_mousebuttons(true);
+
+    ViktorDev::EmelationKeyBoard kbEmulation;
+    kbEmulation.setKeyboard(message);
+    kbEmulation.emulateKeyboard();
+
+    ViktorDev::EmulationMouse mouseEmulation;
+    mouseEmulation.setCoordsButtons(message);
+    mouseEmulation.emulateMouse();
+
+    EXPECT_EQ(true, kbEmulation.getCurrentButtonState('a'));
+    EXPECT_EQ(true, kbEmulation.getCurrentButtonState('b'));
+    EXPECT_EQ(true, kbEmulation.getCurrentButtonState('c'));
 }
 
 int main(int argc, char** argv)

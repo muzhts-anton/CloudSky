@@ -11,6 +11,7 @@ constexpr int ioDeviceInitSleep = 150000;
 constexpr int uidevIdVendor = 0x1;
 constexpr int uidevIdProduct = 0x1;
 constexpr int uidevIdVersion = 1;
-constexpr char *uinputPath = "/dev/uinput";
+constexpr int uinputPathLength = 12;
+constexpr char uinputPath[uinputPathLength] = "/dev/uinput";
 
-#endif  // emulationConstants_H
+#endif // emulationConstants_H

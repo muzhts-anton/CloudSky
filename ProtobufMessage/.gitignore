@@ -3,7 +3,6 @@ build
 SendReceiveKeybMess
 SendReceiveKeybMess1
 
-#ProtobufMessage/clang-format.clang
 clang-format.clang
 
 ButtonsCoords1.bin

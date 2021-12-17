@@ -3,14 +3,11 @@ project(InteractionMessage)
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDART 17)
 
-add_compile_options(-Wall -Wpedantic -g3) #  -Werror
-#add_compile_options(-lpthread) #-lpthread
-#add_link_options(-lpthread)
+add_compile_options(-Wall -Wpedantic -g3 -Werror)
 
 
 
 find_package(Protobuf REQUIRED)
-#find_package(Threads)
 add_subdirectory(project/lib/protobufOperations)
 add_subdirectory(project/lib/emulation)
 

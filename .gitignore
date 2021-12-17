@@ -48,3 +48,5 @@ ButtonsCoords1.bin
 ProtobufMessage/project/build.sh
 ProtobufMessage/ButtonsCoords1.bin
 ProtobufMessage/readme.txt
+ProtobufMessage/project/src/sendReceiveMessage.cpp
+ProtobufMessage/project/src/emulate.cpp

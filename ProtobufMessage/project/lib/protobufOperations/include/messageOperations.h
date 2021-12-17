@@ -6,7 +6,6 @@
 #include <fstream>
 #include <iostream>
 
-
 namespace ViktorDev {
 class InteractionOperations {
 public:
