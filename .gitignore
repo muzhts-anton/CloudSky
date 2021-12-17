@@ -30,3 +30,17 @@
 *.exe
 *.out
 *.app
+
+# Environment
+build
+project/include/message_operations.h
+project/src/buttons_coords.bin 
+.vscode
+send_receive_keyb_m
+send_receive_keyb_m1
+project/src/emulate.cpp
+project/src/mouse_move.cpp
+project/src/mouse_move
+*.swp
+buttons_coords.bin
+*.user
