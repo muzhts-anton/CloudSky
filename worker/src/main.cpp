@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     KeyboardMouse::ButtonsCoords ReceiveMessage;
     EmulateInteraction emulation;
     ScreenRecorder recorder;
-    recorder.initScreenGrabber();
+    
     emulation.initEmulateKbMouse();
     worker.start();
     double fps = 0.5;
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     while (true)
     {
         std::cout << "Отлавливаем...\n";
-        recorder.captureVideoData(&worker);
+        recorder.Start();
         std::cout << "Отловили?\n";
         worker.getInteraction(filename);
         ReceiveInteraction ReceiveM(filename, ReceiveMessage);
@@ -36,5 +36,6 @@ int main(int argc, char *argv[])
         //worker.sendFile(videoFilename);
         usleep(1000.0 / fps);
     }
+    recorder.Stop();
     return 0;
 }

@@ -1,189 +1,301 @@
 #include "ScreenRecorder.h"
-#include <fstream>
-#include <istream>
 
+ScreenRecorder::ScreenRecorder()
+	: output_filename_("udp://127.0.0.1:8080") {
+    AVCodecContext video_encoder_codec_context;
 
-ScreenRecorder::ScreenRecorder(){
-    avdevice_register_all();
-    std::cout << "[LOG] : All required functions have been registered!";
+	video_encoder_codec_context.bit_rate = 400000;
+	video_encoder_codec_context.width = 1920;
+	video_encoder_codec_context.height = 950;
+	video_encoder_codec_context.pix_fmt = AV_PIX_FMT_YUV420P;
+	video_encoder_codec_context.time_base.num = 1;
+	video_encoder_codec_context.time_base.den = 30;
+	video_encoder_codec_context.framerate.num = 30;
+	video_encoder_codec_context.framerate.den = 1;
+	video_encoder_codec_context.gop_size = 3;
+	video_encoder_codec_context.max_b_frames = 10;
+	InitVideo(&video_encoder_codec_context);
+	InitWriter();
 }
-
-ScreenRecorder::~ScreenRecorder(){
-    close();
-}
-
-int ScreenRecorder::initScreenGrabber(){
-    Display* serverDisplay = XOpenDisplay(nullptr); 
-    Screen*  screen = DefaultScreenOfDisplay(serverDisplay); 
-    height = screen->height; 
-    width  = screen->width;
-    XCloseDisplay(serverDisplay);
-
-    openInputDevices();
-    
-    avVideoCodecCtx = recorderFmtCtx->streams[videoIndex]->codec;
-    avVideoDecodec = avcodec_find_decoder(avVideoCodecCtx->codec_id);
-    if (avVideoDecodec == nullptr) {
-        std::cerr << "Codec not found.\n";
-        throw std::invalid_argument("Codec not found.\n");
-    }
-    
-    if (avcodec_open2(avVideoCodecCtx, avVideoDecodec, nullptr) < 0) {
-        std::cout << "Could not open decodec . \n";
-        throw std::invalid_argument("Could not open decodec .");
-    }	
-
-    swsVideoCtx = sws_getContext(avVideoCodecCtx->width,
-        avVideoCodecCtx->height,
-        avVideoCodecCtx->pix_fmt,
-        avVideoCodecCtx->width,
-        avVideoCodecCtx->height,
-        AV_PIX_FMT_YUV420P,
-        SWS_BICUBIC, nullptr, nullptr, nullptr);
-
-    
-    avYUVFrame = av_frame_alloc();
-    videoBuffer.reserve(av_image_get_buffer_size(AV_PIX_FMT_YUV420P, avVideoCodecCtx->width, avVideoCodecCtx->height,1));
-    av_image_fill_arrays(avYUVFrame->data, avYUVFrame->linesize, videoBuffer.data(), AV_PIX_FMT_YUV420P, avVideoCodecCtx->width, avVideoCodecCtx->height,32); 
-
-    avYUVFrame->width = avVideoCodecCtx->width;
-    avYUVFrame->height = avVideoCodecCtx->height;
-    avYUVFrame->format = AV_PIX_FMT_YUV420P;
-
-    avVideoEncodec = avcodec_find_encoder(AV_CODEC_ID_H264);
-    if(!avVideoEncodec) {
-      std::cerr << "h264 codec not found\n";
-      throw std::invalid_argument("h264 codec not found");
-    }
-    
-    avVideoEncoderCtx = avcodec_alloc_context3(avVideoEncodec);
-    
-    avVideoEncoderCtx->codec_id = AV_CODEC_ID_H264;
-    avVideoEncoderCtx->codec_type = AVMEDIA_TYPE_VIDEO;
-    avVideoEncoderCtx->pix_fmt = AV_PIX_FMT_YUV420P;
-    avVideoEncoderCtx->width = width;
-    avVideoEncoderCtx->height = height;
-    avVideoEncoderCtx->time_base.num = 1;
-    avVideoEncoderCtx->time_base.den = 60;
-    avVideoEncoderCtx->bit_rate = 128*1024*8;
-    avVideoEncoderCtx->gop_size = 250;
-    avVideoEncoderCtx->qmin = 1;
-    avVideoEncoderCtx->qmax = 10;
-
-    AVDictionary *param = 0;
-    av_dict_set(&param, "rtbufsize ", "102400",0);
-    av_dict_set(&param, "preset", "superfast", 0);
-    av_dict_set(&param, "tune", "zerolatency", 0);
-
-    if (avcodec_open2(avVideoEncoderCtx, avVideoEncodec, &param) < 0)  {
-        std::cout << "Failed to open video encoder!\n";
-        return 0;
-    }
-    return 0;
-}
-
-int ScreenRecorder::captureVideoData(Worker* worker){
-
-    int got_picture = 0;
-    int flag = 0;
-    std::vector<uint8_t>  outBuf;;
-    
-    outBuf.reserve(width * height * 3);
-    
-    AVFrame *avOutFrame;
-    avOutFrame = av_frame_alloc();
-    av_image_fill_arrays(avOutFrame->data, avOutFrame->linesize, outBuf.data(), avVideoEncoderCtx->pix_fmt, avVideoEncoderCtx->width, avVideoEncoderCtx->height,32);
-
-    avRecorderPkt = av_packet_alloc();
-    AVPacket* pkt = av_packet_alloc();  
-    while (worker) {
-        if (av_read_frame(recorderFmtCtx, avRecorderPkt) >= 0)  {
-            if (avRecorderPkt->stream_index == videoIndex) {
-                flag = avcodec_decode_video2(avVideoCodecCtx, avOutFrame, &got_picture, avRecorderPkt);
-                if (flag < 0) {
-                    break;
-                }
-                if (got_picture > 0) {
-                    sws_scale(swsVideoCtx, avOutFrame->data, avOutFrame->linesize, 0, avVideoEncoderCtx->height, avYUVFrame->data, avYUVFrame->linesize);
-                    got_picture = 0;
-                    flag = avcodec_encode_video2(avVideoEncoderCtx, pkt, avYUVFrame, &got_picture);
-                    if (flag >= 0) {
-                        if (got_picture > 0) {
-                            size_t len = pkt->size;
-                            char* data = reinterpret_cast<char*>(pkt->data);
-                            while(len / PACKETSIZE){
-                                worker->sendData(data, PACKETSIZE);
-                                data+= PACKETSIZE;
-                                len-=PACKETSIZE;
-                            }
-                            if(len>0){
-                                worker->sendData(data, len);
-                            }
-                        }
-                    }
-                    av_packet_unref(pkt);
-                    av_packet_unref(avRecorderPkt);
-                }
-            }
-        }
-
-    }
-    
-    return 0;
-}
-
-void ScreenRecorder::openInputDevices(){
-
-    recorderFmtCtx = avformat_alloc_context();
-    avInputFmt = av_find_input_format("x11grab");
-    if (avInputFmt == nullptr)  {
-        std::cerr << "av_find_input_format not found.\n";
-        throw std::invalid_argument("av_find_input_format not found.\n");
-    }
-
-    if(avformat_open_input(&recorderFmtCtx,":0.0", avInputFmt, &avInputDeviceOptions) !=0 ) {
-        std::cerr << "Couldn't open input stream.\n";
-        throw std::invalid_argument("Couldn't open input stream.\n");
-    }
-
-    if (avformat_find_stream_info(recorderFmtCtx, &avInputDeviceOptions) < 0) {
-        std::cerr << "Couldn't find stream information.\n";
-        throw std::invalid_argument("Couldn't find stream information.\n");
-    }
+int ScreenRecorder::InitWriter(){
 	
-	for (unsigned int i=0; i < recorderFmtCtx->nb_streams; ++i) {
-        if (recorderFmtCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
-            videoIndex = i;
-            break;
-        }
-    }
+	avformat_alloc_output_context2(&output_format_context_, nullptr, "h264", output_filename_.c_str());
+	if (!output_format_context_)
+	{
+		std::cout << "\nerror in allocating av format output context";
+		return 1;
+	}
+	out_video_stream_ = avformat_new_stream(output_format_context_, nullptr);
+	out_video_stream_->id = output_format_context_->nb_streams - 1;
+	out_video_stream_->time_base = video_encoder_codec_context_->time_base;
+	int ret = avcodec_parameters_from_context(out_video_stream_->codecpar, video_encoder_codec_context_);
+	if (ret < 0) {
+		av_log(nullptr, AV_LOG_ERROR, "Failed to copy encoder parameters to output stream\n");
+		return ret;
+	}
 
-    if (videoIndex == -1 || videoIndex >= recorderFmtCtx->nb_streams) {
-        std::cerr << "Didn't find a video stream.\n";
-        throw std::invalid_argument("Didn't find a video stream.\n");
-    }
+	if (output_format_context_->oformat->flags & AVFMT_GLOBALHEADER)
+	{
+		output_format_context_->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+	}
+	
+	AVDictionary* options = nullptr;
+	// av_dict_set(&options, "framerate", "60", 0);
+	// av_dict_set(&options, "probesize", "32", 0);
+	// av_dict_set(&options, "rtbufsize", "32", 0);
+	av_dict_set(&options,"preset", "fast",0);
+	av_dict_set(&options,"tune", "zerolatency", 0);
+
+	if (!(output_format_context_->flags & AVFMT_NOFILE))
+	{
+		if (avio_open2(&output_format_context_->pb, output_filename_.c_str(), AVIO_FLAG_WRITE, nullptr, &options) < 0)
+		{
+			std::cout << "\nerror in creating the video file";
+			return 1;
+		}
+	}
+
+	if (!output_format_context_->nb_streams)
+	{
+		std::cout << "\noutput file dose not contain any stream";
+		return 1;
+	}
+
+	ret = avformat_write_header(output_format_context_, nullptr);
+	if (ret < 0)
+	{
+		std::cout << "\nerror in writing the header context";
+		return 1;
+	}
+	return 0;
 }
 
-void ScreenRecorder::close(){
-    avformat_close_input(&recorderFmtCtx);
-    if(!recorderFmtCtx)
+int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
+	avdevice_register_all();
+	avformat_network_init();
+	AVDictionary* options = nullptr;
+	av_dict_set(&options, "framerate", "60", 0);
+	av_dict_set(&options, "probesize", "32", 0);
+	av_dict_set(&options, "rtbufsize", "32", 0);
+	av_dict_set(&options,"preset", "fast",0);
+	av_dict_set(&options,"tune", "zerolatency", 0);
+	
+	int ret;
+	AVInputFormat* video_input_format_ = nullptr;
+	video_input_format_ =  av_find_input_format("x11grab");
+	ret = avformat_open_input(&input_video_format_context_, ":0.0", video_input_format_, &options);
+	if (ret != 0)
 	{
-		std::cout<<"[LOG] File closed sucessfully\n";
+		std::cout << "\nerror in opening input device";
+		return ret;
 	}
-	else
+	ret = avformat_find_stream_info(input_video_format_context_, &options);
+	if (ret < 0)
 	{
-		std::cerr<<"[ERROR] Unable to close the file\n";
-		throw std::invalid_argument("[ERROR] Unable to close the file\n");
+		std::cout << "\nunable to find the stream information";
+		return ret;
+	}
+	int out_video_stream_index = av_find_best_stream(input_video_format_context_, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
+	if (out_video_stream_index == -1)
+	{
+		std::cout << "\nunable to find the video stream index. (-1)";
+		return 1;
 	}
 
-	avformat_free_context(recorderFmtCtx);
-	if( !recorderFmtCtx )
-	{
-		std::cout<<"\navformat free successfully";
+	AVCodecParameters* video_parameter_ = nullptr;
+	video_parameter_ = input_video_format_context_->streams[out_video_stream_index]->codecpar;
+	AVCodec* decoder_codec_ =nullptr;
+	decoder_codec_ = avcodec_find_decoder(video_parameter_->codec_id);
+	if (!decoder_codec_) {
+		std::cout << "codec not found\n";
+		return 1;
 	}
-	else
-	{
-		std::cerr<<"[ERROR] Unable to free avformat context\n";
-		throw std::invalid_argument("[ERROR] Unable to free avformat context\n");
+	video_decoder_codec_context_ = avcodec_alloc_context3(decoder_codec_);
+	if (!video_decoder_codec_context_) {
+		std::cout << "Could not allocate video decoder context\n";
+		return 1;
 	}
+
+	avcodec_parameters_to_context(video_decoder_codec_context_, video_parameter_);
+
+	ret = avcodec_open2(video_decoder_codec_context_, decoder_codec_, nullptr);
+	if (ret < 0) {
+		std::cout << "Could not open decoder\n";
+		return ret;
+	}
+
+	AVCodec* video_encoder_codec_ = nullptr;
+	video_encoder_codec_ = avcodec_find_encoder(AV_CODEC_ID_MPEG4);
+	if (!video_encoder_codec_) {
+		std::cout << "Codec AV_CODEC_ID_MPEG4 not found\n";
+		return 1;
+	}
+	
+	video_encoder_codec_context_ = avcodec_alloc_context3(video_encoder_codec_);
+	if (!video_encoder_codec_context_) {
+		std::cout << "Could not allocate video video encoder context\n";
+		return 1;
+	}
+
+	video_encoder_codec_context_->bit_rate	  = video_encoder_codec_context->bit_rate;
+	video_encoder_codec_context_->width		  = video_encoder_codec_context->width;
+	video_encoder_codec_context_->height		= video_encoder_codec_context->height;
+	video_encoder_codec_context_->pix_fmt		  = video_encoder_codec_context->pix_fmt;
+	video_encoder_codec_context_->time_base.num = video_encoder_codec_context->time_base.num;
+	video_encoder_codec_context_->time_base.den = video_encoder_codec_context->time_base.den;
+	video_encoder_codec_context_->framerate.num = video_encoder_codec_context->framerate.num;
+	video_encoder_codec_context_->framerate.den = video_encoder_codec_context->framerate.den;
+	video_encoder_codec_context_->gop_size	  = video_encoder_codec_context->gop_size;
+	video_encoder_codec_context_->max_b_frames  = video_encoder_codec_context->max_b_frames;
+	
+	ret = avcodec_open2(video_encoder_codec_context_, video_encoder_codec_, &options);
+	if (ret < 0) {
+		std::cout << "Could not open video encoder\n";
+		return ret;
+	}
+
+	sws_context_ = sws_getContext(
+		video_decoder_codec_context_->width, video_decoder_codec_context_->height, video_decoder_codec_context_->pix_fmt,
+		video_encoder_codec_context_->width, video_encoder_codec_context_->height, video_encoder_codec_context_->pix_fmt,
+		SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
+
+	av_dict_free(&options);
+	avcodec_parameters_free(&video_parameter_);
+
+	return 0;
+}
+
+ScreenRecorder::~ScreenRecorder() {
+	avformat_network_deinit();
+	
+	if (video_encoder_codec_context_ != nullptr)
+		avcodec_free_context(&video_encoder_codec_context_);
+
+	if (video_decoder_codec_context_ != nullptr)
+		avcodec_free_context(&video_decoder_codec_context_);
+
+	sws_freeContext(sws_context_);
+}
+
+void ScreenRecorder::Start() {
+	isRecord = true;
+	DecodeVideo();
+	
+	
+}
+
+void ScreenRecorder::Stop() {
+	isRecord = false;
+}
+
+void ScreenRecorder::DecodeVideo() {
+	int frame_number = 0;
+
+	while (isRecord ) {
+		AVPacket* input_packet = av_packet_alloc();
+		
+		av_read_frame(input_video_format_context_, input_packet);
+		int ret;
+		ret = avcodec_send_packet(video_decoder_codec_context_, input_packet);
+		if (ret < 0) {
+			av_packet_free(&input_packet);
+			std::cout << "Error sending a packet for decoding\n";
+			return;
+		}
+
+		while (ret >= 0) {
+
+			AVFrame* decoded_frame = av_frame_alloc();
+			if (!decoded_frame) {
+
+				std::cout << "Could not allocate video pFrame\n";
+				return;
+			}
+			ret = avcodec_receive_frame(video_decoder_codec_context_, decoded_frame);
+			if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+				break;
+			else if (ret < 0) {
+				av_frame_free(&decoded_frame);
+				std::cout << "Error during decoding\n";
+				return;
+			}
+			ScaleVideo(decoded_frame);
+			av_packet_free(&input_packet);
+			std::cout << "return from decode\n";
+
+		}
+		++frame_number;
+		std::cout << frame_number;
+		if (frame_number > 10000){
+			return;
+		}
+
+	}
+
+	return;
+}
+
+void ScreenRecorder::ScaleVideo(AVFrame* decoded_frame) {
+	
+	AVFrame* scaled_frame = av_frame_alloc();
+	int nbytes = av_image_get_buffer_size(video_encoder_codec_context_->pix_fmt, video_encoder_codec_context_->width, video_encoder_codec_context_->height, 32);
+	std::vector<uint8_t> video_outbuf;
+	video_outbuf.reserve(nbytes);
+	av_image_fill_arrays(scaled_frame->data, scaled_frame->linesize, video_outbuf.data(), video_encoder_codec_context_->pix_fmt, video_encoder_codec_context_->width, video_encoder_codec_context_->height, 1);
+
+	sws_scale(sws_context_, decoded_frame->data, decoded_frame->linesize,
+		0, video_decoder_codec_context_->height, scaled_frame->data, scaled_frame->linesize);
+	
+	EncodeVideo(scaled_frame);
+	av_frame_free(&decoded_frame);
+	video_outbuf.clear();
+		std::cout << "return from scaled\n";
+	return;
+}
+
+void ScreenRecorder::EncodeVideo(AVFrame* scaled_frame) {
+	int ret;
+
+	scaled_frame->format = video_encoder_codec_context_->pix_fmt;
+	scaled_frame->width = video_encoder_codec_context_->width;
+	scaled_frame->height = video_encoder_codec_context_->height;
+	ret = avcodec_send_frame(video_encoder_codec_context_, scaled_frame);
+	if (ret < 0) {
+		std::cout << "Error sending a frame for encoding\n";
+		return;
+	}
+	AVPacket* output_packet = av_packet_alloc();
+	if (!output_packet)
+		return;
+	ret = avcodec_receive_packet(video_encoder_codec_context_, output_packet);
+	if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+		return;
+	else if (ret < 0) {
+		std::cout << "Error during encoding\n";
+		return;
+	}
+	if (output_packet->pts != AV_NOPTS_VALUE)
+		output_packet->pts = av_rescale_q(output_packet->pts, video_encoder_codec_context_->time_base, out_video_stream_->time_base);
+	if (output_packet->dts != AV_NOPTS_VALUE)
+		output_packet->dts = av_rescale_q(output_packet->dts, video_encoder_codec_context_->time_base, out_video_stream_->time_base);
+	output_packet->stream_index = out_video_stream_->index;
+
+	av_frame_free(&scaled_frame);
+	Writer(output_packet);
+
+	return;
+}
+
+void ScreenRecorder::Writer(AVPacket* output_packet) {
+	
+	if (av_interleaved_write_frame(output_format_context_, output_packet) != 0)
+	{
+		av_packet_unref(output_packet);
+		av_packet_free(&output_packet);
+		std::cout << "\nerror in writing video frame";
+	}
+	av_packet_unref(output_packet);
+	av_packet_free(&output_packet);
+
+	return;
 }
