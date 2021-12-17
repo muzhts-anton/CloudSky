@@ -119,6 +119,7 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
         ev.type = EV_KEY;
         ev.code = BTN_LEFT;
         ev.value = mouseButtons[0].second;
+        cout << ev.value << "\n";
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
         memset(&ev, 0, sizeof(struct input_event));
@@ -139,6 +140,7 @@ void ViktorDev::EmulateInteraction::emulateMouseMovement() {
         ev.type = EV_KEY;
         ev.code = BTN_RIGHT;
         ev.value = mouseButtons[1].second;
+        cout << ev.value << "\n";
         if (write(fd, &ev, sizeof(struct input_event)) < 0)
             die("error: write");
         

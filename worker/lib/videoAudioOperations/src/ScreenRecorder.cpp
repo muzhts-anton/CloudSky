@@ -184,9 +184,9 @@ void ScreenRecorder::Start(Worker *initWorker) {
 	isRecord = true;
 	worker=initWorker;
 	worker->start();
-	EmulateClientInput();
-	//threads.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
-	//threads.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
+	//EmulateClientInput();
+	threads.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
+	threads.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
 }
 
 void ScreenRecorder::Stop() {
