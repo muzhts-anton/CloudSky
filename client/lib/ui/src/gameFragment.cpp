@@ -31,7 +31,8 @@ GameFragment::GameFragment()
     // QDir vidfile;
     // vidfile.cdUp();
     // vidfile.cd("lib/ui/media/");
-    usleep(1000000);
+    //usleep(1000000);
+    std::this_thread::sleep_for(std::chrono::seconds(4))
     emit play(QString("udp://10.147.18.164:8080"));
 
     _timer = new QTimer(this);
