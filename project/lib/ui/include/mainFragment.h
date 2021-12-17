@@ -17,6 +17,7 @@ public:
 
 public slots:
     void onGame();
+    void onAddGame();
     void onButHovered(QPushButton* obj);
     void onLogOut();
 
@@ -26,7 +27,7 @@ private:
     secondfit::ButtonHoverWatcher* _watcher;
     QPushButton* _openGameBut;
     QPushButton* _settingsBut;
-    //QPushButton* _addGameBut;
+    QPushButton* _addGameBut;
     QPushButton* _logOutBut;
 };
 

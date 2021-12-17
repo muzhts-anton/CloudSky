@@ -94,6 +94,11 @@ RegFragment::~RegFragment()
 
 bool RegFragment::checkData()
 {
+    if (_userFirstPassword->text() != _userSecondPassword->text()) {
+        _errorLabel->setText("Passwords are different");
+        _errorLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::ATTENTIONLABEL));
+        return false;
+    }
     return true;
 }
 

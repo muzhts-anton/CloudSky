@@ -13,6 +13,7 @@ enum class Type {
     LINEEDIT,
     CAPITALLABEL,
     LOWERLABEL,
+    ATTENTIONLABEL,
     SPINBOX,
 };
 
@@ -38,6 +39,7 @@ const QMap<Type, QString> fixed = {
     { Type::SECONDBUTTON, "QPushButton { background-color:" + theme::backraoundcolor + "border: none; border-radius: 7px; padding:" + theme::padding + "color:" + theme::fontcolor + "font-size:" + theme::lowerfontsize + "}\n" },
     { Type::LOWERLABEL, "QLabel { color:" + theme::backraoundcolor + "font-size:" + theme::lowerfontsize + "}\n" },
     { Type::CAPITALLABEL, "QLabel { color:" + theme::secondcolor + "font-size:" + theme::capitalfontsize + "color:" + theme::thirdcolor + "font-weight: bold;" + "}\n" },
+    { Type::ATTENTIONLABEL, "QLabel { color:" + theme::secondcolor + "font-size:" + theme::lowerfontsize + "color:" + theme::attentioncolor + "font-weight: bold;" + "}\n" },
     { Type::LINEEDIT, "QLineEdit { background-color:" + theme::backraoundcolor + "color:" + theme::fontcolor + "font-size:" + theme::lowerfontsize + "}\n" },
     { Type::SPINBOX, "QSpinBox { background-color:" + theme::backraoundcolor + "color:" + theme::fontcolor + "font-size:" + theme::lowerfontsize + "}\n" }
 };

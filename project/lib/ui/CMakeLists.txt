@@ -10,6 +10,7 @@ src/mainFragment.cpp
 src/watcherHoverBut.cpp
 src/authFragment.cpp
 src/regFragment.cpp
+src/addGameFragment.cpp
 )
 
 set(UI_HDR
@@ -27,6 +28,7 @@ include/watcherHoverBut.h
 include/authFragment.h
 include/regFragment.h
 include/fragmentThemeStyle.h
+include/addGameFragment.h
 )
 
 add_library(ui STATIC ${UI_SRC} ${UI_HDR})
