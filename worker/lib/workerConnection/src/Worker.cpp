@@ -15,7 +15,7 @@ using namespace UDPWorker;
 Worker::Worker(int port, const char* ip)
 {
     TCPSocket = new TCPWorkerSocket(port, ip);
-    UDPSocket = new UDPWorkerSocket(port, ip);
+    //UDPSocket = new UDPWorkerSocket(port, ip);
     currentWorkerPort = port + 1;
 }
 
@@ -23,25 +23,28 @@ Worker::Worker(const char* port, const char* ip)
 {
     int numberPort = std::stoi(port);
     TCPSocket = new TCPWorkerSocket(numberPort, ip);
-    UDPSocket = new UDPWorkerSocket(numberPort, ip);
+    //UDPSocket = new UDPWorkerSocket(numberPort, ip);
     currentWorkerPort = numberPort + 1;
 }
 
 Worker::~Worker()
 {
     delete TCPSocket;
-    delete UDPSocket;
+    //delete UDPSocket;
 }
 
 void Worker::start()
 {
     TCPSocket->activateSocket();
-    UDPSocket->activateSocket();
+    //UDPSocket->activateSocket();
 }
 
 void Worker::getInteraction(std::string filename)
 {
     try {
+        std::cout << "????????????????\n";
+        if (TCPSocket == nullptr)
+            std::cout << "HERE\n";
         TCPSocket->receiveFile(filename);
     }
     catch (const std::invalid_argument& e) {

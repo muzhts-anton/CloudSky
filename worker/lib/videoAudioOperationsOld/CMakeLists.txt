@@ -15,7 +15,7 @@ target_link_libraries(videoAudioOperations
     avfilter
     SDL2
     X11
+    workerConnection
     protobufOperations
     emulation
-    workerConnection
 )

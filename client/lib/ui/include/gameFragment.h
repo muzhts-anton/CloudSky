@@ -20,7 +20,7 @@ class GameFragment : public BaseFragment {
     Q_OBJECT
     QThread playerThread;
 
-    static constexpr short fps = 80;
+    static constexpr short fps = 40;
 
 public:
     GameFragment();

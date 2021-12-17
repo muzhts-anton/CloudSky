@@ -1,50 +1,68 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <stdexcept>
-#include <memory>
-#include <X11/Xlib.h>
+#ifndef __SCREEN_RECORDER_H__
+#define __SCREEN_RECORDER_H__
 
-#include "UDPWorkerSocket.h"
-#include "Worker.h"
-
-#define PACKETSIZE 4092
 extern "C" {
-#include "libswscale/swscale.h"
-#include "libavcodec/avcodec.h"
-#include "libavformat/avformat.h"
-#include "libavutil/opt.h"
-#include "libavdevice/avdevice.h"
-#include "libavutil/imgutils.h"
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+#include <libavdevice/avdevice.h>
+#include <libavfilter/avfilter.h>
+#include <libavutil/avutil.h>
+#include <libavutil/imgutils.h>
+#include <libavutil/audio_fifo.h>
+#include <libswscale/swscale.h>
+#include <libswresample/swresample.h>
 }
 
-class ScreenRecorder{
-public:
-    ScreenRecorder();
-    ~ScreenRecorder();
+#include <iostream>
+#include <vector>
+#include "Worker.h"
 
-    int initScreenGrabber();
-    int captureVideoData(Worker* worker);
+
+class ScreenRecorder {
+public:
+	ScreenRecorder();
+	~ScreenRecorder();
+	void Start(Worker *initWorker);
+	void Stop();
 
 private:
+	// initialize decoder
+	// initialize scaler
+	// initialize encoder
+	int InitVideo(AVCodecContext* video_encoder_codec_context);
+	
+	int InitWriter();
 
-    AVFormatContext * recorderFmtCtx = NULL;
-    AVInputFormat *avInputFmt = NULL;
-    AVCodecContext * avVideoCodecCtx = NULL;
-    AVCodecContext * avVideoEncoderCtx = NULL;
-    AVDictionary * avInputDeviceOptions = NULL;
-    AVCodec * avVideoDecodec = NULL;
-    AVCodec * avVideoEncodec = NULL;
-    struct SwsContext *swsVideoCtx = NULL;
-    AVPacket* avRecorderPkt = NULL;
-    long int videoIndex = -1;
-    AVFrame *avYUVFrame = NULL;
-    std::vector<uint8_t> videoBuffer;
+	void DecodeVideo();
+	void ScaleVideo(AVFrame* decoded_frame);
+	void EncodeVideo(AVFrame* scaled_frame);
+	void Writer(AVPacket* output_packet);	
+	
+	// decoder
+	AVFormatContext* input_video_format_context_ = nullptr;
+	AVCodecContext* video_decoder_codec_context_ = nullptr;
+	AVFormatContext* input_audio_format_context_ = nullptr;
+	AVCodecContext* audio_decoder_codec_context_ = nullptr;
 
-    unsigned int width;
-    unsigned int height;
+	// scaler
+	SwsContext* sws_context_ = nullptr;
+	SwrContext* swr_context_ = nullptr;
 
-    int getVideoStream();
-    void openInputDevices();
-    void close();
+	// encoder
+	AVCodecContext* video_encoder_codec_context_ = nullptr;
+	AVCodecContext* audio_encoder_codec_context_ = nullptr;
+
+	// writer
+	AVFormatContext* output_format_context_ = nullptr;
+	AVStream* out_video_stream_ = nullptr;
+	AVStream* out_audio_stream_ = nullptr;
+
+	std::string output_filename_;
+
+	bool isRecord = false;
+
+	Worker *worker = nullptr;
+	
 };
+
+#endif

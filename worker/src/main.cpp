@@ -14,13 +14,12 @@ int main(int argc, char *argv[])
     // KeyboardMouse::ButtonsCoords ReceiveMessage;
     // EmulateInteraction emulation;
     // emulation.initEmulateKbMouse();
-    worker.start();
+    // worker.start();
     // double fps = 0.5;
     // std::string filename = "receivedButtonsCoords.bin";
     // std::string videoFilename = "out.mp4";
     ScreenRecorder recorder;
-    recorder.initScreenGrabber();
-    recorder.captureVideoData(&worker);
+    recorder.Start(&worker);
 
     // while (true)
     // {
