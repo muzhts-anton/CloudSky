@@ -1,12 +1,10 @@
 #include "messageOperations.h"
 
-using namespace ViktorDev;
-
-KeyboardMouse::ButtonsCoords& InteractionOperations::getMessage()
+KeyboardMouse::ButtonsCoords& ViktorDev::InteractionOperations::getMessage()
 {
     return message;
 }
-void InteractionOperations::setMessage(bool buttonPressed[buttonQuanity], int coords[coordQuanity])
+void ViktorDev::InteractionOperations::setMessage(bool buttonPressed[buttonQuanity], int coords[coordQuanity])
 {
     for (int i = 0; i < buttonQuanity; ++i) {
         getMessage().add_buttonpressed(buttonPressed[i]);
@@ -14,17 +12,17 @@ void InteractionOperations::setMessage(bool buttonPressed[buttonQuanity], int co
     getMessage().set_xcoord(coords[0]);
     getMessage().set_ycoord(coords[1]);
 }
-InteractionOperations::InteractionOperations(KeyboardMouse::ButtonsCoords myMessage, string filePath)
+ViktorDev::InteractionOperations::InteractionOperations(KeyboardMouse::ButtonsCoords myMessage, std::string filePath)
 {
     getMessage() = myMessage;
     this->filePath = filePath;
 }
-InteractionOperations::InteractionOperations(bool buttonPressed[buttonQuanity], int coords[2], string filePath)
+ViktorDev::InteractionOperations::InteractionOperations(bool buttonPressed[buttonQuanity], int coords[2], std::string filePath)
 {
     setMessage(buttonPressed, coords);
     this->filePath = filePath;
 }
-InteractionOperations::InteractionOperations()
+ViktorDev::InteractionOperations::InteractionOperations()
 {
     for (int i = 0; i < buttonQuanity; ++i) {
         getMessage().add_buttonpressed(false);
@@ -33,79 +31,80 @@ InteractionOperations::InteractionOperations()
     getMessage().set_ycoord(0);
     this->filePath = "";
 }
-void InteractionOperations::printMessage()
+void ViktorDev::InteractionOperations::printMessage()
 {
-    cout << "Pressed buttons: ";
+    std::cout << "Pressed buttons: ";
     for (const bool& button : getMessage().buttonpressed()) {
-        cout << button << " ";
+        std::cout << button << " ";
     };
-    cout << endl;
-    cout << "xCoord = " << getMessage().xcoord() << endl;
-    cout << "yCoord = " << getMessage().ycoord() << endl;
+    std::cout << std::endl;
+    std::cout << "xCoord = " << getMessage().xcoord() << std::endl;
+    std::cout << "yCoord = " << getMessage().ycoord() << std::endl;
 }
 
-SendInteraction::SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage)
+ViktorDev::SendInteraction::SendInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage)
     : InteractionOperations(myMessage, filePath)
 {
     out.open(filePath, std::ios_base::binary);
     if (!out) {
-        cout << "FILE DOES NOT OPENED!" << endl;
+        std::cout << "FILE DOES NOT OPENED!" << std::endl;
         assert(errorWithFile);
         exit(errorWithFile);
     };
 }
-SendInteraction::SendInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2])
+ViktorDev::SendInteraction::SendInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2])
     : InteractionOperations(buttonPressed, coords, filePath)
 {
     out.open(filePath, std::ios_base::binary);
     if (!out) {
-        cout << "FILE DOES NOT OPENED!" << endl;
+        std::cout << "FILE DOES NOT OPENED!" << std::endl;
         assert(errorWithFile);
         exit(errorWithFile);
     };
 }
-SendInteraction::~SendInteraction()
+ViktorDev::SendInteraction::~SendInteraction()
 {
     out.close();
 }
-int SendInteraction::sendIt()
+int ViktorDev::SendInteraction::sendIt()
 {
-    ofstream outAddit;
+    std::ofstream outAddit;
     outAddit.open(filePath, std::ios_base::binary);
 
     if (!message.SerializePartialToOstream(&outAddit)) {
-        cout << "ERRORSEND IT !" << endl;
+        std::cout << "ERRORSEND IT !" << std::endl;
         return errorSerializeMessage;
     };
+    outAddit.close();
     return SUCCESS;
 }
 
-ReceiveInteraction::ReceiveInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage)
+ViktorDev::ReceiveInteraction::ReceiveInteraction(std::string filePath, KeyboardMouse::ButtonsCoords myMessage)
     : InteractionOperations(myMessage, filePath)
 {
     in.open(filePath, std::ios_base::binary);
     if (!in) {
-        cout<<"errorWithFile in ReceiveInteraction constructor";
+        std::cout << "errorWithFile in ReceiveInteraction constructor";
         assert(errorWithFile);
-        exit(errorWithFile);
         in.close();
+        exit(errorWithFile);
     };
 }
-ReceiveInteraction::ReceiveInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2])
+ViktorDev::ReceiveInteraction::ReceiveInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2])
     : InteractionOperations(buttonPressed, coords, filePath)
 {
     in.open(filePath, std::ios_base::binary);
     if (!in) {
         assert(errorWithFile);
-        exit(errorWithFile);
         in.close();
+        exit(errorWithFile);
     };
 }
-ReceiveInteraction::~ReceiveInteraction()
+ViktorDev::ReceiveInteraction::~ReceiveInteraction()
 {
     in.close();
 }
-int ReceiveInteraction::receiveIt()
+int ViktorDev::ReceiveInteraction::receiveIt()
 {
     if (!message.ParseFromIstream(&in)) {
         return errorParseMessage;

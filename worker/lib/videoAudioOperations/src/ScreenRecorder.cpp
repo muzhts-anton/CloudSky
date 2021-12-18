@@ -4,7 +4,7 @@
 #include "operationEmulation.h"
 
 ScreenRecorder::ScreenRecorder()
-	: output_filename_("udp://10.147.18.218:8080") {
+	: output_filename_("udp://10.147.18.204:8080") {
     AVCodecContext video_encoder_codec_context;
 
 	video_encoder_codec_context.bit_rate = 400000;
@@ -201,7 +201,8 @@ void ScreenRecorder::Stop() {
 void ScreenRecorder::EmulateClientInput()
 {
 	KeyboardMouse::ButtonsCoords ReceiveMessage;
-    ViktorDev::EmulateInteraction emulation;
+    ViktorDev::EmelationKeyBoard keyboard;
+	ViktorDev::EmulationMouse mouse;
     //emulation.initEmulateKbMouse();
     std::string filename = "receivedButtonsCoords.bin";
     //double fps = 100;
@@ -211,10 +212,12 @@ void ScreenRecorder::EmulateClientInput()
         worker->getInteraction(filename);
         ViktorDev::ReceiveInteraction ReceiveM(filename, ReceiveMessage);
         if (ReceiveM.receiveIt())
-            cout << "Error wint receiving";
+            std::cout << "Error wint receiving";
         ReceiveM.printMessage();
-        emulation.setKeysCoords(ReceiveM.getMessage());
-        emulation.emulateKbMouse();
+		keyboard.setKeyboard(ReceiveM.getMessage());
+		mouse.setCoordsButtons(ReceiveM.getMessage());
+		keyboard.emulateKeyboard();
+		mouse.emulateMouse();
 		std::cout << "Законч принимать\n";
         //usleep(1000.0 / fps);
     }

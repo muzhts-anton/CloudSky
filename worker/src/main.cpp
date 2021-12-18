@@ -15,6 +15,6 @@ int main(int argc, char *argv[])
     Worker worker(argv[1], argv[2]);
     ScreenRecorder recorder;
     recorder.Start(&worker);
-    std::this_thread::sleep_for(std::chrono::seconds(10000));  
+    std::this_thread::sleep_for(std::chrono::seconds(1000000));  
     return 0;
 }
