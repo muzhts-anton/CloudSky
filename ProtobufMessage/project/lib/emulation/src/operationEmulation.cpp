@@ -258,6 +258,7 @@ void ViktorDev::EmulationMouse::emulateMouse()
     memset(&event, 0, sizeof(struct input_event));
     gettimeofday(&event.time, 0);
     synMouse();
+    //usleep(10000); time between ticks
     return;
 }
 ViktorDev::EmulationMouse::EmulationMouse()
