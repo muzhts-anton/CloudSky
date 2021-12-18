@@ -13,10 +13,11 @@
 #include <array>
 
 constexpr int clientIPSize = 13;
-constexpr int workersAmount = 3;
+constexpr int workersAmount = 4;
 constexpr const char *paulIP = "10.147.18.164";
 constexpr const char *kostyaIP = "10.147.18.218";
 constexpr const char *tonyIP = "10.147.18.148";
+constexpr const char *localhost = "127.0.0.1";
 constexpr const char *workersAreBusy = "BUSY";
 constexpr const char *workerFreedom = "FREE";
 
@@ -44,8 +45,8 @@ private:
     boost::asio::ip::tcp::socket socket_;
 
     //boost::array<char, 1024> buffer_;
-    std::array<std::string, workersAmount> workersIP = { paulIP, kostyaIP, tonyIP };
-    std::array<bool, workersAmount> workersBussiness = { 1, 0, 0 };
+    std::array<std::string, workersAmount> workersIP = { paulIP, kostyaIP, tonyIP, localhost };
+    std::array<bool, workersAmount> workersBussiness = { true, false, false, true};
     std::string clientIP;
     int newPort;
     

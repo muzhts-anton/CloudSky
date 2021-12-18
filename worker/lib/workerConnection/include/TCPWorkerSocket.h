@@ -11,13 +11,17 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-constexpr int defaultServerPort = 8050;
-constexpr const char* defaultServerIp = "127.0.0.1";
+constexpr int defaultWorkerPort = 8080;
+constexpr const char* defaultWorkerIp = "127.0.0.1";
+constexpr const char* defaultServerIp = "10.147.18.164";
+constexpr const char* workerIP = "127.0.0.1";
+constexpr const char *workerFreedom = "FREE";
+constexpr int workerIPLength = 14;
 
 namespace TCPWorker {
 class TCPWorkerSocket {
 public:
-    TCPWorkerSocket(int port = defaultServerPort, const char* ip = defaultServerIp);
+    TCPWorkerSocket(int port = defaultWorkerPort, const char* ip = defaultWorkerIp);
 
     TCPWorkerSocket& operator=(TCPWorkerSocket& that);
 
@@ -34,6 +38,8 @@ public:
     void createSocket();
 
     void receiveFile(std::string filename);
+
+    void sendSignal();
 
 private:
     std::fstream file;

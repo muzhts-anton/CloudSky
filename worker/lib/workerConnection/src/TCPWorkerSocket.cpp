@@ -118,10 +118,22 @@ void TCPWorkerSocket::receiveFile(std::string filename)
     }
     if (valread == 0) {
         std::cerr << "[LOG] : TCP Client is not connected anymore. Maybe I should exit...\n";
+        
     }
     for (int i = 0; i < valread; i++)
         file.write(buffer + i, 1);
     file.close();
     if (debug)
         std::cout << "[LOG] : TCP File Saved.\n";
+}
+
+void TCPWorkerSocket::sendSignal()
+{
+    TCPWorkerSocket newSocket(PORT, defaultServerIp);
+    newSocket.activateSocket();
+    const char *buffer = workerIP;
+    int length = workerIPLength;
+    if (debug)
+        std::cout << "[LOG] : TCP Sending Freeing signal...\n";
+    send(generalSocketDescriptor, workerIP, workerIPLength, 0);
 }
