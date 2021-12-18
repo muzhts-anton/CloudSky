@@ -13,6 +13,7 @@ extern "C" {
 #include <libswresample/swresample.h>
 }
 
+#include <sstream>
 #include <list>
 #include <thread>
 #include <memory>

@@ -3,7 +3,6 @@
 #include "messageOperations.h"
 #include "operationEmulation.h"
 
-
 ScreenRecorder::ScreenRecorder()
 	: output_filename_("udp://192.168.56.102:8080") {
     AVCodecContext video_encoder_codec_context;
@@ -93,20 +92,19 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	avdevice_register_all();
 	avformat_network_init();
 	AVDictionary* options = nullptr;
-	//av_dict_set(&options, "framerate", "60", 0);
-	// av_dict_set(&options, "probesize", "32", 0);
-	// av_dict_set(&options, "rtbufsize", "32", 0);
-	// av_dict_set(&options,"preset", "fast",0);
-	// av_dict_set(&options,"tune", "zerolatency", 0);
-	//av_dict_set(&options,"video_size","640x480",0);
-	av_dict_set(&options, "sc_threshold", "1", 0);
-	av_dict_set(&options, "analyzeduration", "32", 0);
-	//av_dict_set(&options, "profile", "high", 0);
 	
+	int width = 640;
+	int height = 480;
+	std::stringstream ost;
+	ost << width << "x" << height;
+	
+	av_dict_set(&options,"video_size", ost.str().data(), 0);
+	av_dict_set(&options, "sc_threshold", "1", 0);
 	
 	int ret;
 	AVInputFormat* video_input_format_ = nullptr;
 	video_input_format_ =  av_find_input_format("x11grab");
+	
 	ret = avformat_open_input(&input_video_format_context_, ":0.0", video_input_format_, &options);
 	if (ret != 0)
 	{
@@ -205,8 +203,7 @@ void ScreenRecorder::Start(Worker *initWorker) {
 	isRecord_ = true;
 	worker_=initWorker;
 	worker_->start();
-	//EmulateClientInput();
-	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
+	//threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
 	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
 }
 
