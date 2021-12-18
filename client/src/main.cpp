@@ -11,14 +11,14 @@ constexpr double iterationSleepAmount = 1000.0;
 
 int main()
 {
-    TCPClient::TCPClientSocket TCPSocket1(defaultPort, defaultIp);
-    TCPSocket1.activateSocket();
-    int newPort = TCPSocket1.receivePortNumber();
-    std::cout << "Переключаемся на порт " << newPort << std::endl;
-    usleep(1000000);
-    TCPClient::TCPClientSocket TCPSocket(newPort, defaultIp);
+    TCPClient::TCPClientSocket TCPSocket(defaultPort, defaultIp);
     TCPSocket.activateSocket();
-    UDPClient::UDPClientSocket UDPSocket(newPort, defaultIp);
+    std::string newIP = TCPSocket.receiveIP();
+    std::cout << "Переключаемся на IP " << newIP << std::endl;
+    usleep(1000000);
+    TCPSocket.changeIP(newIP);
+    TCPSocket.activateSocket();
+    UDPClient::UDPClientSocket UDPSocket(defaultPort, &newIP[0]);
     UDPSocket.activateSocket();
     double fps = defaultFPS;
     std::string fileToSendPath = "buttonsCoords.bin";

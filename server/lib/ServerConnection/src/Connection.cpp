@@ -10,6 +10,7 @@ namespace ServerConnection {
         socket_(strand_),
         newPort(port)
     {
+        clientIP.resize(clientIPSize);
     }
 
     boost::asio::ip::tcp::socket& Connection::socket()
@@ -19,18 +20,44 @@ namespace ServerConnection {
 
     void Connection::start()
     {
-        socket_.async_read_some(boost::asio::buffer(buffer_),
+        socket_.async_read_some(boost::asio::buffer(clientIP),
                                 boost::bind(&Connection::handle_read, shared_from_this(),
                                             boost::asio::placeholders::error));
+    }
+
+    std::string Connection::find_free_worker()
+    {
+        for (size_t i = 0; i < workersAmount; i++)
+        {
+            if (workersBussiness.at(i) == false)
+                return workersIP.at(i);
+        }
+        return workersAreBusy;
     }
 
     void Connection::handle_read(const boost::system::error_code& e)
     {
         if (!e)
         {
+            std::cout << clientIP << std::endl;
+            std::string currentWorker;
+            bool found = false;
+            for (size_t i = 0; i < workersAmount; i++)
+            {
+                if (clientIP.compare(workersIP.at(i)))
+                {
+                    std::cout << "Освобождаем worker с IP " << clientIP << std::endl;
+                    workersBussiness.at(i) = false;
+                    currentWorker = workerFreedom;
+                    found = true;
+                }
+            }
+            if (!found)
+                currentWorker = find_free_worker();
+            std::cout << std::endl;
+            std::cout << "Будем подключать клиента на IP " << currentWorker << std::endl;
             char buffer[20] = { 0 };
-            std::cout << "Будем подключать клиента на порт " << newPort << std::endl;
-            int length = std::snprintf(buffer, 20, "%d", newPort);
+            int length = std::snprintf(buffer, 20, "%s", &currentWorker[0]);
             boost::asio::async_write(socket_, boost::asio::buffer(buffer, length),
                 boost::bind(&Connection::handle_write, shared_from_this(),
                         boost::asio::placeholders::error));
@@ -42,9 +69,7 @@ namespace ServerConnection {
         if (!e)
         {
             char command[180];
-            snprintf(command, 180, "docker run --rm --net=host -it -p \
-            0.0.0.0:%d:%d -e IP=0.0.0.0 -e PORT=%d \
-            cloud-sky-worker", newPort, newPort, newPort);
+            snprintf(command, 180, "echo Тут будет переключение клиента");
             std::cout << command << std::endl;
             system(command);
             boost::system::error_code ignored_ec;

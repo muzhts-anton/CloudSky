@@ -2,6 +2,8 @@
 #include "constants.h"
 
 constexpr bool debug = true;
+constexpr const char *clientIP = "10.147.18.164";
+constexpr int clientIPLength = 14;
 
 TCPClient::TCPClientSocket::TCPClientSocket(const int port, const char* ip)
 {
@@ -23,7 +25,7 @@ void TCPClient::TCPClientSocket::activateSocket()
 {   
     try {
         createSocket();
-        if (inet_pton(AF_INET, IP, &address.sin_addr) <= 0) {
+        if (inet_pton(AF_INET, &IP[0], &address.sin_addr) <= 0) {
             if (debug)
                 std::cout << "[ERROR] : TCP Invalid address\n";
         } else
@@ -56,31 +58,27 @@ void TCPClient::TCPClientSocket::createConnection()
         std::cout << "[LOG] : TCP Connection Successfull.\n";
 }
 
-int TCPClient::TCPClientSocket::receivePortNumber()
+std::string TCPClient::TCPClientSocket::receiveIP()
 {
-    int port = -1;
-    std::string portString;
+    std::string IPString;
     char buffer[1024] = {};
-    char message[10] = "Start";
-    int length = 6;
-    send(generalSocketDescriptor, message, length, 0);
+    send(generalSocketDescriptor, clientIP, clientIPLength, 0);
 
     int valread = read(generalSocketDescriptor, buffer, 1024);
     if (debug) {
         std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
     }
-    if (valread > 0 && valread < 15) {
+    if (valread > 0 && valread < 13) {
         for (int i = 0; i < valread; i++)
-            portString.push_back(buffer[i]);
-        port = std::stoi(portString);
+            IPString.push_back(buffer[i]);
     }
-    return port;
+    return IPString;
 }
 
-void TCPClient::TCPClientSocket::changePort(int newPort)
+void TCPClient::TCPClientSocket::changeIP(std::string newIP)
 {
-    PORT = newPort;
-    address.sin_port = htons(PORT);
+    IP = newIP;
+    addressLength = sizeof(address);
     try {
         createConnection();
     }

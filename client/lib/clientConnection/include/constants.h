@@ -2,8 +2,8 @@
 
 #define CONSTANTS_H_
 
-#define TCP_DEFAULT_PORT 5000
+constexpr int TCPDefaultPort = 8080;
 
-#define UDP_DEFAULT_PORT 4000
+constexpr int UDPDefaultPort = 8080;
 
 #endif

@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <string>
 
 constexpr int defaultClientPort = 8050;
 constexpr const char* defaultClientIp = "127.0.0.1";
@@ -29,16 +30,16 @@ public:
 
     void activateSocket();
 
-    int receivePortNumber();
+    std::string receiveIP();
 
-    void changePort(int newPort);
+    void changeIP(std::string IP);
 
     void transmitFile(std::string filename);
 
 private:
     std::fstream file;
     int PORT;
-    const char* IP;
+    std::string IP;
     int generalSocketDescriptor;
     struct sockaddr_in address;
     int addressLength;
