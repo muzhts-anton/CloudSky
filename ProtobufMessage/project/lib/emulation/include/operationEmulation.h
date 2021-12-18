@@ -26,12 +26,12 @@ public:
     void setKeyboard(const KeyboardMouse::ButtonsCoords& message);
     void synKeyboard();
     void emulateKeyboard();
-    bool getCurrentButtonState(char symbol);
+    bool getCurrentButtonState(int symbol);
 private:
     struct input_event keyInputEvent;
     int fdKeyEmulator;
     std::vector<std::pair<int, bool>> pressedButtons;
-    int kbEncoding[buttonQuanity] { KEY_A, KEY_W, KEY_S, KEY_D, KEY_SPACE, KEY_Q, KEY_E, KEY_F, KEY_ESC };
+    int kbEncoding[buttonQuanityEm] { KEY_A, KEY_W, KEY_S, KEY_D, KEY_SPACE, KEY_Q, KEY_E, KEY_F, KEY_ESC };
     // a w s d space q e f esc
     // 0 1 2 3 4     5 6 7 8
 };

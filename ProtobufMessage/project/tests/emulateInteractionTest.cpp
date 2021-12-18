@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "../include/messageOperations.h"
-#include "../include/operationEmulation.h"
+#include "messageOperations.h"
+#include "operationEmulation.h"
 
 TEST(EMULATE_TEST, coordsTest)
 {
@@ -26,7 +26,7 @@ TEST(EMULATE_TEST, coordsTest)
 TEST(EMULATE_TEST, buttonTest)
 {
     KeyboardMouse::ButtonsCoords message;
-    bool pressedButton[buttonQuanity] { false, false, true, true, false, false, false, false, false };
+    bool pressedButton[buttonQuanity] { true, true, true, true, true, true, true, true, true };
     for (int i = 0; i < buttonQuanity; ++i) {
         message.add_buttonpressed(pressedButton[i]);
     };
@@ -44,9 +44,9 @@ TEST(EMULATE_TEST, buttonTest)
     mouseEmulation.setCoordsButtons(message);
     mouseEmulation.emulateMouse();
 
-    EXPECT_EQ(true, kbEmulation.getCurrentButtonState('a'));
-    EXPECT_EQ(true, kbEmulation.getCurrentButtonState('b'));
-    EXPECT_EQ(true, kbEmulation.getCurrentButtonState('c'));
+    EXPECT_EQ(true, kbEmulation.getCurrentButtonState(KEY_W));
+    EXPECT_EQ(true, kbEmulation.getCurrentButtonState(KEY_A));
+    EXPECT_EQ(true, kbEmulation.getCurrentButtonState(KEY_S));
 }
 
 int main(int argc, char** argv)

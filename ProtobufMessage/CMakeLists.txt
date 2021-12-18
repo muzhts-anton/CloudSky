@@ -24,5 +24,9 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIR})
 
 add_executable(protobufTest project/tests/protobufTest.cpp )
-target_link_libraries(protobufTest protobufOperations ${GTEST_LIBRARIES})
-target_link_libraries(protobufTest gtest pthread) 
+target_link_libraries(protobufTest protobufOperations gtest pthread ${GTEST_LIBRARIES})
+#target_include_directories(protobufTest PUBLIC lib/emulation/include lib/protobufOperations/include)
+
+add_executable(emulateTest project/tests/emulateInteractionTest.cpp )
+target_link_libraries(emulateTest protobufOperations emulation gtest pthread ${GTEST_LIBRARIES})
+target_include_directories(emulateTest PUBLIC project/lib/emulation/include project/lib/protobufOperations/include)

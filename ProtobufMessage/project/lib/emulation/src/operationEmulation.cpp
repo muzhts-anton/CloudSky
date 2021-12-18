@@ -10,49 +10,51 @@
 #include <time.h>
 #include <unistd.h>
 
-#define die(str, ...)       \
-    do {                    \
-        perror(str);        \
-        exit(EXIT_FAILURE); \
-    } while (0)
 void ViktorDev::EmelationKeyBoard::initKeyboard(uinput_user_dev& devFakeKeyboard)
 {
+
     if (ioctl(fdKeyEmulator, UI_SET_EVBIT, EV_KEY)) {
         std::cout << "Error in ioctl : UI_SET_EVBIT : EV_KEY : " << strerror(errno) << std::endl;
+        exit(ioctlError);
     }
 
     // enable set of KEY events here
     for (auto it = pressedButtons.cbegin(); it != pressedButtons.cend(); ++it) {
         if (ioctl(fdKeyEmulator, UI_SET_KEYBIT, it->first)) {
             std::cout << "Error in ioctl : UI_SET_KEYBIT : " << strerror(errno) << std::endl;
+            exit(ioctlError);
         }
     }
 
     // enable synchronization event
     if (ioctl(fdKeyEmulator, UI_SET_EVBIT, EV_SYN)) {
         std::cout << "Error in ioctl : UI_SET_EVBIT : EV_SYN : " << strerror(errno) << std::endl;
+        exit(ioctlError);
     }
 
     // now write the uinput_user_dev structure into uinput file descriptor
     if (write(fdKeyEmulator, &devFakeKeyboard, sizeof(uinput_user_dev)) < 0) {
         std::cout << "Error in write(): uinput_user_dev struct into uinput file descriptor: " << strerror(errno) << std::endl;
+        exit(writeError);
     }
 
     // create the device via an IOCTL call
     if (ioctl(fdKeyEmulator, UI_DEV_CREATE)) {
         std::cout << "Error in ioctl : UI_DEV_CREATE : " << strerror(errno) << std::endl;
+        exit(ioctlError);
     }
 }
 void ViktorDev::EmelationKeyBoard::initEmulateKeyboard()
 {
-    pressedButtons.reserve(buttonQuanity);
-    for (int i = 0; i < buttonQuanity; ++i) {
+    pressedButtons.reserve(buttonQuanityEm);
+    for (int i = 0; i < buttonQuanityEm; ++i) {
         pressedButtons.push_back({ kbEncoding[i], false });
     }
 
     fdKeyEmulator = open(uinputPath, O_WRONLY | O_NONBLOCK);
     if (fdKeyEmulator < 0) {
         std::cout << "error in open : " << strerror(errno) << std::endl;
+        exit(fdError);
     }
 
     // uinput_user_dev struct for fake keyboard
@@ -66,7 +68,6 @@ void ViktorDev::EmelationKeyBoard::initEmulateKeyboard()
     initKeyboard(devFakeKeyboard);
     usleep(ioDeviceInitSleep); // time to initialize the I / O device descriptor
     // now fdKeyEmulator represents the end-point file descriptor of the new input device.
-    std::cout << std::endl;
 }
 ViktorDev::EmelationKeyBoard::EmelationKeyBoard()
 {
@@ -97,6 +98,7 @@ void ViktorDev::EmelationKeyBoard::synKeyboard()
     // now write to the file descriptor
     if (write(fdKeyEmulator, &keyInputEvent, sizeof(input_event)) < 0) {
         std::cout << "Error write : EV_SYN for key press : " << strerror(errno) << std::endl;
+        exit(writeError);
     }
 }
 
@@ -111,6 +113,7 @@ void ViktorDev::EmelationKeyBoard::emulateKeyboard()
         // now write to the file descriptor
         if (write(fdKeyEmulator, &keyInputEvent, sizeof(input_event)) < 0) {
             std::cout << "Error write : KEY_A press : " << strerror(errno) << std::endl;
+            exit(writeError);
         }
     };
 
@@ -118,9 +121,11 @@ void ViktorDev::EmelationKeyBoard::emulateKeyboard()
     synKeyboard();
     // time between ticks
 }
-bool ViktorDev::EmelationKeyBoard::getCurrentButtonState(char symbol){
-    for(int i = 0;i < buttonQuanity; ++i){
-        if (pressedButtons[i].first ==symbol){
+
+bool ViktorDev::EmelationKeyBoard::getCurrentButtonState(int symbol)
+{
+    for (int i = 0; i < buttonQuanityEm; ++i) {
+        if ((pressedButtons[i]).first == symbol) {
             return pressedButtons[i].second;
         }
     }
@@ -136,11 +141,15 @@ void ViktorDev::EmulationMouse::initEmulateMouse()
         it->second = 0;
     }
     fdMouse = open(uinputPath, O_WRONLY | O_NONBLOCK);
-    if (fdMouse < 0)
-        die("error: open");
+    if (fdMouse < 0) {
+        perror("error: open");
+        exit(ioctlError);
+    }
     auto setSignal = [fdMouse = this->fdMouse](int signalType, int signal) {
-        if (ioctl(fdMouse, _IOW(UINPUT_IOCTL_BASE, signalType, int), signal) < 0)
-            die("error: ioctl");
+        if (ioctl(fdMouse, _IOW(UINPUT_IOCTL_BASE, signalType, int), signal) < 0) {
+            perror("error: ioctl");
+            exit(ioctlError);
+        }
     };
     setSignal(uiSetEvbit, EV_KEY);
     setSignal(UiSetKeybit, BTN_LEFT);
@@ -157,11 +166,15 @@ void ViktorDev::EmulationMouse::initEmulateMouse()
     uidev.id.product = uidevIdProduct;
     uidev.id.version = uidevIdVersion;
 
-    if (write(fdMouse, &uidev, sizeof(uidev)) < 0)
-        die("error: write");
+    if (write(fdMouse, &uidev, sizeof(uidev)) < 0) {
+        perror("error: write");
+        exit(writeError);
+    }
 
-    if (ioctl(fdMouse, UI_DEV_CREATE) < 0)
-        die("error: ioctl");
+    if (ioctl(fdMouse, UI_DEV_CREATE) < 0) {
+        perror("error: ioctl");
+        exit(ioctlError);
+    }
 
     usleep(ioDeviceInitSleep); //time to initialize the I / O device descriptor
 
@@ -172,11 +185,9 @@ void ViktorDev::EmulationMouse::setCoordsButtons(const KeyboardMouse::ButtonsCoo
 {
     coords.first = message.xcoord();
     coords.second = message.ycoord();
-    std::cout << "IN setKeysCoords" << std::endl;
     int i = 0;
     for (auto it = mouseButtons.begin(); it != mouseButtons.end(); ++it, ++i) {
         it->second = (message.mousebuttons())[i];
-        std::cout << "mouseButtons[i].first = " << mouseButtons[i].second << std::endl;
     }
 }
 
@@ -186,15 +197,19 @@ void ViktorDev::EmulationMouse::emulateMouseMovement(int coordX, int coordY)
     event.type = EV_REL;
     event.code = REL_X;
     event.value = coordX;
-    if (write(fdMouse, &event, sizeof(struct input_event)) < 0)
-        die("error: write");
+    if (write(fdMouse, &event, sizeof(struct input_event)) < 0) {
+        perror("error: write");
+        exit(writeError);
+    }
 
     memset(&event, 0, sizeof(struct input_event));
     event.type = EV_REL;
     event.code = REL_Y;
     event.value = coordY;
-    if (write(fdMouse, &event, sizeof(struct input_event)) < 0)
-        die("error: write");
+    if (write(fdMouse, &event, sizeof(struct input_event)) < 0) {
+        perror("error: write");
+        exit(writeError);
+    }
 }
 
 void ViktorDev::EmulationMouse::emulateMouseButtons(std::vector<std::pair<int, bool>> mouseButton)
@@ -203,17 +218,19 @@ void ViktorDev::EmulationMouse::emulateMouseButtons(std::vector<std::pair<int, b
     gettimeofday(&event.time, 0);
     event.type = EV_KEY;
     event.code = BTN_LEFT;
-    std::cout << "mouseButtons[0].second = " << mouseButtons[0].second << std::endl;
     event.value = mouseButtons[0].second;
-    if (write(fdMouse, &event, sizeof(struct input_event)) < 0)
-        die("error: write");
+    if (write(fdMouse, &event, sizeof(struct input_event)) < 0) {
+        perror("error: write");
+        exit(writeError);
+    }
     memset(&event, 0, sizeof(struct input_event));
     event.type = EV_KEY;
     event.code = BTN_RIGHT;
-    std::cout << "mouseButtons[0].second = " << mouseButtons[1].second << std::endl;
     event.value = mouseButtons[1].second;
-    if (write(fdMouse, &event, sizeof(struct input_event)) < 0)
-        die("error: write");
+    if (write(fdMouse, &event, sizeof(struct input_event)) < 0) {
+        perror("error: write");
+        exit(writeError);
+    }
 }
 
 void ViktorDev::EmulationMouse::synMouse()
@@ -222,8 +239,10 @@ void ViktorDev::EmulationMouse::synMouse()
     event.type = EV_SYN;
     event.code = 0;
     event.value = 0;
-    if (write(fdMouse, &event, sizeof(struct input_event)) < 0)
-        die("error: write");
+    if (write(fdMouse, &event, sizeof(struct input_event)) < 0) {
+        perror("error: write");
+        exit(writeError);
+    }
     previousCoords.first = coords.first;
     previousCoords.second = coords.second;
 }
@@ -245,10 +264,11 @@ ViktorDev::EmulationMouse::EmulationMouse()
 {
     initEmulateMouse();
 }
-int ViktorDev::EmulationMouse::getCurrentXCoord(){
+int ViktorDev::EmulationMouse::getCurrentXCoord()
+{
     return coords.first;
 }
-int ViktorDev::EmulationMouse::getCurrentYCoord(){
+int ViktorDev::EmulationMouse::getCurrentYCoord()
+{
     return coords.second;
 }
-

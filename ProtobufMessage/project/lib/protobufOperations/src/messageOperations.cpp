@@ -86,8 +86,8 @@ ViktorDev::ReceiveInteraction::ReceiveInteraction(std::string filePath, Keyboard
     if (!in) {
         std::cout << "errorWithFile in ReceiveInteraction constructor";
         assert(errorWithFile);
-        exit(errorWithFile);
         in.close();
+        exit(errorWithFile);
     };
 }
 ViktorDev::ReceiveInteraction::ReceiveInteraction(std::string filePath, bool buttonPressed[buttonQuanity], int coords[2])
@@ -96,8 +96,8 @@ ViktorDev::ReceiveInteraction::ReceiveInteraction(std::string filePath, bool but
     in.open(filePath, std::ios_base::binary);
     if (!in) {
         assert(errorWithFile);
-        exit(errorWithFile);
         in.close();
+        exit(errorWithFile);
     };
 }
 ViktorDev::ReceiveInteraction::~ReceiveInteraction()
