@@ -3,21 +3,23 @@
 #include "messageOperations.h"
 #include "operationEmulation.h"
 
+
 ScreenRecorder::ScreenRecorder()
-	: output_filename_("udp://10.147.18.204:8080") {
+	: output_filename_("udp://192.168.56.102:8080") {
     AVCodecContext video_encoder_codec_context;
 
 	video_encoder_codec_context.bit_rate = 400000;
-	video_encoder_codec_context.width = 1920;
-	video_encoder_codec_context.height = 950;
+	video_encoder_codec_context.width = 2560;
+	video_encoder_codec_context.height = 1920;
 	video_encoder_codec_context.pix_fmt = AV_PIX_FMT_YUV420P;
 	video_encoder_codec_context.time_base.num = 1;
-	video_encoder_codec_context.time_base.den = 30;
-	video_encoder_codec_context.framerate.num = 30;
+	video_encoder_codec_context.time_base.den = 60;
+	video_encoder_codec_context.framerate.num = 60;
 	video_encoder_codec_context.framerate.den = 1;
-	video_encoder_codec_context.gop_size = 3;
-	video_encoder_codec_context.max_b_frames = 10;
+	video_encoder_codec_context.gop_size = 	1;
+	video_encoder_codec_context.max_b_frames = 1;
 	InitVideo(&video_encoder_codec_context);
+	//InitAudio();
 	InitWriter();
 }
 int ScreenRecorder::InitWriter(){
@@ -37,17 +39,31 @@ int ScreenRecorder::InitWriter(){
 		return ret;
 	}
 
+	// out_audio_stream_ = avformat_new_stream(output_format_context_, NULL);
+	// out_audio_stream_->time_base = audio_encoder_codec_context_->time_base;
+	// out_audio_stream_->id = output_format_context_->nb_streams - 1;
+	// ret = avcodec_parameters_from_context(out_audio_stream_->codecpar, audio_encoder_codec_context_);
+	// if (ret < 0) {
+	// 	av_log(NULL, AV_LOG_ERROR, "Failed to copy encoder parameters to output stream\n");
+	// 	return ret;
+	// }
+
 	if (output_format_context_->oformat->flags & AVFMT_GLOBALHEADER)
 	{
 		output_format_context_->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 	}
 	
 	AVDictionary* options = nullptr;
-	// av_dict_set(&options, "framerate", "60", 0);
-	av_dict_set(&options, "probesize", "32", 0);
-	av_dict_set(&options, "rtbufsize", "32", 0);
+	av_dict_set(&options, "sc_threshold", "200", 0);
+	av_dict_set(&options, "analyzeduration", "32", 0);
+	//av_dict_set(&options, "profile", "high", 0);
+	av_dict_set(&options, "probesize", "100000", 0);
+	av_dict_set(&options, "rtbufsize", "100000", 0);
 	av_dict_set(&options,"preset", "fast",0);
 	av_dict_set(&options,"tune", "zerolatency", 0);
+	av_dict_set(&options, "max_interleave_delta", "1", 0);
+
+
 
 	if (!(output_format_context_->flags & AVFMT_NOFILE))
 	{
@@ -77,11 +93,16 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	avdevice_register_all();
 	avformat_network_init();
 	AVDictionary* options = nullptr;
-	av_dict_set(&options, "framerate", "60", 0);
-	av_dict_set(&options, "probesize", "32", 0);
-	av_dict_set(&options, "rtbufsize", "32", 0);
-	av_dict_set(&options,"preset", "fast",0);
-	av_dict_set(&options,"tune", "zerolatency", 0);
+	//av_dict_set(&options, "framerate", "60", 0);
+	// av_dict_set(&options, "probesize", "32", 0);
+	// av_dict_set(&options, "rtbufsize", "32", 0);
+	// av_dict_set(&options,"preset", "fast",0);
+	// av_dict_set(&options,"tune", "zerolatency", 0);
+	//av_dict_set(&options,"video_size","640x480",0);
+	av_dict_set(&options, "sc_threshold", "1", 0);
+	av_dict_set(&options, "analyzeduration", "32", 0);
+	//av_dict_set(&options, "profile", "high", 0);
+	
 	
 	int ret;
 	AVInputFormat* video_input_format_ = nullptr;
@@ -160,7 +181,7 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	sws_context_ = sws_getContext(
 		video_decoder_codec_context_->width, video_decoder_codec_context_->height, video_decoder_codec_context_->pix_fmt,
 		video_encoder_codec_context_->width, video_encoder_codec_context_->height, video_encoder_codec_context_->pix_fmt,
-		SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
+		SWS_BILINEAR, nullptr, nullptr, nullptr);
 
 	av_dict_free(&options);
 	avcodec_parameters_free(&video_parameter_);
@@ -181,17 +202,17 @@ ScreenRecorder::~ScreenRecorder() {
 }
 
 void ScreenRecorder::Start(Worker *initWorker) {
-	isRecord = true;
-	worker=initWorker;
-	worker->start();
+	isRecord_ = true;
+	worker_=initWorker;
+	worker_->start();
 	//EmulateClientInput();
-	threads.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
-	threads.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
+	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
+	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
 }
 
 void ScreenRecorder::Stop() {
-	isRecord = false;
-	for (auto i = threads.begin(); i != threads.end(); ++i) {
+	isRecord_ = false;
+	for (auto i = threads_.begin(); i != threads_.end(); ++i) {
         if ((*i)->joinable()) {
             (*i)->join();
         }
@@ -209,7 +230,7 @@ void ScreenRecorder::EmulateClientInput()
 
     while (true)
     {
-        worker->getInteraction(filename);
+        worker_->getInteraction(filename);
         ViktorDev::ReceiveInteraction ReceiveM(filename, ReceiveMessage);
         if (ReceiveM.receiveIt())
             std::cout << "Error wint receiving";
@@ -226,7 +247,7 @@ void ScreenRecorder::EmulateClientInput()
 void ScreenRecorder::DecodeVideo() {
 	int frame_number = 0;
 
-	while (isRecord ) {
+	while (isRecord_) {
 		
 		AVPacket* input_packet = av_packet_alloc();
 		av_read_frame(input_video_format_context_, input_packet);

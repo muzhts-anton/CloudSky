@@ -65,10 +65,10 @@ private:
 
 	std::string output_filename_;
 
-	bool isRecord = false;
+	bool isRecord_ = false;
 
-	Worker *worker = nullptr;
-	std::list<std::shared_ptr<std::thread>> threads;
+	Worker *worker_ = nullptr;
+	std::list<std::shared_ptr<std::thread>> threads_;
 };
 
 #endif
