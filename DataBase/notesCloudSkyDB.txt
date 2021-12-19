@@ -1,0 +1,54 @@
+CREATE DATABASE serverDB;
+
+CREATE TABLE clients (
+Email varchar (30) UNIQUE NOT NULL,
+Username varchar (30) UNIQUE NOT NULL,
+Password varchar(20) NOT NULL,
+Country varchar(25),
+FirstName varchar(20) NOT NULL,
+SecondName varchar(20) NOT NULL,
+Coins integer,
+AvailableGames bool[3],
+Age integer NOT NULL,
+id integer UNIQUE NOT NULL,
+HoursPlayedNumber float(10),
+FPS integer
+);
+
+INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins,AvailableGames, Age, id, HoursPlayedNumber, FPS) VALUES ('viktor@mail.ru', 'Ninja','mypassword1','Ivan','Ivanov',0, '{1,0,1}', 20, 1, '0.0', 30);
+INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, HoursPlayedNumber, FPS) VALUES ('nagibator@mail.ru', 'Nagibator', 'mypassword2','Viktor','Viktorov', 0,'{0,0,0}', 15, 2, '0.0', 60);
+INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, HoursPlayedNumber, FPS) VALUES ('ghost@mail.ru', 'ghost', 'mypassword3', 'Petr','Petrov', 0,'{1,1,1}', 25, 3, '0.0', 120);
+INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, HoursPlayedNumber, FPS) VALUES ('Donald@mail.ru', 'President','mypasswordDT','Donald','Trump',99, '{1,1,0}', 20, 4, '0.0', 30);
+
+
+
+Подключение к БД:
+\c database_name
+
+Вывести всю таблицу:
+SELECT * FROM table_name;
+
+Delete DB:
+DROP TABLE client;
+
+
+
+
+
+
+
+1. сделать enum class MyClass{
+    SUCCESS = 0,
+    ERROR =1
+};
+
+
+2. 3 protobuf files
+3. Антону надо уметь получать имя, [фамилия], количесво монет, доступа к играм. Захардкодить 3 игры
+
+5. Отправлять сообщение о том, какие игры имеет пользователь
+
+Весь алгоритм взаимодействия:
+1. Пользователь пытается зарегистрироваться или залогиниться
+2. Пользователь получает от сервера сообщение с инфой, какие игры он имеет, сколько у него комнов.
+3. Пользователь выбирает игру, информация об этом отправляется на сервер, там запускается определенная игра

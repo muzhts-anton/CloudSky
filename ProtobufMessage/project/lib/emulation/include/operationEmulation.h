@@ -27,6 +27,7 @@ public:
     void synKeyboard();
     void emulateKeyboard();
     bool getCurrentButtonState(int symbol);
+
 private:
     struct input_event keyInputEvent;
     int fdKeyEmulator;
@@ -47,7 +48,6 @@ public:
     void synMouse();
     int getCurrentXCoord();
     int getCurrentYCoord();
-
 
 private:
     std::pair<int, int> coords, previousCoords;

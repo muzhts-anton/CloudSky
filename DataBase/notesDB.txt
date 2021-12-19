@@ -1,0 +1,45 @@
+CREATE DATABASE test_database;
+CREATE USER test_user WITH password 'qwerty';
+GRANT ALL ON DATABASE test_database TO test_user;
+
+
+CREATE TABLE player (
+id integer NOT NULL,
+name varchar (100) NOT NULL,
+membership varchar (30) NOT NULL,
+gender varchar (10),
+level varchar (15),
+status varchar (1),
+create_date timestamp,
+last_modify_date timestamp,
+player_id integer PRIMARY KEY
+);
+/////////////////////////////////////////////////////////////////
+
+//To enter with role postgres
+sudo -i -u postgres
+
+//Create Table
+CREATE TABLE playground (
+    equip_id serial PRIMARY KEY,
+    type varchar (50) NOT NULL,
+    color varchar (25) NOT NULL,
+    location varchar(25) check (location in ('north', 'south', 'west', 'east', 'northeast', 'southeast', 'southwest', 'northwest')),
+    install_date date
+);
+
+
+//Check create Table
+\d
+
+// Insert data
+INSERT INTO playground (type, color, location, install_date) VALUES ('slide', 'blue', 'south', '2014-04-28');
+INSERT INTO playground (type, color, location, install_date) VALUES ('swing', 'yellow', 'northwest', '2010-08-16');
+
+// Check Insert
+SELECT * FROM playground;
+
+// Delete
+DELETE FROM playground WHERE type = 'slide';
+
+

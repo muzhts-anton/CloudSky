@@ -1,0 +1,26 @@
+syntax = "proto3";
+package dbInteraction;
+
+message clientInitInformation{
+    string firstName = 1;
+    string secondName = 2;
+    int32 coins = 3;
+    repeated bool gameAccess = 4;
+    // repeated bool buttonPressed = 1 [ packed = true ]; // repeated => buttonPressed is array
+    // int64 xCoord = 2;
+    // int64 yCoord = 3;
+    // repeated bool mouseButtons = 4;
+}
+
+message transactionRequst{
+    int32 productID = 1;
+}
+
+message transactionAnswer{
+    int32 resultCode = 1; // CHANGE TO ENUM! SUCCESS = 0; not enough coins = 1; the product has already been purchased = 2
+    int32 currentCoins = 2; //quanity of coins after transaction
+}
+
+message selectedGame{
+    int32 gameID = 1;
+}
