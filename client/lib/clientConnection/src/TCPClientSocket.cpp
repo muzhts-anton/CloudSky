@@ -2,8 +2,9 @@
 #include "constants.h"
 
 constexpr bool debug = true;
-constexpr const char *clientIP = "10.147.18.164";
-constexpr int clientIPLength = 14;
+// constexpr const char *clientIP = "10.147.18.164";
+constexpr const char *clientIP = "127.0.0.1";
+constexpr int clientIPLength = 9;
 
 TCPClient::TCPClientSocket::TCPClientSocket(const int port, const char* ip)
 {
@@ -60,24 +61,36 @@ void TCPClient::TCPClientSocket::createConnection()
 
 std::string TCPClient::TCPClientSocket::receiveIP()
 {
-    std::string IPString;
     char buffer[1024] = {};
     send(generalSocketDescriptor, clientIP, clientIPLength, 0);
 
+    std::string IPString;
     int valread = read(generalSocketDescriptor, buffer, 1024);
     if (debug) {
         std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
     }
-    if (valread > 0 && valread < 13) {
+    if (valread > 0 && valread < 14) {
         for (int i = 0; i < valread; i++)
             IPString.push_back(buffer[i]);
     }
+    std::cout << IPString << std::endl;
     return IPString;
+}
+
+void TCPClient::TCPClientSocket::sendIP()
+{
+    int bytes_sent = send(generalSocketDescriptor, clientIP, clientIPLength, 0);
+    if (debug) {
+        std::cout << "[LOG] : TCP Transmitted Data Size " << bytes_sent << " Bytes.\n";
+        std::cout << "[LOG] : TCP File Transfer Complete.\n";
+    }
 }
 
 void TCPClient::TCPClientSocket::changeIP(std::string newIP)
 {
     IP = newIP;
+    PORT = 8081;
+    address.sin_port = htons(PORT);
     addressLength = sizeof(address);
     try {
         createConnection();

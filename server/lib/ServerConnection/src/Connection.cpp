@@ -30,7 +30,10 @@ namespace ServerConnection {
         for (size_t i = 0; i < workersAmount; i++)
         {
             if (workersBussiness.at(i) == false)
+            {
+                workersBussiness.at(i) = true;
                 return workersIP.at(i);
+            }
         }
         return workersAreBusy;
     }
@@ -39,12 +42,12 @@ namespace ServerConnection {
     {
         if (!e)
         {
-            std::cout << clientIP << std::endl;
+            std::cout << "Клиент пришёл с IP " << clientIP << std::endl;
             std::string currentWorker;
             bool found = false;
             for (size_t i = 0; i < workersAmount; i++)
             {
-                if (clientIP.compare(workersIP.at(i)))
+                if (clientIP.compare(workersIP.at(i)) == 0)
                 {
                     std::cout << "Освобождаем worker с IP " << clientIP << std::endl;
                     workersBussiness.at(i) = false;

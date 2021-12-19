@@ -14,7 +14,7 @@
 constexpr int defaultWorkerPort = 8080;
 constexpr const char* defaultWorkerIp = "127.0.0.1";
 constexpr const char* defaultServerIp = "10.147.18.164";
-constexpr const char* workerIP = "127.0.0.1";
+constexpr const char* workerIP = "10.147.18.164";
 constexpr const char *workerFreedom = "FREE";
 constexpr int workerIPLength = 14;
 
@@ -29,6 +29,8 @@ public:
 
     void activateSocket();
 
+    void activateSendSocket();
+
     void bindSocket();
 
     void setListenSet();
@@ -37,11 +39,18 @@ public:
 
     void createSocket();
 
+    void createConnection();
+
+    std::string receiveClientIP();
+
     void receiveFile(std::string filename);
 
     void sendSignal();
 
 private:
+
+    void sendWorkerIP();
+
     std::fstream file;
     int PORT;
     int generalSocketDescriptor;

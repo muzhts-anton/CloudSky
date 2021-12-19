@@ -14,17 +14,19 @@ using namespace UDPWorker;
 
 Worker::Worker(int port, const char* ip)
 {
+    currentWorkerPort = port;
+    workerIP = ip;
     TCPSocket = new TCPWorkerSocket(port, ip);
     UDPSocket = new UDPWorkerSocket(port, ip);
-    currentWorkerPort = port + 1;
 }
 
 Worker::Worker(const char* port, const char* ip)
 {
     int numberPort = std::stoi(port);
+    currentWorkerPort = numberPort;
+    workerIP = ip;
     TCPSocket = new TCPWorkerSocket(numberPort, ip);
     UDPSocket = new UDPWorkerSocket(numberPort, ip);
-    currentWorkerPort = numberPort + 1;
 }
 
 Worker::~Worker()
@@ -47,6 +49,19 @@ void Worker::getInteraction(std::string filename)
     catch (const std::invalid_argument& e) {
         std::cerr << e.what() << std::endl;
     }
+    catch (const std::runtime_error& e) {
+        std::cout << e.what() << std::endl;
+        delete TCPSocket;
+        TCPSocket = new TCPWorkerSocket(currentWorkerPort, &workerIP[0]);
+        TCPSocket->activateSocket();
+        receiveClientIP();
+    }
+}
+
+void Worker::receiveClientIP()
+{
+    clientIP.clear();
+    clientIP = TCPSocket->receiveClientIP();
 }
 
 void Worker::sendFile(std::string filename)

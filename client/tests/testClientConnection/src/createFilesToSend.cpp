@@ -11,18 +11,18 @@
 
 #include "createFilesToSend.h"
 
-void createFileWithList(std::vector<std::string> *filesToSend);
+void createFileWithList(std::vector<std::string>& filesToSend);
 
-void createFileWithSet(std::vector<std::string> *filesToSend);
+void createFileWithSet(std::vector<std::string>& filesToSend);
 
-void createFileWithMap(std::vector<std::string> *filesToSend);
+void createFileWithMap(std::vector<std::string>& filesToSend);
 
-void createFileWithUnordSet(std::vector<std::string> *filesToSend);
+void createFileWithUnordSet(std::vector<std::string>& filesToSend);
 
-void createFileWithUnordMap(std::vector<std::string> *filesToSend);
+void createFileWithUnordMap(std::vector<std::string>& filesToSend);
 
 
-void createFilesToSend(std::vector<std::string> *filesToSend)
+void createFilesToSend(std::vector<std::string>& filesToSend)
 {
     createFileWithList(filesToSend);
     createFileWithSet(filesToSend);
@@ -31,7 +31,7 @@ void createFilesToSend(std::vector<std::string> *filesToSend)
     createFileWithUnordMap(filesToSend);
 }
 
-void createFileWithList(std::vector<std::string> *filesToSend)
+void createFileWithList(std::vector<std::string>& filesToSend)
 {
     std::ofstream fileWithList;
     std::string filename = "fileToSendWithList.bin";
@@ -45,10 +45,10 @@ void createFileWithList(std::vector<std::string> *filesToSend)
         fileWithList << number;
     }
     fileWithList.close();
-    filesToSend->push_back(filename);
+    filesToSend.push_back(filename);
 }
 
-void createFileWithSet(std::vector<std::string> *filesToSend)
+void createFileWithSet(std::vector<std::string>& filesToSend)
 {
     std::ofstream fileWithSet;
     std::string filename = "fileToSendWithSet.bin";
@@ -60,10 +60,10 @@ void createFileWithSet(std::vector<std::string> *filesToSend)
         fileWithSet << *it;
     }
     fileWithSet.close();
-    filesToSend->push_back(filename);
+    filesToSend.push_back(filename);
 }
 
-void createFileWithMap(std::vector<std::string> *filesToSend)
+void createFileWithMap(std::vector<std::string>& filesToSend)
 {
     std::ofstream fileWithMap;
     std::string filename = "fileToSendWithMap.txt";
@@ -80,7 +80,7 @@ void createFileWithMap(std::vector<std::string> *filesToSend)
         fileWithMap << it->first << it->second;
     }
     fileWithMap.close();
-    filesToSend->push_back(filename);
+    filesToSend.push_back(filename);
 }
 
 void createFileWithUnordSet(std::vector<std::string> *filesToSend)
@@ -99,7 +99,7 @@ void createFileWithUnordSet(std::vector<std::string> *filesToSend)
     filesToSend->push_back(filename);
 }
 
-void createFileWithUnordMap(std::vector<std::string> *filesToSend)
+void createFileWithUnordMap(std::vector<std::string>& filesToSend)
 {
     std::ofstream fileWithUnordMap;
     std::string filename = "fileToSendWithUnordMap.txt";
@@ -113,7 +113,7 @@ void createFileWithUnordMap(std::vector<std::string> *filesToSend)
         fileWithUnordMap << it->first << it->second;
     }
     fileWithUnordMap.close();
-    filesToSend->push_back(filename);
+    filesToSend.push_back(filename);
 }
 
 void compareFiles(std::string first, std::string second)

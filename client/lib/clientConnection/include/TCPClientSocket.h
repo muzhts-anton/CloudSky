@@ -32,6 +32,8 @@ public:
 
     std::string receiveIP();
 
+    void sendIP();
+
     void changeIP(std::string IP);
 
     void transmitFile(std::string filename);

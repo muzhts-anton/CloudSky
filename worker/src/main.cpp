@@ -6,9 +6,10 @@ int main(int argc, char *argv[])
         return -1;
     Worker worker(argv[1], argv[2]);
     worker.start();
+    worker.receiveClientIP();
     double fps = 0.5;
     std::string fileToReceivePath = "receivedButtonsCoords.bin";
-    while () {
+    while (true) {
         worker.getInteraction(fileToReceivePath);
         worker.sendFile("fileToSend.bin");
         usleep(1000.0 / fps);

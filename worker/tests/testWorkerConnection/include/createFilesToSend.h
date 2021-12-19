@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-void createFilesToSend(std::vector<std::string> *filesToSend);
+void createFilesToSend(std::vector<std::string>& filesToSend);
 
 void compareFiles(std::string first, std::string second);
 

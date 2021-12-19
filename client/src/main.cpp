@@ -18,6 +18,8 @@ int main()
     usleep(1000000);
     TCPSocket.changeIP(newIP);
     TCPSocket.activateSocket();
+    TCPSocket.sendIP();
+    usleep(1000000);
     UDPClient::UDPClientSocket UDPSocket(defaultPort, &newIP[0]);
     UDPSocket.activateSocket();
     double fps = defaultFPS;
