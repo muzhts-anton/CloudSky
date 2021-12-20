@@ -31,6 +31,10 @@ public:
 
     void sendFile(std::string filename);
 
+    bool getState();
+
+    void setState(bool state);
+
     void sendData(const char* data, size_t size);
 
     std::string getClientIP();
@@ -41,6 +45,7 @@ private:
     int currentWorkerPort;
     std::string workerIP;
     std::string clientIP;
+    bool isRunning = false;
 };
 
 #endif

@@ -8,7 +8,7 @@ ScreenRecorder::ScreenRecorder(Worker *initWorker)
 	: worker_(initWorker) {
 	worker_->start();
 	worker_->receiveClientIP();
-	output_filename_ = worker_->getClientIP();
+	output_filename_ = "udp://" + worker_->getClientIP() + ":8080";
     AVCodecContext video_encoder_codec_context;
 
 	video_encoder_codec_context.bit_rate = 400000;
@@ -228,17 +228,35 @@ void ScreenRecorder::EmulateClientInput()
     //emulation.initEmulateKbMouse();
     std::string filename = "receivedButtonsCoords.bin";
     //double fps = 100;
-
+	std::cout<<"1111111"<<std::endl;
     while (true)
     {
+			
+
         worker_->getInteraction(filename);
         ViktorDev::ReceiveInteraction ReceiveM(filename, ReceiveMessage);
-        if (ReceiveM.receiveIt())
-            std::cout << "Error wint receiving";
+        if (ReceiveM.receiveIt()){
+        	std::cout << "Error wint receiving";
+		}
+		std::cout<<"222"<<std::endl;
         ReceiveM.printMessage();
+		std::cout<<"333"<<std::endl;
+		if(ReceiveM.getMessage().xcoord() == 0){
+			for(int i =0; i < buttonQuanity; ++i){
+			ReceiveM.getMessage().add_buttonpressed(false);
+		}
+		ReceiveM.printMessage();
+		ReceiveM.getMessage().set_xcoord(100);
+		ReceiveM.getMessage().set_ycoord(100);
+		ReceiveM.getMessage().mousebuttons(false);
+		}
+
 		keyboard.setKeyboard(ReceiveM.getMessage());
+		std::cout<<"666"<<std::endl;
 		mouse.setCoordsButtons(ReceiveM.getMessage());
+		std::cout<<"44444"<<std::endl;
 		keyboard.emulateKeyboard();
+		std::cout<<"555"<<std::endl;
 		mouse.emulateMouse();
 		std::cout << "Законч принимать\n";
         //usleep(1000.0 / fps);
@@ -247,9 +265,15 @@ void ScreenRecorder::EmulateClientInput()
 
 void ScreenRecorder::DecodeVideo() {
 	int frame_number = 0;
-
+	bool previous = worker_->getState();
 	while (isRecord_) {
-		
+		if(!worker_->getState()){
+			previous = false;
+			continue;
+		}
+		if(previous == false){
+			usleep(1000000);
+		}
 		AVPacket* input_packet = av_packet_alloc();
 		av_read_frame(input_video_format_context_, input_packet);
 		int ret;
@@ -286,6 +310,8 @@ void ScreenRecorder::DecodeVideo() {
 		if (frame_number > 10000){
 			return;
 		}
+		
+		previous = worker_->getState();
 
 	}
 

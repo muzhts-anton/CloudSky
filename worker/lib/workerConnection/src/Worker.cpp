@@ -14,17 +14,19 @@ using namespace UDPWorker;
 
 Worker::Worker(int port, const char* ip)
 {
+    currentWorkerPort = port;
+    workerIP = ip;
     TCPSocket = new TCPWorkerSocket(port, ip);
-    //UDPSocket = new UDPWorkerSocket(port, ip);
-    currentWorkerPort = port + 1;
+    UDPSocket = new UDPWorkerSocket(port, ip);
 }
 
 Worker::Worker(const char* port, const char* ip)
 {
     int numberPort = std::stoi(port);
+    currentWorkerPort = numberPort;
+    workerIP = ip;
     TCPSocket = new TCPWorkerSocket(numberPort, ip);
-    //UDPSocket = new UDPWorkerSocket(numberPort, ip);
-    currentWorkerPort = numberPort + 1;
+    UDPSocket = new UDPWorkerSocket(numberPort, ip);
 }
 
 Worker::~Worker()
@@ -36,7 +38,14 @@ Worker::~Worker()
 void Worker::start()
 {
     TCPSocket->activateSocket();
-    //UDPSocket->activateSocket();
+    setState(true);
+}
+bool Worker::getState(){
+    return isRunning;
+}
+
+void Worker::setState(bool state){
+    isRunning = state;
 }
 
 void Worker::getInteraction(std::string filename)
@@ -46,6 +55,19 @@ void Worker::getInteraction(std::string filename)
     }
     catch (const std::invalid_argument& e) {
         std::cerr << e.what() << std::endl;
+    }
+    catch (const std::runtime_error& e) {
+        std::cout << e.what() << std::endl;
+        setState(false);
+        TCPSocket->setListenSet();
+        TCPSocket->acceptConnection();
+        std::fstream file;
+        file.open(filename, std::ios::binary);
+        file.close();
+        receiveClientIP();
+        TCPSocket->receiveFile(filename);
+        //sleep(10);
+        setState(true);
     }
 }
 

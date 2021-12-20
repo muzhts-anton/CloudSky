@@ -14,7 +14,7 @@
 constexpr int defaultWorkerPort = 8080;
 constexpr const char* defaultWorkerIp = "10.147.18.218";
 constexpr const char* defaultServerIp = "10.147.18.164";
-constexpr const char* workerIP = "10.147.18.218";
+constexpr const char* workerIP = "10.147.18.204";
 constexpr const char *workerFreedom = "FREE";
 constexpr int workerIPLength = 14;
 
