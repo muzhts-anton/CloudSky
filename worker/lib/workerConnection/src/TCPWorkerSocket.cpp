@@ -55,6 +55,32 @@ void TCPWorkerSocket::activateSocket()
     }
 }
 
+void TCPWorkerSocket::activateSendSocket()
+{   
+    try {
+        createSocket();
+        if (inet_pton(AF_INET, &IP[0], &address.sin_addr) <= 0) {
+            if (debug)
+                std::cout << "[ERROR] : TCP Invalid address\n";
+        } else
+            createConnection();
+    }
+    catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+void TCPWorkerSocket::createConnection()
+{
+    if (connect(generalSocketDescriptor, (struct sockaddr*)&address, sizeof(address)) < 0) {
+        if (debug)
+            perror("[ERROR] : TCP connection attempt failed.\n");
+        throw std::invalid_argument("[ERROR] : TCP connection attempt failed.");
+    }
+    if (debug)
+        std::cout << "[LOG] : TCP Connection Successfull.\n";
+}
+
 void TCPWorkerSocket::createSocket()
 {
     if ((generalSocketDescriptor = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
@@ -99,6 +125,22 @@ void TCPWorkerSocket::acceptConnection()
         std::cout << "[LOG] : TCP Connected to Server.\n";
 }
 
+std::string TCPWorkerSocket::receiveClientIP()
+{
+    std::string IPString;
+    char buffer[1024] = {};
+    int valread = read(newSocketDescriptor, buffer, 1024);
+    if (debug) {
+        std::cout << "[LOG] : TCP Client IP received,  " << valread << " bytes\n";
+    }
+    if (valread > 0 && valread < 14) {
+        for (int i = 0; i < valread; i++)
+            IPString.push_back(buffer[i]);
+    }
+    std::cout << IPString << std::endl;
+    return IPString;
+}
+
 void TCPWorkerSocket::receiveFile(std::string filename)
 {
     file.open(filename, std::ios::out | std::ios::trunc | std::ios::binary);
@@ -124,4 +166,23 @@ void TCPWorkerSocket::receiveFile(std::string filename)
     file.close();
     if (debug)
         std::cout << "[LOG] : TCP File Saved.\n";
+}
+
+void TCPWorkerSocket::sendWorkerIP()
+{
+    int bytes_sent = send(generalSocketDescriptor, workerIP, workerIPLength, 0);
+    if (debug) {
+        std::cout << "[LOG] : TCP Worker to Server:  " << bytes_sent << " Bytes.\n";
+        std::cout << "[LOG] : TCP File Transfer Complete.\n";
+    }
+    throw std::runtime_error("[LOG]: Client is not connected. Waiting for another...");
+}
+
+void TCPWorkerSocket::sendSignal()
+{
+    TCPWorkerSocket newSocket(8080, defaultServerIp);
+    newSocket.activateSendSocket();
+    if (debug)
+        std::cout << "[LOG] : TCP Sending Freeing signal...\n";
+    newSocket.sendWorkerIP();
 }

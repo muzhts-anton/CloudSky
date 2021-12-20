@@ -25,6 +25,8 @@ public:
 
     void start();
 
+    void receiveClientIP();
+
     void getInteraction(std::string filename);
 
     void sendFile(std::string filename);
@@ -35,6 +37,8 @@ private:
     TCPWorkerSocket* TCPSocket;
     UDPWorkerSocket* UDPSocket;
     int currentWorkerPort;
+    std::string workerIP;
+    std::string clientIP;
 };
 
 #endif

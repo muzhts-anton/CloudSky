@@ -5,7 +5,7 @@
 
 
 ScreenRecorder::ScreenRecorder()
-	: output_filename_("udp://192.168.56.102:8080") {
+	: output_filename_("udp://10.147.18.148:8080") {
     AVCodecContext video_encoder_codec_context;
 
 	video_encoder_codec_context.bit_rate = 400000;
@@ -205,6 +205,7 @@ void ScreenRecorder::Start(Worker *initWorker) {
 	isRecord_ = true;
 	worker_=initWorker;
 	worker_->start();
+	worker_->receiveClientIP();
 	//EmulateClientInput();
 	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
 	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));

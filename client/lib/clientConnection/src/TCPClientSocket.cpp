@@ -3,6 +3,9 @@
 
 constexpr bool debug = true;
 
+constexpr const char *clientIP = "10.147.18.148";
+constexpr int clientIPLength = 13;
+
 TCPClient::TCPClientSocket::TCPClientSocket(const int port, const char* ip)
 {
     PORT = port;
@@ -19,11 +22,34 @@ TCPClient::TCPClientSocket::~TCPClientSocket()
     close(generalSocketDescriptor);
 }
 
+void TCPClient::TCPClientSocket::sendIP()
+{
+    int bytes_sent = send(generalSocketDescriptor, clientIP, clientIPLength, 0);
+    if (debug) {
+        std::cout << "[LOG] : TCP Transmitted Data Size " << bytes_sent << " Bytes.\n";
+        std::cout << "[LOG] : TCP File Transfer Complete.\n";
+    }
+}
+
+void TCPClient::TCPClientSocket::changeIP(std::string newIP)
+{
+    IP = newIP;
+    PORT = 8081;
+    address.sin_port = htons(PORT);
+    addressLength = sizeof(address);
+    try {
+        createConnection();
+    }
+    catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
 void TCPClient::TCPClientSocket::activateSocket()
 {   
     try {
         createSocket();
-        if (inet_pton(AF_INET, IP, &address.sin_addr) <= 0) {
+        if (inet_pton(AF_INET, &IP[0], &address.sin_addr) <= 0) {
             if (debug)
                 std::cout << "[ERROR] : TCP Invalid address\n";
         } else
@@ -87,6 +113,24 @@ void TCPClient::TCPClientSocket::changePort(int newPort)
     catch (const std::invalid_argument& e) {
         std::cerr << e.what() << std::endl;
     }
+}
+
+std::string TCPClient::TCPClientSocket::receiveIP()
+{
+    char buffer[1024] = {};
+    send(generalSocketDescriptor, clientIP, clientIPLength, 0);
+
+    std::string IPString;
+    int valread = read(generalSocketDescriptor, buffer, 1024);
+    if (debug) {
+        std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
+    }
+    if (valread > 0 && valread < 14) {
+        for (int i = 0; i < valread; i++)
+            IPString.push_back(buffer[i]);
+    }
+    std::cout << IPString << std::endl;
+    return IPString;
 }
 
 void TCPClient::TCPClientSocket::transmitFile(std::string filename)

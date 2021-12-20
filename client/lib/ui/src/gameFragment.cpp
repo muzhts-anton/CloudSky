@@ -7,14 +7,25 @@
 #include <QDir>
 #include <unistd.h>
 
+constexpr const char *serverIP = "10.147.18.164";
+constexpr int serverPort = 8080;
+constexpr int workerPort = 8080;
+
 namespace fragment {
 
 GameFragment::GameFragment()
-    : TCPSocket(8080, "10.147.18.164")
+    : TCPSocket(serverPort, serverIP)
     , _player(new media::MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
 {
     TCPSocket.activateSocket();
+    std::string newIP = TCPSocket.receiveIP();
+    std::cout << "Переключаемся на IP " << newIP << std::endl;
+    usleep(1000000);
+    TCPSocket.changeIP(newIP);
+    TCPSocket.activateSocket();
+    TCPSocket.sendIP();
+    usleep(1000000);
     _backBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
 
     QHBoxLayout* mainHLayout = new QHBoxLayout(this);
@@ -33,7 +44,8 @@ GameFragment::GameFragment()
     // vidfile.cd("lib/ui/media/");
     //usleep(1000000);
     std::this_thread::sleep_for(std::chrono::seconds(4));
-    emit play(QString("udp://10.147.18.164:8080"));
+    emit play(QString(QString::fromStdString("udp://" + newIP + std::to_string(workerPort))));
+    // emit play(QString("udp://10.147.18.164:8080"));
 
     _timer = new QTimer(this);
     _timer->setInterval(1000.f / GameFragment::fps);

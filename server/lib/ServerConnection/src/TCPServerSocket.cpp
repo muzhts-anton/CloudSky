@@ -4,6 +4,7 @@
 #include <iostream>
 
 constexpr int debug = 1;
+constexpr int initInfoLength = 10;
 
 using namespace TCPServer;
 
@@ -21,8 +22,6 @@ TCPServerSocket& TCPServerSocket::operator=(TCPServerSocket& that)
 {
     PORT = that.PORT;
     IP = that.IP;
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
     addressLength = sizeof(address);
     return *this;
@@ -32,8 +31,8 @@ TCPServerSocket::~TCPServerSocket()
 {
     if (file.is_open())
         file.close();
-    char buff[10] = { 0 };
-    while (recv(newSocketDescriptor, buff, 10, 0) > 0) { }
+    char buff[initInfoLength] = { 0 };
+    while (recv(newSocketDescriptor, buff, initInfoLength, 0) > 0) { }
     close(newSocketDescriptor);
     close(generalSocketDescriptor);
 }

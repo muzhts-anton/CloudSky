@@ -49,6 +49,12 @@ void Worker::getInteraction(std::string filename)
     }
 }
 
+void Worker::receiveClientIP()
+{
+    clientIP.clear();
+    clientIP = TCPSocket->receiveClientIP();
+}
+
 void Worker::sendFile(std::string filename)
 {
     try {

@@ -31,6 +31,12 @@ public:
 
     int receivePortNumber();
 
+    std::string receiveIP();
+
+    void sendIP();
+
+    void changeIP(std::string IP);
+
     void changePort(int newPort);
 
     void transmitFile(std::string filename);
@@ -38,7 +44,7 @@ public:
 private:
     std::fstream file;
     int PORT;
-    const char* IP;
+    std::string IP;
     int generalSocketDescriptor;
     struct sockaddr_in address;
     int addressLength;
