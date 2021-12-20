@@ -11,14 +11,12 @@ add_compile_options(-Wall -Wpedantic -c -g -g3 -lpqxx -L/usr/lib/x86_64-linux-gn
 add_link_options(-lpqxx -lpq )
 #link_directories()
 
-set(PQXX /usr/local/include/pqxx)
+#set(PQXX /usr/local/include/pqxx)
 
 
 add_subdirectory(project/lib/dbOperations)
 
 add_executable(serverDB project/src/serverDB.cpp) 
 target_include_directories(serverDB PRIVATE ${PostgreSQL_INCLUDE_DIRS})
-#target_include_directories(serverDB PUBLIC project/lib/dbOperations/include())
-target_link_libraries(serverDB PRIVATE ${PostgreSQL_LIBRARIES})
-#target_link_libraries(serverDB PRIVATE PRIVATE PostgreSQL::PostgreSQL)
-target_link_libraries(serverDB PRIVATE dbOperations)
+target_link_libraries(serverDB PRIVATE ${PostgreSQL_LIBRARIES} dbOperations)
+#target_link_libraries(serverDB PRIVATE dbOperations)

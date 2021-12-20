@@ -94,7 +94,7 @@ void ViktorDev::transactionHandlerServer::printTransaction()
               << "availableGames = " << availableGames[0] << ' ' << availableGames[1] << ' ' << availableGames[2] << std::endl;
 };
 
-void ViktorDev::transactionHandlerServer::parseRequesTransaction(PGresult* res)
+void ViktorDev::transactionHandlerServer::parseRequestTransaction(PGresult* res)
 {
     int nTuples = PQntuples(res);
     fprintf(stdout, "Tuples count: %i\n", nTuples);
@@ -124,7 +124,7 @@ void ViktorDev::transactionHandlerServer::doTransaction(std::vector<std::pair<st
             gameId = i;
         };
     }
-    //transactionResult
+    //TransactionResult
     if (coins < games[gameId].second) {
         // send protobuf message
         return;
@@ -155,7 +155,7 @@ void ViktorDev::transactionHandlerServer::requestTransactionPeek(std::string use
     }
     char* resStatusStr = PQresStatus(resStatus);
     fprintf(stdout, "Query Result Status: %s\n", resStatusStr);
-    parseRequesTransaction(res);
+    parseRequestTransaction(res);
     printTransaction();
 
     PQclear(res);

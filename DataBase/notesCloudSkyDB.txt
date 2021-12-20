@@ -7,18 +7,17 @@ Password varchar(20) NOT NULL,
 Country varchar(25),
 FirstName varchar(20) NOT NULL,
 SecondName varchar(20) NOT NULL,
-Coins integer,
+Coins integer DEFAULT 0,
 AvailableGames bool[3],
-Age integer NOT NULL,
-id integer UNIQUE NOT NULL,
-HoursPlayedNumber float(10),
-FPS integer
+Age integer DEFAULT 0,
+id integer DEFAULT 0,
+FPS integer DEFAULT 30
 );
 
-INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins,AvailableGames, Age, id, HoursPlayedNumber, FPS) VALUES ('viktor@mail.ru', 'Ninja','mypassword1','Ivan','Ivanov',0, '{1,0,1}', 20, 1, '0.0', 30);
-INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, HoursPlayedNumber, FPS) VALUES ('nagibator@mail.ru', 'Nagibator', 'mypassword2','Viktor','Viktorov', 0,'{0,0,0}', 15, 2, '0.0', 60);
-INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, HoursPlayedNumber, FPS) VALUES ('ghost@mail.ru', 'ghost', 'mypassword3', 'Petr','Petrov', 0,'{1,1,1}', 25, 3, '0.0', 120);
-INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, HoursPlayedNumber, FPS) VALUES ('Donald@mail.ru', 'President','mypasswordDT','Donald','Trump',99, '{1,1,0}', 20, 4, '0.0', 30);
+INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins,AvailableGames, Age, id, FPS) VALUES ('viktor@mail.ru', 'Ninja','mypassword1','Ivan','Ivanov',0, '{1,0,1}', 20, 1, 30);
+INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, FPS) VALUES ('nagibator@mail.ru', 'Nagibator', 'mypassword2','Viktor','Viktorov', 0,'{0,0,0}', 15, 2, 60);
+INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, FPS) VALUES ('ghost@mail.ru', 'ghost', 'mypassword3', 'Petr','Petrov', 0,'{1,1,1}', 25, 3, 120);
+INSERT INTO clients ( Email, Username, Password, FirstName, SecondName, Coins, AvailableGames, Age, id, FPS) VALUES ('Donald@mail.ru', 'President','mypasswordDT','Donald','Trump',99, '{1,1,0}', 20, 4, 30);
 
 
 
