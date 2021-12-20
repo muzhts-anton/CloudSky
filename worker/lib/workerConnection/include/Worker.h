@@ -33,6 +33,8 @@ public:
 
     void sendData(const char* data, size_t size);
 
+    std::string getClientIP();
+
 private:
     TCPWorkerSocket* TCPSocket;
     UDPWorkerSocket* UDPSocket;

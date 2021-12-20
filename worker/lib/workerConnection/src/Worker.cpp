@@ -55,6 +55,11 @@ void Worker::receiveClientIP()
     clientIP = TCPSocket->receiveClientIP();
 }
 
+std::string Worker::getClientIP()
+{
+    return clientIP;
+}
+
 void Worker::sendFile(std::string filename)
 {
     try {
@@ -74,3 +79,4 @@ void Worker::sendData(const char* data, size_t size)
         std::cerr << e.what() << std::endl;
     }
 }
+

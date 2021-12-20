@@ -13,9 +13,9 @@ int main(int argc, char *argv[])
     if (argc != 3)
         return -1;
     Worker worker(argv[1], argv[2]);
-    
-    ScreenRecorder recorder;
-    recorder.Start(&worker);
+
+    ScreenRecorder recorder(&worker);
+    recorder.Start();
     std::this_thread::sleep_for(std::chrono::seconds(1000000));  
     return 0;
 }

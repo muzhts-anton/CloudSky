@@ -4,8 +4,11 @@
 #include "operationEmulation.h"
 
 
-ScreenRecorder::ScreenRecorder()
-	: output_filename_("udp://10.147.18.148:8080") {
+ScreenRecorder::ScreenRecorder(Worker *initWorker)
+	: worker_(initWorker) {
+	worker_->start();
+	worker_->receiveClientIP();
+	output_filename_ = worker_->getClientIP();
     AVCodecContext video_encoder_codec_context;
 
 	video_encoder_codec_context.bit_rate = 400000;
@@ -201,11 +204,8 @@ ScreenRecorder::~ScreenRecorder() {
 	sws_freeContext(sws_context_);
 }
 
-void ScreenRecorder::Start(Worker *initWorker) {
+void ScreenRecorder::Start() {
 	isRecord_ = true;
-	worker_=initWorker;
-	worker_->start();
-	worker_->receiveClientIP();
 	//EmulateClientInput();
 	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
 	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));

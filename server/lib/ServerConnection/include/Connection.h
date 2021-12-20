@@ -46,7 +46,7 @@ private:
     boost::asio::ip::tcp::socket socket_;
 
     //boost::array<char, 1024> buffer_;
-    std::array<std::string, workersAmount> workersIP = { kostyaIP, viktorIP};
+    std::array<std::string, workersAmount> workersIP = { viktorIP, kostyaIP};
     std::array<bool, workersAmount> workersBussiness = { false, false};
     std::string clientIP;
     int newPort;

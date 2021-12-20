@@ -24,9 +24,9 @@ extern "C" {
 
 class ScreenRecorder {
 public:
-	ScreenRecorder();
+	ScreenRecorder(Worker *initWorker);
 	~ScreenRecorder();
-	void Start(Worker *initWorker);
+	void Start();
 	void Stop();
 
 private:
