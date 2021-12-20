@@ -80,21 +80,21 @@ void ViktorDev::authorizationHandler::requestAuthorization(std::string username)
     PQfinish(conn);
 }
 
-ViktorDev::transactionHandlerServer::transactionHandlerServer(bool wantedGames[gameQuanity])
+ViktorDev::TransactionHandlerServer::TransactionHandlerServer(bool wantedGames[gameQuanity])
 {
     for (int i = 0; i < gameQuanity; ++i) {
         availableGames[i] = wantedGames[i];
     }
 }
 
-void ViktorDev::transactionHandlerServer::printTransaction()
+void ViktorDev::TransactionHandlerServer::printTransaction()
 {
     std::cout << std::endl
               << "coins = " << coins << std::endl
               << "availableGames = " << availableGames[0] << ' ' << availableGames[1] << ' ' << availableGames[2] << std::endl;
 };
 
-void ViktorDev::transactionHandlerServer::parseRequestTransaction(PGresult* res)
+void ViktorDev::TransactionHandlerServer::parseRequestTransaction(PGresult* res)
 {
     int nTuples = PQntuples(res);
     fprintf(stdout, "Tuples count: %i\n", nTuples);
@@ -116,7 +116,7 @@ void ViktorDev::transactionHandlerServer::parseRequestTransaction(PGresult* res)
     }
 }
 
-void ViktorDev::transactionHandlerServer::doTransaction(std::vector<std::pair<std::string, int>> games)
+void ViktorDev::TransactionHandlerServer::doTransaction(std::vector<std::pair<std::string, int>> games)
 {
     int gameId = -1;
     for (int i = 0; i < gameQuanity; ++i) {
@@ -137,7 +137,7 @@ void ViktorDev::transactionHandlerServer::doTransaction(std::vector<std::pair<st
     //send protobuf message
 };
 
-void ViktorDev::transactionHandlerServer::requestTransactionPeek(std::string username)
+void ViktorDev::TransactionHandlerServer::requestTransactionPeek(std::string username)
 {
     const char* conninfo = connectionInfo;
     PGconn* conn = PQconnectdb(conninfo);

@@ -49,19 +49,19 @@ private:
     void requestAuthorization(PGconn** conn);
 };
 
-// class transactionHandlerClient { // Надо с протобафом это сделать
+// class TransactionHandlerClient { // Надо с протобафом это сделать
 // public:
-//     //transactionHandlerClient();
-//     //~transactionHandlerClient();
+//     //TransactionHandlerClient();
+//     //~TransactionHandlerClient();
 //     void sendToServer();
 
 // private:
 //     int productID;
 // };
 
-class transactionHandlerServer { // Надо с протобафом это сделать
+class TransactionHandlerServer { // Надо с протобафом это сделать
 public:
-    transactionHandlerServer(bool wantedGames[gameQuanity]);
+    TransactionHandlerServer(bool wantedGames[gameQuanity]);
     void requestTransactionPeek(std::string username);
     void doTransaction(std::vector<std::pair<std::string, int>> games);
     void sendToClient();

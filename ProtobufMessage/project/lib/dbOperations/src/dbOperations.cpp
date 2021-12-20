@@ -35,7 +35,6 @@ void ViktorDev::authorizationHandler::parseRequestAuth(PGresult* res)
 }
 void ViktorDev::authorizationHandler::showBinaryResults(PGresult* res)
 {
-    /* узнали формат результата: бинарный или текстовый?? */
     int binaryTuples = PQbinaryTuples(res);
     if (binaryTuples == 1)
         fprintf(stdout, "Binary data\n");
@@ -81,21 +80,86 @@ void ViktorDev::authorizationHandler::requestAuthorization(std::string username)
     PQfinish(conn);
 }
 
-ViktorDev::transactionHandlerServer::transactionHandlerServer(bool wantedGames[gameQuanity])
+dbInteraction::transactionRequst& ViktorDev::TransactionHandlerClient::getRequestMessage()
 {
+    return requestMessage;
+}
+
+dbInteraction::transactionAnswer& ViktorDev::TransactionHandlerClient::getAnswerMessage()
+{
+    return answerMessage;
+}
+ViktorDev::TransactionHandlerClient::TransactionHandlerClient(std::string filePath, dbInteraction::transactionRequst message)
+{
+    this->filePath = filePath;
+    this->requestMessage = message;
+}
+int ViktorDev::TransactionHandlerClient::sendIt()
+{
+    out.open(filePath, std::ios_base::binary);
+    if (!out) {
+        std::cout << "FILE DOES NOT OPENED!" << std::endl;
+        assert(ViktorDev::errorWithFile);
+        exit(ViktorDev::errorWithFile);
+    }
+    if (!requestMessage.SerializePartialToOstream(&out)) {
+        std::cout << "ERRORSEND IT !" << std::endl;
+        return ViktorDev::errorSerializeMessage;
+    };
+    out.close();
+    return ViktorDev::success;
+}
+int ViktorDev::TransactionHandlerClient::receiveIt()
+{
+    in.open(filePath, std::ios_base::binary);
+    if (!in) {
+        assert(errorWithFile);
+        in.close();
+        exit(errorWithFile);
+    };
+    if (!answerMessage.ParseFromIstream(&in)) {
+        return ViktorDev::errorParseMessage;
+    };
+    if (answerMessage.transactionstatus() == 0) {
+        result = ViktorDev::TransactionResult::SUCCESS;
+    } else {
+        if (answerMessage.transactionstatus() == 1) {
+            result = ViktorDev::TransactionResult::NOT_ENOUGH_COINS;
+        } else {
+            result = ViktorDev::TransactionResult::ALREADY_PURCHASED;
+        }
+    }
+    in.close();
+    return ViktorDev::success;
+}
+
+void ViktorDev::TransactionHandlerClient::printRequestMessage()
+{
+    std::cout << "productID = " << getRequestMessage().productid() << std::endl;
+    std::cout << "username = " << getRequestMessage().username() << std::endl;
+}
+void ViktorDev::TransactionHandlerClient::printAnswerMessage()
+{
+    std::cout << "transactionStatus = " << getAnswerMessage().transactionstatus() << std::endl;
+    std::cout << "currentCoins = " << getAnswerMessage().coins() << std::endl;
     for (int i = 0; i < gameQuanity; ++i) {
-        availableGames[i] = wantedGames[i];
+        std::cout << "gameAccess " << i << " = " << getAnswerMessage().gameaccess()[i] << std::endl;
     }
 }
 
-void ViktorDev::transactionHandlerServer::printTransaction()
+ViktorDev::TransactionHandlerServer::TransactionHandlerServer(dbInteraction::transactionAnswer message) {
+    answerMessage = message;
+}
+
+
+void ViktorDev::TransactionHandlerServer::printTransaction()
 {
     std::cout << std::endl
               << "coins = " << coins << std::endl
               << "availableGames = " << availableGames[0] << ' ' << availableGames[1] << ' ' << availableGames[2] << std::endl;
 }
 
-void ViktorDev::transactionHandlerServer::parseRequestTransaction(PGresult* res)
+void ViktorDev::TransactionHandlerServer::parseRequestTransaction(PGresult* res)
 {
     int nTuples = PQntuples(res);
     fprintf(stdout, "Tuples count: %i\n", nTuples);
@@ -117,36 +181,20 @@ void ViktorDev::transactionHandlerServer::parseRequestTransaction(PGresult* res)
     }
 }
 
-void ViktorDev::transactionHandlerServer::doTransaction(std::vector<std::pair<std::string, int>> games)
-{
-    int gameId = -1;
-    for (int i = 0; i < gameQuanity; ++i) {
-        if (wantedGames[i] == true) {
-            gameId = i;
-        };
-    }
-
-    //TransactionResult
-    if (coins < games[gameId].second) {
-        // send protobuf message with error
-        return;
-    }
-    if (availableGames[gameId] == true) {
-        //send protobuf message with error
-        return;
-    }
-    // do transaction
-    //send protobuf message
+dbInteraction::transactionRequst& ViktorDev::TransactionHandlerServer::getRequestMessage(){
+    return requestMessage;
 }
-
-void ViktorDev::transactionHandlerServer::requestTransactionPeek(std::string username)
+dbInteraction::transactionAnswer& ViktorDev::TransactionHandlerServer::getAnswerMessage(){
+    return answerMessage;
+}
+void ViktorDev::TransactionHandlerServer::requestTransactionPeek()
 {
     const char* conninfo = connectionInfo;
     PGconn* conn = PQconnectdb(conninfo);
     setConnection(&conn);
 
     const char* sql1 = "SELECT coins, availablegames FROM Clients WHERE username = $1";
-    const char* sql1param = username.c_str();
+    const char* sql1param = getRequestMessage().username().c_str();
     PGresult* res = PQexecParams(conn, sql1, 1, NULL, &sql1param, NULL, NULL, 0);
     ExecStatusType resStatus = PQresultStatus(res);
     if (resStatus != PGRES_TUPLES_OK) {
@@ -158,10 +206,62 @@ void ViktorDev::transactionHandlerServer::requestTransactionPeek(std::string use
     char* resStatusStr = PQresStatus(resStatus);
     fprintf(stdout, "Query Result Status: %s\n", resStatusStr);
     parseRequestTransaction(res);
-    printTransaction();
+    printTransaction(); 
+
 
     PQclear(res);
     PQfinish(conn);
+}
+
+void ViktorDev::TransactionHandlerServer::doTransaction()
+{   
+    int prices [gameQuanity] {firstGamePrice, secondGamePrice, thirdGamePrice};
+    if(coins < prices[getRequestMessage().productid()]){
+        resultCode = 1;
+        return;
+    }
+    if(availableGames[getRequestMessage().productid()] ==1){
+        resultCode = 2;
+        return;
+    }
+
+    const char* conninfo = connectionInfo;
+    PGconn* conn = PQconnectdb(conninfo);
+    setConnection(&conn);
+
+    const char* sql1 = "UPDATE clients SET coins = $1 WHERE username = $2";
+    const char* sql1param = getRequestMessage().username().c_str();
+    PGresult* res = PQexecParams(conn, sql1, 1, NULL, &sql1param, NULL, NULL, 0);
+    ExecStatusType resStatus = PQresultStatus(res);
+    if (resStatus != PGRES_TUPLES_OK) {
+        fprintf(stderr, "SELECT failed: %s", PQerrorMessage(conn));
+        PQclear(res);
+        PQfinish(conn);
+        exit(1);
+    }
+    char* resStatusStr = PQresStatus(resStatus);
+    fprintf(stdout, "Query Result Status: %s\n", resStatusStr);
+    parseRequestTransaction(res);
+    printTransaction(); 
+
+
+    PQclear(res);
+    PQfinish(conn);
+}
+
+void ViktorDev::TransactionHandlerServer::sendToClient(){    
+    out.open(filePath, std::ios_base::binary);
+    if (!out) {
+        std::cout << "FILE DOES NOT OPENED!" << std::endl;
+        assert(ViktorDev::errorWithFile);
+        exit(ViktorDev::errorWithFile);
+    }
+    if (!answerMessage.SerializePartialToOstream(&out)) {
+        std::cout << "ERRORSEND IT !" << std::endl;
+        //return ViktorDev::errorSerializeMessage;
+    };
+    out.close();
+    //return ViktorDev::success;
 }
 
 dbInteraction::clientAuthInformation& ViktorDev::ClientAuthorizationHandler::getMessage()
@@ -451,7 +551,6 @@ void ViktorDev::ClientRegistrationHandler::printMessage()
     std::cout << "FPS = " << getMessage().fps() << std::endl;
 }
 
-
 int ViktorDev::ClientRegistrationHandler::receiveIt()
 {
     in.open(filePath, std::ios_base::binary);
@@ -465,10 +564,10 @@ int ViktorDev::ClientRegistrationHandler::receiveIt()
     };
     if (answerMessage.authorizationstatus() == 0) {
         result = ViktorDev::RegistrationResult::SUCCESS;
-        std::cout<<"Registration result = success"<<std::endl;
+        std::cout << "Registration result = success" << std::endl;
     } else {
         result = ViktorDev::RegistrationResult::DUPLICATED_INFO;
-        std::cout<<"Registration result = duplicated info"<<std::endl;
+        std::cout << "Registration result = duplicated info" << std::endl;
     }
     in.close();
     return ViktorDev::success;
@@ -477,23 +576,20 @@ int ViktorDev::ClientRegistrationHandler::receiveIt()
 void ViktorDev::ClientRegistrationHandler::printResult()
 {
     if (result == ViktorDev::RegistrationResult::SUCCESS) {
-        std::cout<<"Registration result = success"<<std::endl;
+        std::cout << "Registration result = success" << std::endl;
     } else {
-        if(result == ViktorDev::RegistrationResult::DUPLICATED_INFO){
-            std::cout<<"Registration result = duplicated info"<<std::endl;
+        if (result == ViktorDev::RegistrationResult::DUPLICATED_INFO) {
+            std::cout << "Registration result = duplicated info" << std::endl;
         }
     }
 }
 
-
 // REGISTRATION SERVER PART
-
 
 ViktorDev::ServerRegistrationHandler::ServerRegistrationHandler(std::string filePath, dbInteraction::registrationInfo message)
 {
     this->filePath = filePath;
     this->message = message;
-
 }
 
 int ViktorDev::ServerRegistrationHandler::receiveIt()
@@ -512,7 +608,8 @@ int ViktorDev::ServerRegistrationHandler::receiveIt()
     in.close();
     return ViktorDev::success;
 }
-dbInteraction::registrationInfo& ViktorDev::ServerRegistrationHandler::getMessage(){
+dbInteraction::registrationInfo& ViktorDev::ServerRegistrationHandler::getMessage()
+{
     return message;
 }
 void ViktorDev::ServerRegistrationHandler::printMessage()
@@ -533,23 +630,16 @@ void ViktorDev::ServerRegistrationHandler::printMessage()
     std::cout << "FPS = " << getMessage().fps() << std::endl;
 }
 
-void ViktorDev::ServerRegistrationHandler::updateInt(dbInteraction::registrationInfo addMessage){
+void ViktorDev::ServerRegistrationHandler::updateInt(dbInteraction::registrationInfo addMessage)
+{
     const char* conninfo = connectionInfo;
     PGconn* conn = PQconnectdb(conninfo);
     setConnection(&conn);
     const int paramsQuanity = 0;
     const char* sql1 = "UPDATE clients SET coins = 0, age  = 20";
-    //const char* sql1param[paramsQuanity]{};// = getMessage().username().c_str();
-    //int paramFormats[paramsQuanity] = { 0, 0, 0, 0, 0, 1, 0, 1, 1 }; 
-    //int paramLengths[paramsQuanity] = { 0, 0, 0, 0, 0, (int)sizeof(int), 0/*(int)sizeof(bool[3])*/, (int)sizeof(int), (int)sizeof(int)};
     PGresult* res = PQexecParams(conn, sql1, paramsQuanity, NULL, NULL, NULL, NULL, 3); //0 - text, 1 - bin
     ExecStatusType resStatus = PQresultStatus(res);
-    // if (resStatus != PGRES_TUPLES_OK) {
-    //     fprintf(stderr, "INSERT failed: %s", PQerrorMessage(conn));
-    //     PQclear(res);
-    //     PQfinish(conn);
-    //     exit(1);
-    // }
+
     char* resStatusStr = PQresStatus(resStatus);
     fprintf(stdout, "Query Result Status: %s\n", resStatusStr);
 
@@ -573,42 +663,19 @@ void ViktorDev::ServerRegistrationHandler::parseRequestCheck(PGresult* res)
         checkingResult = ViktorDev::RegistrationResult::DUPLICATED_INFO;
     }
 }
-void ViktorDev::ServerRegistrationHandler::addRecord(dbInteraction::registrationInfo addMessage){
+void ViktorDev::ServerRegistrationHandler::addRecord(dbInteraction::registrationInfo addMessage)
+{
     const char* conninfo = connectionInfo;
     PGconn* conn = PQconnectdb(conninfo);
     setConnection(&conn);
     const int paramsQuanity = 6;
     const char* sql1 = "INSERT INTO clients (Email, Username, Password, FirstName, SecondName, availablegames) VALUES ($1, $2, $3, $4, $5, $6)";
-    // int age = addMessage.age();
-    // const int* pAge = &age;
-    // int id = 15;
-    // int * pId = &id;
-    const char * AvailableGames = "{f,f,f}";
-    // int coins = 5;
-    // int * pCoins = &coins;
-    // std::cout<<std::endl<<addMessage.email().c_str()<<std::endl;
-    // std::cout<<std::endl<<addMessage.username().c_str()<<std::endl;
-    // std::cout<<std::endl<<addMessage.password().c_str()<<std::endl;
-    // std::cout<<std::endl<<addMessage.firstname().c_str()<<std::endl;
-    // std::cout<<std::endl<<addMessage.secondname().c_str()<<std::endl;
-    // std::cout<<std::endl<<(const char *)(pCoins)<<std::endl;
-    // std::cout<<std::endl<<AvailableGames<<std::endl;
-    // std::cout<<std::endl<<(const char *)(pAge)<<std::endl;
-    // std::cout<<std::endl<<(const char *)(pId)<<std::endl;
-    const char* sql1param[paramsQuanity]{addMessage.email().c_str(), addMessage.username().c_str(),addMessage.password().c_str(), addMessage.firstname().c_str(), addMessage.secondname().c_str(), AvailableGames};// = getMessage().username().c_str();
-    //int paramFormats[paramsQuanity] = { 0, 0, 0, 0, 0, 1, 0, 1, 1 }; 
-    //int paramLengths[paramsQuanity] = { 0, 0, 0, 0, 0, (int)sizeof(int), 0/*(int)sizeof(bool[3])*/, (int)sizeof(int), (int)sizeof(int)};
+    const char* AvailableGames = "{f,f,f}";
+    const char* sql1param[paramsQuanity] { addMessage.email().c_str(), addMessage.username().c_str(), addMessage.password().c_str(), addMessage.firstname().c_str(), addMessage.secondname().c_str(), AvailableGames }; 
     PGresult* res = PQexecParams(conn, sql1, paramsQuanity, NULL, sql1param, NULL, NULL, 1); //0 - text, 1 - bin
     ExecStatusType resStatus = PQresultStatus(res);
-    // if (resStatus != PGRES_TUPLES_OK) {
-    //     fprintf(stderr, "INSERT failed: %s", PQerrorMessage(conn));
-    //     PQclear(res);
-    //     PQfinish(conn);
-    //     exit(1);
-    // }
     char* resStatusStr = PQresStatus(resStatus);
     fprintf(stdout, "Query Result Status: %s\n", resStatusStr);
-    //parseRequestCheck(res);
 
     PQclear(res);
     PQfinish(conn);
@@ -621,9 +688,7 @@ void ViktorDev::ServerRegistrationHandler::check()
     setConnection(&conn);
 
     const char* sql1 = "SELECT password FROM Clients WHERE email = $1 or username = $2";
-    const char* sql1param[2]{getMessage().email().c_str(), getMessage().username().c_str()};// = getMessage().username().c_str();
-    // sql1param[0] = getMessage().email().c_str();
-    // sql1param[1] = getMessage().username().c_str();
+    const char* sql1param[2] { getMessage().email().c_str(), getMessage().username().c_str() }; 
     PGresult* res = PQexecParams(conn, sql1, 2, NULL, sql1param, NULL, NULL, 0);
     ExecStatusType resStatus = PQresultStatus(res);
     if (resStatus != PGRES_TUPLES_OK) {
@@ -635,7 +700,7 @@ void ViktorDev::ServerRegistrationHandler::check()
     char* resStatusStr = PQresStatus(resStatus);
     fprintf(stdout, "Query Result Status: %s\n", resStatusStr);
     parseRequestCheck(res);
-    if(checkingResult == ViktorDev::RegistrationResult::SUCCESS){
+    if (checkingResult == ViktorDev::RegistrationResult::SUCCESS) {
         addRecord(getMessage());
     }
 
@@ -674,6 +739,6 @@ void ViktorDev::ServerRegistrationHandler::printResult()
     } else {
         if (checkingResult == ViktorDev::RegistrationResult::DUPLICATED_INFO) {
             std::cout << "Registration: duplicated information" << std::endl;
-        } 
+        }
     }
 }

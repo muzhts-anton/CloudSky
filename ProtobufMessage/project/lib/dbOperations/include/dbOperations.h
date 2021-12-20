@@ -28,7 +28,6 @@ enum class RegistrationResult {
     DUPLICATED_INFO
 };
 
-
 enum class TransactionResult {
     SUCCESS = 0,
     NOT_ENOUGH_COINS = 1,
@@ -54,13 +53,17 @@ private:
     void requestAuthorization(PGconn** conn);
 };
 
-class transactionHandlerServer { // Надо с протобафом это сделать
+class TransactionHandlerServer {
 public:
-    transactionHandlerServer(bool wantedGames[gameQuanity]);
+    std::ofstream out;
+    std::ifstream in;
+    TransactionHandlerServer(dbInteraction::transactionAnswer message);
     void requestTransactionPeek(std::string username);
-    void doTransaction(std::vector<std::pair<std::string, int>> games);
+    void requestTransactionPeek();
     void sendToClient();
-
+    std::string filePath;
+    dbInteraction::transactionRequst& getRequestMessage();
+    dbInteraction::transactionAnswer& getAnswerMessage();
 private:
     std::string username;
     int resultCode = 0; // CHANGE TO ENUM! SUCCESS = 0; not enough coins = 1; the product has already been purchased = 2
@@ -69,6 +72,30 @@ private:
     bool wantedGames[gameQuanity] = { false, false, false };
     void printTransaction();
     void parseRequestTransaction(PGresult* res);
+    void doTransaction();
+    dbInteraction::transactionRequst requestMessage;
+    dbInteraction::transactionAnswer answerMessage;
+};
+
+class TransactionHandlerClient {
+public:
+    std::ofstream out;
+    std::ifstream in;
+    std::string filePath;
+    TransactionResult result;
+
+    dbInteraction::transactionRequst& getRequestMessage();
+    dbInteraction::transactionAnswer& getAnswerMessage();
+    TransactionHandlerClient() = delete;
+    TransactionHandlerClient(std::string filePath, dbInteraction::transactionRequst message);
+    int sendIt();
+    int receiveIt();
+    void printRequestMessage();
+    void printAnswerMessage();
+
+private:
+    dbInteraction::transactionRequst requestMessage;
+    dbInteraction::transactionAnswer answerMessage;
 };
 
 class selectedGameHandler {
@@ -195,7 +222,6 @@ public:
     int receiveIt();
 };
 void printRegOrLogMessage(dbInteraction::registrationOrLogIn message);
-
 
 }
 

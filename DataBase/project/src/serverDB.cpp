@@ -18,7 +18,7 @@ int main()
     ViktorDev::authorizationHandler autHandler;
     autHandler.requestAuthorization("President");
     bool wantedGames[ViktorDev::gameQuanity] { false, false, true };
-    ViktorDev::transactionHandlerServer transactionHandler(wantedGames);
+    ViktorDev::TransactionHandlerServer transactionHandler(wantedGames);
     transactionHandler.requestTransactionPeek("President");
 }
 // void showBinaryResults(PGresult *res) {
