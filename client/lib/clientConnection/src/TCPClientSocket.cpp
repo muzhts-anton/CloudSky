@@ -34,7 +34,7 @@ void TCPClient::TCPClientSocket::sendIP()
 void TCPClient::TCPClientSocket::changeIP(std::string newIP)
 {
     IP = newIP;
-    PORT = 8081;
+    PORT = 8080;
     address.sin_port = htons(PORT);
     addressLength = sizeof(address);
     try {
