@@ -1,22 +1,19 @@
 #include "startFragment.h"
+#include "fragmentThemeStyle.h"
 
 #include <QDebug>
 #include <QDir>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QPixmap>
-#include <QVBoxLayout>
 
 namespace fragment {
 
 StartFragment::StartFragment()
-    : _openGameBut(new QPushButton("Go to game screen"))
-    , _settingsBut(new QPushButton("open soon"))
-    , _addGameBut(new QPushButton("open soon"))
+    : _authBut(new QPushButton("Authorization"))
+    , _regBut(new QPushButton("Registration"))
 {
-    _openGameBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
-    _addGameBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
-    _settingsBut->setStyleSheet("background-color: grey; border: none; border-radius: 7px; padding: 10px; color: white;");
+    _authBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
+    _regBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
 
     QDir logofile;
     logofile.cdUp();
@@ -29,32 +26,29 @@ StartFragment::StartFragment()
     logo->setFixedHeight(235);
     logo->setFixedWidth(235);
 
-    QHBoxLayout* mainHL = new QHBoxLayout(this);
-    QVBoxLayout* buttonsVL = new QVBoxLayout;
-    mainHL->addWidget(logo);
-    mainHL->addLayout(buttonsVL);
+    _mainHL = new QHBoxLayout(this);
+    _buttonsVL = new QVBoxLayout;
+    _mainHL->addWidget(logo);
+    _mainHL->addLayout(_buttonsVL);
 
-    buttonsVL->addWidget(_openGameBut);
-    buttonsVL->addWidget(_addGameBut);
-    buttonsVL->addWidget(_settingsBut);
-    buttonsVL->setAlignment(Qt::AlignCenter);
-    mainHL->setAlignment(Qt::AlignCenter);
-    // this->setLayout(buttonsVL);
+    _buttonsVL->addWidget(_regBut);
+    _buttonsVL->addWidget(_authBut);
+    _buttonsVL->setAlignment(Qt::AlignCenter);
+    _mainHL->setAlignment(Qt::AlignCenter);
 
-    connect(_openGameBut, &QPushButton::clicked, this, &StartFragment::onGame);
-}
-
-StartFragment::~StartFragment()
-{
-    delete _openGameBut;
-    delete _settingsBut;
-    delete _addGameBut;
+    connect(_authBut, &QPushButton::clicked, this, &StartFragment::onAuth);
+    connect(_regBut, &QPushButton::clicked, this, &StartFragment::onReg);
 }
 
 // slots
-void StartFragment::onGame()
+void StartFragment::onAuth()
 {
-    emit navigateTo(screens::ScreenNames::GAME);
+    emit navigateTo(screens::ScreenNames::LOGIN);
+}
+
+void StartFragment::onReg()
+{
+    emit navigateTo(screens::ScreenNames::REGISTER);
 }
 
 } // namespace fragment

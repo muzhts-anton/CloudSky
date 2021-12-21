@@ -13,8 +13,6 @@
 #include <QtGui>
 #include <QThread>
 #include <QString>
-#include <QPointer>
-#include <QHBoxLayout>
 
 namespace fragment {
 
@@ -22,7 +20,7 @@ class GameFragment : public BaseFragment {
     Q_OBJECT
     QThread playerThread;
 
-    static constexpr short fps = 80;
+    static constexpr short fps = 40;
 
 public:
     GameFragment();
@@ -37,11 +35,9 @@ signals:
 
 private:
     TCPClient::TCPClientSocket TCPSocket;
-    QPointer<media::MediaPlayer> _player;
-    QPointer<QPushButton> _backBut;
-    QPointer<QTimer> _timer;
-
-    QPointer<QHBoxLayout> _mainHLayout;
+    media::MediaPlayer* _player;
+    QPushButton* _backBut;
+    QTimer* _timer;
 };
 
 } // namespace fragment

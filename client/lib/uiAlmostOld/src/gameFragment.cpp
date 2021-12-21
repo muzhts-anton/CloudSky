@@ -1,7 +1,7 @@
 #include "gameFragment.h"
 #include "messageOperations.h"
-#include "fragmentThemeStyle.h"
 
+#include <QHBoxLayout>
 #include <QString>
 #include <QDir>
 #include <unistd.h>
@@ -16,7 +16,6 @@ GameFragment::GameFragment()
     : TCPSocket(serverPort, serverIP)
     , _player(new media::MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
-    , _timer(new QTimer(this))
 {
     TCPSocket.activateSocket();
     std::string newIP = TCPSocket.receiveIP();
@@ -26,13 +25,12 @@ GameFragment::GameFragment()
     TCPSocket.activateSocket();
     TCPSocket.sendIP();
     usleep(1000000);
+    _backBut->setStyleSheet("background-color: rgb(189,144,255); border: none; border-radius: 7px; padding: 10px; color: white;");
 
-    _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
-
-    _mainHLayout = new QHBoxLayout(this);
-    _mainHLayout->addWidget(_backBut);
-    _mainHLayout->setAlignment(Qt::AlignCenter);
-    this->setLayout(_mainHLayout);
+    QHBoxLayout* mainHLayout = new QHBoxLayout(this);
+    mainHLayout->addWidget(_backBut);
+    mainHLayout->setAlignment(Qt::AlignCenter);
+    this->setLayout(mainHLayout);
 
     _player->moveToThread(&playerThread);
     connect(&playerThread, &QThread::finished, _player, &QObject::deleteLater);
@@ -40,9 +38,15 @@ GameFragment::GameFragment()
     connect(_player, &media::MediaPlayer::finished, this, &GameFragment::onBack);
     playerThread.start();
 
+    // QDir vidfile;
+    // vidfile.cdUp();
+    // vidfile.cd("lib/ui/media/");
+    //usleep(1000000);
     std::this_thread::sleep_for(std::chrono::seconds(4));
     emit play(QString(QString::fromStdString("udp://" + newIP + std::to_string(workerPort))));
+    // emit play(QString("udp://10.147.18.164:8080"));
 
+    _timer = new QTimer(this);
     _timer->setInterval(1000.f / GameFragment::fps);
     _timer->start();
 
@@ -52,7 +56,7 @@ GameFragment::GameFragment()
 
 void GameFragment::timerOutEvent()
 {
-std::string fileToSendPath = "buttonsCoords.bin";
+    std::string fileToSendPath = "buttonsCoords.bin";
 
     bool *butts = _player->getbutts();
     bool *mouse = _player->getmouse();
@@ -85,6 +89,8 @@ GameFragment::~GameFragment()
 {
     playerThread.quit();
     playerThread.wait();
+    delete _backBut;
+    delete _timer;
 }
 
 } // namespace fragment

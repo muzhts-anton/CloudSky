@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "fragmentThemeStyle.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -7,7 +6,7 @@ MainWindow::MainWindow(QWidget* parent)
     , _factory(new ScreensFactory)
     , _nav(new Navigator(_container, _factory))
 {
-    _container->setStyleSheet(themestyle::fixed.value(themestyle::Type::STACKEDWIDGET));
+    _container->setStyleSheet("background-color: rgb(193,243,255);");
     this->setWindowTitle("CloudSky");
     this->setCentralWidget(_container);
 }
