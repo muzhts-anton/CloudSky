@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
     ViktorDev::EmulationMouse mouseEmulation;
     mouseEmulation.setCoordsButtons(message);
-    for(int i = 0; i <10; ++i){
+    for (int i = 0; i < 10; ++i) {
         mouseEmulation.emulateMouse();
     }
 }

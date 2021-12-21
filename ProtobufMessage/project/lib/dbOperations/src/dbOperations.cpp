@@ -147,10 +147,10 @@ void ViktorDev::TransactionHandlerClient::printAnswerMessage()
     }
 }
 
-ViktorDev::TransactionHandlerServer::TransactionHandlerServer(dbInteraction::transactionAnswer message) {
+ViktorDev::TransactionHandlerServer::TransactionHandlerServer(dbInteraction::transactionAnswer message)
+{
     answerMessage = message;
 }
-
 
 void ViktorDev::TransactionHandlerServer::printTransaction()
 {
@@ -181,10 +181,12 @@ void ViktorDev::TransactionHandlerServer::parseRequestTransaction(PGresult* res)
     }
 }
 
-dbInteraction::transactionRequst& ViktorDev::TransactionHandlerServer::getRequestMessage(){
+dbInteraction::transactionRequst& ViktorDev::TransactionHandlerServer::getRequestMessage()
+{
     return requestMessage;
 }
-dbInteraction::transactionAnswer& ViktorDev::TransactionHandlerServer::getAnswerMessage(){
+dbInteraction::transactionAnswer& ViktorDev::TransactionHandlerServer::getAnswerMessage()
+{
     return answerMessage;
 }
 void ViktorDev::TransactionHandlerServer::requestTransactionPeek()
@@ -206,21 +208,20 @@ void ViktorDev::TransactionHandlerServer::requestTransactionPeek()
     char* resStatusStr = PQresStatus(resStatus);
     fprintf(stdout, "Query Result Status: %s\n", resStatusStr);
     parseRequestTransaction(res);
-    printTransaction(); 
-
+    printTransaction();
 
     PQclear(res);
     PQfinish(conn);
 }
 
 void ViktorDev::TransactionHandlerServer::doTransaction()
-{   
-    int prices [gameQuanity] {firstGamePrice, secondGamePrice, thirdGamePrice};
-    if(coins < prices[getRequestMessage().productid()]){
+{
+    int prices[gameQuanity] { firstGamePrice, secondGamePrice, thirdGamePrice };
+    if (coins < prices[getRequestMessage().productid()]) {
         resultCode = 1;
         return;
     }
-    if(availableGames[getRequestMessage().productid()] ==1){
+    if (availableGames[getRequestMessage().productid()] == 1) {
         resultCode = 2;
         return;
     }
@@ -242,14 +243,14 @@ void ViktorDev::TransactionHandlerServer::doTransaction()
     char* resStatusStr = PQresStatus(resStatus);
     fprintf(stdout, "Query Result Status: %s\n", resStatusStr);
     parseRequestTransaction(res);
-    printTransaction(); 
-
+    printTransaction();
 
     PQclear(res);
     PQfinish(conn);
 }
 
-void ViktorDev::TransactionHandlerServer::sendToClient(){    
+void ViktorDev::TransactionHandlerServer::sendToClient()
+{
     out.open(filePath, std::ios_base::binary);
     if (!out) {
         std::cout << "FILE DOES NOT OPENED!" << std::endl;
@@ -671,7 +672,7 @@ void ViktorDev::ServerRegistrationHandler::addRecord(dbInteraction::registration
     const int paramsQuanity = 6;
     const char* sql1 = "INSERT INTO clients (Email, Username, Password, FirstName, SecondName, availablegames) VALUES ($1, $2, $3, $4, $5, $6)";
     const char* AvailableGames = "{f,f,f}";
-    const char* sql1param[paramsQuanity] { addMessage.email().c_str(), addMessage.username().c_str(), addMessage.password().c_str(), addMessage.firstname().c_str(), addMessage.secondname().c_str(), AvailableGames }; 
+    const char* sql1param[paramsQuanity] { addMessage.email().c_str(), addMessage.username().c_str(), addMessage.password().c_str(), addMessage.firstname().c_str(), addMessage.secondname().c_str(), AvailableGames };
     PGresult* res = PQexecParams(conn, sql1, paramsQuanity, NULL, sql1param, NULL, NULL, 1); //0 - text, 1 - bin
     ExecStatusType resStatus = PQresultStatus(res);
     char* resStatusStr = PQresStatus(resStatus);
@@ -688,7 +689,7 @@ void ViktorDev::ServerRegistrationHandler::check()
     setConnection(&conn);
 
     const char* sql1 = "SELECT password FROM Clients WHERE email = $1 or username = $2";
-    const char* sql1param[2] { getMessage().email().c_str(), getMessage().username().c_str() }; 
+    const char* sql1param[2] { getMessage().email().c_str(), getMessage().username().c_str() };
     PGresult* res = PQexecParams(conn, sql1, 2, NULL, sql1param, NULL, NULL, 0);
     ExecStatusType resStatus = PQresultStatus(res);
     if (resStatus != PGRES_TUPLES_OK) {

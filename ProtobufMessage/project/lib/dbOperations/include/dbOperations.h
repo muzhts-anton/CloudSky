@@ -64,6 +64,7 @@ public:
     std::string filePath;
     dbInteraction::transactionRequst& getRequestMessage();
     dbInteraction::transactionAnswer& getAnswerMessage();
+
 private:
     std::string username;
     int resultCode = 0; // CHANGE TO ENUM! SUCCESS = 0; not enough coins = 1; the product has already been purchased = 2

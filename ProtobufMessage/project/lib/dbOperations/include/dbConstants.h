@@ -1,4 +1,4 @@
-namespace ViktorDev{
+namespace ViktorDev {
 constexpr int gameQuanity = 3;
 constexpr int gameNameLength = 50;
 constexpr int connInfoLength = 50;
