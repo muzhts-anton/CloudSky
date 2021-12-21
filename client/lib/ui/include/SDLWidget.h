@@ -66,7 +66,7 @@ private:
 private:
     AVFormatContext* pFormatCtx = NULL;
     AVCodecContext* pCodecCtx = NULL;
-    AVCodec* pCodec = NULL;
+    const AVCodec* pCodec = NULL;
     AVFrame* pFrame = NULL;
     AVFrame* pFrameRGB = NULL;
     size_t buffer_size;
