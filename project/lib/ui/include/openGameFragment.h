@@ -7,6 +7,8 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QPointer>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 namespace fragment {
 
@@ -28,6 +30,9 @@ private:
     QPointer<QComboBox> _gameSelecterBox;
     QPointer<QPushButton> _openBut;
     QPointer<QPushButton> _backBut;
+
+    QPointer<QHBoxLayout> _buttsHL;
+    QPointer<QVBoxLayout> _mainVL;
 };
 
 } // namespace fragment

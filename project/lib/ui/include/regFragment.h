@@ -9,6 +9,8 @@
 #include <QLabel>
 #include <QString>
 #include <QPointer>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 namespace fragment {
 
@@ -42,6 +44,10 @@ private:
     QPointer<QLabel> _errorLabel;
     QPointer<QPushButton> _regBut;
     QPointer<QPushButton> _backBut;
+
+    QPointer<QHBoxLayout> _ageHL;
+    QPointer<QHBoxLayout> _buttsHL;
+    QPointer<QVBoxLayout> _mainVL;
 };
 
 } // namespace fragment

@@ -3,9 +3,7 @@
 
 #include <QDebug>
 #include <QDir>
-#include <QHBoxLayout>
 #include <QPixmap>
-#include <QVBoxLayout>
 
 namespace fragment {
 
@@ -29,20 +27,20 @@ MainFragment::MainFragment()
     _pic->setFixedHeight(235);
     _pic->setFixedWidth(235);
 
-    QHBoxLayout* mainHL = new QHBoxLayout(this);
-    QVBoxLayout* buttonsVL = new QVBoxLayout;
+    _mainHL = new QHBoxLayout(this);
+    _buttonsVL = new QVBoxLayout;
 
-    buttonsVL->addWidget(_greetingLabel);
-    buttonsVL->addWidget(_openGameBut);
-    buttonsVL->addWidget(_settingsBut);
-    buttonsVL->addWidget(_addGameBut);
-    buttonsVL->addWidget(_logOutBut);
+    _buttonsVL->addWidget(_greetingLabel);
+    _buttonsVL->addWidget(_openGameBut);
+    _buttonsVL->addWidget(_settingsBut);
+    _buttonsVL->addWidget(_addGameBut);
+    _buttonsVL->addWidget(_logOutBut);
 
-    mainHL->addLayout(buttonsVL);
-    mainHL->addWidget(_pic);
+    _mainHL->addLayout(_buttonsVL);
+    _mainHL->addWidget(_pic);
     
-    buttonsVL->setAlignment(Qt::AlignCenter);
-    mainHL->setAlignment(Qt::AlignCenter);
+    _buttonsVL->setAlignment(Qt::AlignCenter);
+    _mainHL->setAlignment(Qt::AlignCenter);
 
     _openGameBut->installEventFilter(_watcher);
     _addGameBut->installEventFilter(_watcher);

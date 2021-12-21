@@ -1,9 +1,6 @@
 #include "authFragment.h"
 #include "fragmentThemeStyle.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-
 namespace fragment {
 
 AuthFragment::AuthFragment()
@@ -24,17 +21,17 @@ AuthFragment::AuthFragment()
     _userPassword->setEchoMode(QLineEdit::Password);
     _backBut->setFixedWidth(75);
 
-    QHBoxLayout* buttsHL = new QHBoxLayout;
-    buttsHL->addWidget(_backBut);
-    buttsHL->addWidget(_authBut);
+    _buttsHL = new QHBoxLayout;
+    _buttsHL->addWidget(_backBut);
+    _buttsHL->addWidget(_authBut);
 
-    QVBoxLayout* mainVL = new QVBoxLayout(this);
-    mainVL->addWidget(_explanLabel);
-    mainVL->addWidget(_userName);
-    mainVL->addWidget(_userPassword);
-    mainVL->addLayout(buttsHL);
+    _mainVL = new QVBoxLayout(this);
+    _mainVL->addWidget(_explanLabel);
+    _mainVL->addWidget(_userName);
+    _mainVL->addWidget(_userPassword);
+    _mainVL->addLayout(_buttsHL);
 
-    mainVL->setAlignment(Qt::AlignCenter);
+    _mainVL->setAlignment(Qt::AlignCenter);
 
     connect(_authBut, &QPushButton::clicked, this, &AuthFragment::onAuth);
     connect(_backBut, &QPushButton::clicked, this, &AuthFragment::onBack);

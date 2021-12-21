@@ -3,10 +3,8 @@
 
 #include <QDebug>
 #include <QDir>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QPixmap>
-#include <QVBoxLayout>
 
 namespace fragment {
 
@@ -27,15 +25,15 @@ StartFragment::StartFragment()
     logo->setFixedHeight(235);
     logo->setFixedWidth(235);
 
-    QHBoxLayout* mainHL = new QHBoxLayout(this);
-    QVBoxLayout* buttonsVL = new QVBoxLayout;
-    mainHL->addWidget(logo);
-    mainHL->addLayout(buttonsVL);
+    _mainHL = new QHBoxLayout(this);
+    _buttonsVL = new QVBoxLayout;
+    _mainHL->addWidget(logo);
+    _mainHL->addLayout(_buttonsVL);
 
-    buttonsVL->addWidget(_regBut);
-    buttonsVL->addWidget(_authBut);
-    buttonsVL->setAlignment(Qt::AlignCenter);
-    mainHL->setAlignment(Qt::AlignCenter);
+    _buttonsVL->addWidget(_regBut);
+    _buttonsVL->addWidget(_authBut);
+    _buttonsVL->setAlignment(Qt::AlignCenter);
+    _mainHL->setAlignment(Qt::AlignCenter);
 
     connect(_authBut, &QPushButton::clicked, this, &StartFragment::onAuth);
     connect(_regBut, &QPushButton::clicked, this, &StartFragment::onReg);

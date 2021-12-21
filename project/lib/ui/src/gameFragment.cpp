@@ -1,7 +1,6 @@
 #include "gameFragment.h"
 #include "fragmentThemeStyle.h"
 
-#include <QHBoxLayout>
 #include <QString>
 #include <QDir>
 
@@ -14,10 +13,10 @@ GameFragment::GameFragment()
 {
     _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
 
-    QHBoxLayout* mainHLayout = new QHBoxLayout(this);
-    mainHLayout->addWidget(_backBut);
-    mainHLayout->setAlignment(Qt::AlignCenter);
-    this->setLayout(mainHLayout);
+    _mainHLayout = new QHBoxLayout(this);
+    _mainHLayout->addWidget(_backBut);
+    _mainHLayout->setAlignment(Qt::AlignCenter);
+    this->setLayout(_mainHLayout);
 
     _player->moveToThread(&playerThread);
     connect(&playerThread, &QThread::finished, _player, &QObject::deleteLater);

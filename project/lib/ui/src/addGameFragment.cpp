@@ -3,8 +3,8 @@
 
 #include <QDir>
 #include <QHBoxLayout>
-#include <QPixmap>
 #include <QVBoxLayout>
+#include <QPixmap>
 
 namespace fragment {
 
@@ -34,27 +34,27 @@ AddGameFragment::AddGameFragment()
     _picSecond->setFixedHeight(200);
     _picSecond->setFixedWidth(200);
 
-    QVBoxLayout* firstgameVL = new QVBoxLayout;
-    firstgameVL->addWidget(_picFirst);
-    firstgameVL->addWidget(_descripFirst);
-    firstgameVL->addWidget(_addFirstGameBut);
+    _firstgameVL = new QVBoxLayout;
+    _firstgameVL->addWidget(_picFirst);
+    _firstgameVL->addWidget(_descripFirst);
+    _firstgameVL->addWidget(_addFirstGameBut);
 
-    QVBoxLayout* secondgameVL = new QVBoxLayout;
-    secondgameVL->addWidget(_picSecond);
-    secondgameVL->addWidget(_descripSecond);
-    secondgameVL->addWidget(_addSecondGameBut);
+    _secondgameVL = new QVBoxLayout;
+    _secondgameVL->addWidget(_picSecond);
+    _secondgameVL->addWidget(_descripSecond);
+    _secondgameVL->addWidget(_addSecondGameBut);
 
-    QHBoxLayout* gamesHL = new QHBoxLayout;
-    gamesHL->addLayout(firstgameVL);
-    gamesHL->addLayout(secondgameVL);
+    _gamesHL = new QHBoxLayout;
+    _gamesHL->addLayout(_firstgameVL);
+    _gamesHL->addLayout(_secondgameVL);
 
-    QHBoxLayout* topBarHL = new QHBoxLayout;
-    topBarHL->addWidget(_cashBalance);
-    topBarHL->addWidget(_backBut);
+    _topBarHL = new QHBoxLayout;
+    _topBarHL->addWidget(_cashBalance);
+    _topBarHL->addWidget(_backBut);
 
-    QVBoxLayout* mainVL = new QVBoxLayout(this);
-    mainVL->addLayout(topBarHL);
-    mainVL->addLayout(gamesHL);
+    _mainVL = new QVBoxLayout(this);
+    _mainVL->addLayout(_topBarHL);
+    _mainVL->addLayout(_gamesHL);
 
     connect(_addFirstGameBut, &QPushButton::clicked, this, &AddGameFragment::onAddFirst);
     connect(_addSecondGameBut, &QPushButton::clicked, this, &AddGameFragment::onAddSecond);

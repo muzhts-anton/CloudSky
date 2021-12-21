@@ -1,9 +1,6 @@
 #include "openGameFragment.h"
 #include "fragmentThemeStyle.h"
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-
 namespace fragment {
 
 OpenGameFragment::OpenGameFragment()
@@ -20,14 +17,14 @@ OpenGameFragment::OpenGameFragment()
     _gameSelecterBox->addItem("CS:GO");
     _gameSelecterBox->addItem("Horizon: Zero Dawn");
 
-    QHBoxLayout* buttsHL = new QHBoxLayout;
-    buttsHL->addWidget(_backBut);
-    buttsHL->addWidget(_openBut);
+    _buttsHL = new QHBoxLayout;
+    _buttsHL->addWidget(_backBut);
+    _buttsHL->addWidget(_openBut);
 
-    QVBoxLayout* mainVL = new QVBoxLayout(this);
-    mainVL->addWidget(_explanationLabel);
-    mainVL->addWidget(_gameSelecterBox);
-    mainVL->addLayout(buttsHL);
+    _mainVL = new QVBoxLayout(this);
+    _mainVL->addWidget(_explanationLabel);
+    _mainVL->addWidget(_gameSelecterBox);
+    _mainVL->addLayout(_buttsHL);
 
     connect(_openBut, &QPushButton::clicked, this, &OpenGameFragment::onOpen);
     connect(_backBut, &QPushButton::clicked, this, &OpenGameFragment::onBack);

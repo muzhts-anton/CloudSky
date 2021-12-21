@@ -5,6 +5,8 @@
 
 #include <QPushButton>
 #include <QPointer>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 namespace fragment {
 
@@ -21,6 +23,10 @@ public slots:
 private:
     QPointer<QPushButton> _authBut;
     QPointer<QPushButton> _regBut;
+
+    QPointer<QHBoxLayout> _mainHL;
+    QPointer<QVBoxLayout> _buttonsVL;
+    
 };
 
 } // namespace fragment

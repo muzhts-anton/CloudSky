@@ -12,6 +12,7 @@
 #include <QThread>
 #include <QString>
 #include <QPointer>
+#include <QHBoxLayout>
 
 namespace fragment {
 
@@ -36,6 +37,8 @@ private:
     QPointer<media::MediaPlayer> _player;
     QPointer<QPushButton> _backBut;
     QPointer<QTimer> _timer;
+
+    QPointer<QHBoxLayout> _mainHLayout;
 };
 
 } // namespace fragment

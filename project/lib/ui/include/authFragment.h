@@ -8,6 +8,8 @@
 #include <QLabel>
 #include <QString>
 #include <QPointer>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 namespace fragment {
 
@@ -33,6 +35,9 @@ private:
     QPointer<QLineEdit> _userPassword;
     QPointer<QPushButton> _authBut;
     QPointer<QPushButton> _backBut;
+
+    QPointer<QHBoxLayout> _buttsHL;
+    QPointer<QVBoxLayout> _mainVL;
 };
 
 } // namespace fragment
