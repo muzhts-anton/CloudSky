@@ -41,7 +41,7 @@ GameFragment::GameFragment()
     playerThread.start();
 
     std::this_thread::sleep_for(std::chrono::seconds(4));
-    emit play(QString(QString::fromStdString("udp://" + newIP + std::to_string(workerPort))));
+    emit play(QString(QString::fromStdString("udp://" + newIP + ":"+ std::to_string(workerPort))));
 
     _timer->setInterval(1000.f / GameFragment::fps);
     _timer->start();

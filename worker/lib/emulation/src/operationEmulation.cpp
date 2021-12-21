@@ -77,16 +77,14 @@ ViktorDev::EmelationKeyBoard::EmelationKeyBoard()
 void ViktorDev::EmelationKeyBoard::setKeyboard(const KeyboardMouse::ButtonsCoords& message)
 {
     int i = 0;
-    std::cout<<"888"<<std::endl;
     for (auto it = pressedButtons.begin(); it != pressedButtons.end(); ++it, ++i) {
         it->second = (message.buttonpressed())[i];
     };
-    std::cout<<"999"<<std::endl;
     std::cout << "Readed bools: ";
     for (auto it = pressedButtons.cbegin(); it != pressedButtons.cend(); ++it) {
         std::cout << it->second << ' ';
     }
-    std::cout<<"101010"<<std::endl;
+
     std::cout << std::endl;
     i = 0;
 }

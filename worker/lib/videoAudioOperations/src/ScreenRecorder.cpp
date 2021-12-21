@@ -2,6 +2,7 @@
 #include "KeyboardMouseMessage.pb.h"
 #include "messageOperations.h"
 #include "operationEmulation.h"
+#include <sstream>
 
 
 ScreenRecorder::ScreenRecorder(Worker *initWorker)
@@ -96,20 +97,19 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	avdevice_register_all();
 	avformat_network_init();
 	AVDictionary* options = nullptr;
-	//av_dict_set(&options, "framerate", "60", 0);
-	// av_dict_set(&options, "probesize", "32", 0);
-	// av_dict_set(&options, "rtbufsize", "32", 0);
-	// av_dict_set(&options,"preset", "fast",0);
-	// av_dict_set(&options,"tune", "zerolatency", 0);
-	//av_dict_set(&options,"video_size","640x480",0);
-	av_dict_set(&options, "sc_threshold", "1", 0);
-	av_dict_set(&options, "analyzeduration", "32", 0);
-	//av_dict_set(&options, "profile", "high", 0);
 	
+	// int width = 640;
+	// int height = 480;
+	// std::stringstream ost;
+	// ost << width << "x" << height;
+	
+	av_dict_set(&options,"video_size", "1920x1080",0); 
+	av_dict_set(&options, "sc_threshold", "1", 0);
 	
 	int ret;
 	AVInputFormat* video_input_format_ = nullptr;
 	video_input_format_ =  av_find_input_format("x11grab");
+	
 	ret = avformat_open_input(&input_video_format_context_, ":0.0", video_input_format_, &options);
 	if (ret != 0)
 	{
@@ -228,19 +228,15 @@ void ScreenRecorder::EmulateClientInput()
     //emulation.initEmulateKbMouse();
     std::string filename = "receivedButtonsCoords.bin";
     //double fps = 100;
-	std::cout<<"1111111"<<std::endl;
     while (true)
     {
-			
 
         worker_->getInteraction(filename);
         ViktorDev::ReceiveInteraction ReceiveM(filename, ReceiveMessage);
         if (ReceiveM.receiveIt()){
         	std::cout << "Error wint receiving";
 		}
-		std::cout<<"222"<<std::endl;
         ReceiveM.printMessage();
-		std::cout<<"333"<<std::endl;
 		if(ReceiveM.getMessage().xcoord() == 0){
 			for(int i =0; i < buttonQuanity; ++i){
 			ReceiveM.getMessage().add_buttonpressed(false);
@@ -252,11 +248,8 @@ void ScreenRecorder::EmulateClientInput()
 		}
 
 		keyboard.setKeyboard(ReceiveM.getMessage());
-		std::cout<<"666"<<std::endl;
 		mouse.setCoordsButtons(ReceiveM.getMessage());
-		std::cout<<"44444"<<std::endl;
 		keyboard.emulateKeyboard();
-		std::cout<<"555"<<std::endl;
 		mouse.emulateMouse();
 		std::cout << "Законч принимать\n";
         //usleep(1000.0 / fps);

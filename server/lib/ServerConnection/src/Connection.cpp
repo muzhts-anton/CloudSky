@@ -71,10 +71,6 @@ namespace ServerConnection {
     {
         if (!e)
         {
-            char command[180];
-            snprintf(command, 180, "echo Тут будет переключение клиента");
-            std::cout << command << std::endl;
-            system(command);
             boost::system::error_code ignored_ec;
             socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
         }
