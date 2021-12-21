@@ -1,0 +1,48 @@
+#ifndef TCPCLIENTSOCKET_HPP_
+
+#define TCPCLIENTSOCKET_HPP_
+
+#include <iostream>
+
+#include <arpa/inet.h>
+#include <fstream>
+#include <iostream>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+constexpr int defaultClientPort = 8050;
+constexpr const char* defaultClientIp = "127.0.0.1";
+
+namespace TCPClient {
+class TCPClientSocket {
+public:
+    TCPClientSocket(const int port = defaultClientPort, const char* ip = defaultClientIp);
+
+    ~TCPClientSocket();
+
+    void createSocket();
+
+    void createConnection();
+
+    void activateSocket();
+
+    int receivePortNumber();
+
+    void changePort(int newPort);
+
+    void transmitFile(std::string filename);
+
+private:
+    std::fstream file;
+    int PORT;
+    const char* IP;
+    int generalSocketDescriptor;
+    struct sockaddr_in address;
+    int addressLength;
+};
+}
+
+#endif
