@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+// NOT MY CODE STARTS:
+
 namespace media {
 
 MediaPlayer::MediaPlayer()
@@ -267,6 +269,10 @@ void MediaPlayer::play()
     av_frame_free(&pict);
     av_free(pict);
 }
+
+// NOT MY CODE ENDS
+
+// MY CODE STARTS:
 
 // tracing
 void MediaPlayer::onKeyDown(SDL_Keycode sym)
