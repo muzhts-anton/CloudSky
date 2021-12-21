@@ -40,15 +40,6 @@ AuthFragment::AuthFragment()
     connect(_backBut, &QPushButton::clicked, this, &AuthFragment::onBack);
 }
 
-AuthFragment::~AuthFragment()
-{
-    delete _userName;
-    delete _userPassword;
-    delete _authBut;
-    delete _backBut;
-    delete _explanLabel;
-}
-
 bool AuthFragment::checkData()
 {
     // TODO(Tony, Viktor): implement with DB

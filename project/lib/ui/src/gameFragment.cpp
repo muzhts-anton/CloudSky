@@ -10,6 +10,7 @@ namespace fragment {
 GameFragment::GameFragment()
     : _player(new media::MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
+    , _timer(new QTimer(this))
 {
     _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
 
@@ -29,7 +30,6 @@ GameFragment::GameFragment()
 
     emit play(vidfile.absoluteFilePath("vid.mp4"));
 
-    _timer = new QTimer(this);
     _timer->setInterval(1000.f / GameFragment::fps);
     _timer->start();
 
@@ -55,8 +55,6 @@ GameFragment::~GameFragment()
 {
     playerThread.quit();
     playerThread.wait();
-    delete _backBut;
-    delete _timer;
 }
 
 } // namespace fragment

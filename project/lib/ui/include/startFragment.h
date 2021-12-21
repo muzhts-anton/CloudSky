@@ -4,6 +4,7 @@
 #include "baseFragment.h"
 
 #include <QPushButton>
+#include <QPointer>
 
 namespace fragment {
 
@@ -11,15 +12,15 @@ class StartFragment : public BaseFragment {
     Q_OBJECT
 public:
     StartFragment();
-    ~StartFragment();
+    ~StartFragment() = default;
 
 public slots:
     void onAuth();
     void onReg();
 
 private:
-    QPushButton* _authBut;
-    QPushButton* _regBut;
+    QPointer<QPushButton> _authBut;
+    QPointer<QPushButton> _regBut;
 };
 
 } // namespace fragment

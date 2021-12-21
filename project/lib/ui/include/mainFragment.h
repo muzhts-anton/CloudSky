@@ -6,6 +6,7 @@
 
 #include <QPushButton>
 #include <QLabel>
+#include <QPointer>
 
 namespace fragment {
 
@@ -13,7 +14,7 @@ class MainFragment : public BaseFragment {
     Q_OBJECT
 public:
     MainFragment();
-    ~MainFragment();
+    ~MainFragment() = default;
 
 public slots:
     void onGame();
@@ -22,13 +23,13 @@ public slots:
     void onLogOut();
 
 private:
-    QLabel* _greetingLabel;
-    QLabel* _pic;
-    secondfit::ButtonHoverWatcher* _watcher;
-    QPushButton* _openGameBut;
-    QPushButton* _settingsBut;
-    QPushButton* _addGameBut;
-    QPushButton* _logOutBut;
+    QPointer<QLabel> _greetingLabel;
+    QPointer<QLabel> _pic;
+    QPointer<secondfit::ButtonHoverWatcher> _watcher;
+    QPointer<QPushButton> _openGameBut;
+    QPointer<QPushButton> _settingsBut;
+    QPointer<QPushButton> _addGameBut;
+    QPointer<QPushButton> _logOutBut;
 };
 
 } // namespace fragment

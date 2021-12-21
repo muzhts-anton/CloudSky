@@ -55,17 +55,6 @@ MainFragment::MainFragment()
     connect(_logOutBut, &QPushButton::clicked, this, &MainFragment::onLogOut);
 }
 
-MainFragment::~MainFragment()
-{
-    delete _greetingLabel;
-    delete _pic;
-    delete _watcher;
-    delete _openGameBut;
-    delete _settingsBut;
-    delete _addGameBut;
-    delete _logOutBut;
-}
-
 // slots
 void MainFragment::onGame()
 {

@@ -8,6 +8,7 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QString>
+#include <QPointer>
 
 namespace fragment {
 
@@ -15,7 +16,7 @@ class RegFragment : public BaseFragment {
     Q_OBJECT
 public:
     RegFragment();
-    ~RegFragment();
+    ~RegFragment() = default;
 
 public slots:
     void onReg();
@@ -28,19 +29,19 @@ private:
     bool checkData();
 
 private:
-    QLabel* _explanLabel;
-    QLineEdit* _userFirstName;
-    QLineEdit* _userSecondName;
-    QLineEdit* _userCountry;
-    QLineEdit* _userEmail;
-    QLineEdit* _userNickName;
-    QLineEdit* _userFirstPassword;
-    QLineEdit* _userSecondPassword;
-    QLabel* _ageTxt;
-    QSpinBox* _userAge;
-    QLabel* _errorLabel;
-    QPushButton* _regBut;
-    QPushButton* _backBut;
+    QPointer<QLabel> _explanLabel;
+    QPointer<QLineEdit> _userFirstName;
+    QPointer<QLineEdit> _userSecondName;
+    QPointer<QLineEdit> _userCountry;
+    QPointer<QLineEdit> _userEmail;
+    QPointer<QLineEdit> _userNickName;
+    QPointer<QLineEdit> _userFirstPassword;
+    QPointer<QLineEdit> _userSecondPassword;
+    QPointer<QLabel> _ageTxt;
+    QPointer<QSpinBox> _userAge;
+    QPointer<QLabel> _errorLabel;
+    QPointer<QPushButton> _regBut;
+    QPointer<QPushButton> _backBut;
 };
 
 } // namespace fragment

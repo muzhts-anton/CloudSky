@@ -61,18 +61,6 @@ AddGameFragment::AddGameFragment()
     connect(_backBut, &QPushButton::clicked, this, &AddGameFragment::onBack);
 }
 
-AddGameFragment::~AddGameFragment()
-{
-    delete _cashBalance;
-    delete _picFirst;
-    delete _picSecond;
-    delete _descripFirst;
-    delete _descripSecond;
-    delete _addFirstGameBut;
-    delete _addSecondGameBut;
-    delete _backBut;
-}
-
 void AddGameFragment::onAddFirst()
 {
     _addFirstGameBut->setText("nice");

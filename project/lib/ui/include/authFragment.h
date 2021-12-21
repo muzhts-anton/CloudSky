@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QString>
+#include <QPointer>
 
 namespace fragment {
 
@@ -14,7 +15,7 @@ class AuthFragment : public BaseFragment {
     Q_OBJECT
 public:
     AuthFragment();
-    ~AuthFragment();
+    ~AuthFragment() = default;
 
 public slots:
     void onAuth();
@@ -27,11 +28,11 @@ private:
     bool checkData();
 
 private:
-    QLabel* _explanLabel;
-    QLineEdit* _userName;
-    QLineEdit* _userPassword;
-    QPushButton* _authBut;
-    QPushButton* _backBut;
+    QPointer<QLabel> _explanLabel;
+    QPointer<QLineEdit> _userName;
+    QPointer<QLineEdit> _userPassword;
+    QPointer<QPushButton> _authBut;
+    QPointer<QPushButton> _backBut;
 };
 
 } // namespace fragment

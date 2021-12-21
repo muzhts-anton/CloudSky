@@ -11,6 +11,7 @@
 #include <QtGui>
 #include <QThread>
 #include <QString>
+#include <QPointer>
 
 namespace fragment {
 
@@ -32,9 +33,9 @@ signals:
     void play(QString path);
 
 private:
-    media::MediaPlayer* _player;
-    QPushButton* _backBut;
-    QTimer* _timer;
+    QPointer<media::MediaPlayer> _player;
+    QPointer<QPushButton> _backBut;
+    QPointer<QTimer> _timer;
 };
 
 } // namespace fragment

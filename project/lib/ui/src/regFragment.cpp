@@ -75,23 +75,6 @@ RegFragment::RegFragment()
     connect(_backBut, &QPushButton::clicked, this, &RegFragment::onBack);
 }
 
-RegFragment::~RegFragment()
-{
-    delete _explanLabel;
-    delete _userFirstName;
-    delete _userSecondName;
-    delete _userCountry;
-    delete _userEmail;
-    delete _userNickName;
-    delete _userFirstPassword;
-    delete _userSecondPassword;
-    delete _ageTxt;
-    delete _userAge;
-    delete _errorLabel;
-    delete _regBut;
-    delete _backBut;
-}
-
 bool RegFragment::checkData()
 {
     if (_userFirstPassword->text() != _userSecondPassword->text()) {

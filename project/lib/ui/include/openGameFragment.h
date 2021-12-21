@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QComboBox>
+#include <QPointer>
 
 namespace fragment {
 
@@ -13,7 +14,7 @@ class OpenGameFragment : public BaseFragment {
     Q_OBJECT
 public:
     OpenGameFragment();
-    ~OpenGameFragment();
+    ~OpenGameFragment() = default;
 
 public slots:
     void onOpen();
@@ -23,10 +24,10 @@ private:
     void onResume() override;
 
 private:
-    QLabel* _explanationLabel;
-    QComboBox* _gameSelecterBox;
-    QPushButton* _openBut;
-    QPushButton* _backBut;
+    QPointer<QLabel> _explanationLabel;
+    QPointer<QComboBox> _gameSelecterBox;
+    QPointer<QPushButton> _openBut;
+    QPointer<QPushButton> _backBut;
 };
 
 } // namespace fragment

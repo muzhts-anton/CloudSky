@@ -41,12 +41,6 @@ StartFragment::StartFragment()
     connect(_regBut, &QPushButton::clicked, this, &StartFragment::onReg);
 }
 
-StartFragment::~StartFragment()
-{
-    delete _authBut;
-    delete _regBut;
-}
-
 // slots
 void StartFragment::onAuth()
 {

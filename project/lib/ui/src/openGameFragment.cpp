@@ -33,14 +33,6 @@ OpenGameFragment::OpenGameFragment()
     connect(_backBut, &QPushButton::clicked, this, &OpenGameFragment::onBack);
 }
 
-OpenGameFragment::~OpenGameFragment()
-{
-    delete _explanationLabel;
-    delete _gameSelecterBox;
-    delete _openBut;
-    delete _backBut;
-}
-
 void OpenGameFragment::onResume()
 {
     emit back();
