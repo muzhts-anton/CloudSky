@@ -8,6 +8,7 @@ message clientAuthInformation{
 
 message registrationOrLogIn{
     bool regOrLog = 1; // 0 - registration; 1 - log in
+    string username = 2;
 }
 
 message serverAuthInformation{

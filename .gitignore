@@ -43,7 +43,7 @@ project/src/mouse_move.cpp
 project/src/mouse_move
 *.sh
 EmulateKBMouse/*
-DataBase
+DataBase/
 ButtonsCoords1.bin
 ProtobufMessage/project/build.sh
 ProtobufMessage/ButtonsCoords1.bin
