@@ -107,7 +107,7 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	av_dict_set(&options, "sc_threshold", "1", 0);
 	
 	int ret;
-	AVInputFormat* video_input_format_ = nullptr;
+	const AVInputFormat* video_input_format_ = nullptr;
 	video_input_format_ =  av_find_input_format("x11grab");
 	
 	ret = avformat_open_input(&input_video_format_context_, ":0.0", video_input_format_, &options);
@@ -131,7 +131,7 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 
 	AVCodecParameters* video_parameter_ = nullptr;
 	video_parameter_ = input_video_format_context_->streams[out_video_stream_index]->codecpar;
-	AVCodec* decoder_codec_ =nullptr;
+	const AVCodec* decoder_codec_ =nullptr;
 	decoder_codec_ = avcodec_find_decoder(video_parameter_->codec_id);
 	if (!decoder_codec_) {
 		std::cout << "codec not found\n";
@@ -151,7 +151,7 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 		return ret;
 	}
 
-	AVCodec* video_encoder_codec_ = nullptr;
+	const AVCodec* video_encoder_codec_ = nullptr;
 	video_encoder_codec_ = avcodec_find_encoder(AV_CODEC_ID_MPEG4);
 	if (!video_encoder_codec_) {
 		std::cout << "Codec AV_CODEC_ID_MPEG4 not found\n";
@@ -207,7 +207,7 @@ ScreenRecorder::~ScreenRecorder() {
 void ScreenRecorder::Start() {
 	isRecord_ = true;
 	//EmulateClientInput();
-	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
+	//threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
 	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
 }
 
