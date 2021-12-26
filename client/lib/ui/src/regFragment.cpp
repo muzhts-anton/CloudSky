@@ -1,7 +1,19 @@
 #include "regFragment.h"
 #include "fragmentThemeStyle.h"
-
+#include "dbOperations.h"
+#include "postgresql/libpq-fe.h"
+#include <arpa/inet.h>
+#include <iomanip>
+#include <iostream>
+#include <netinet/in.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 #include <QtGui>
+
+
 
 namespace fragment {
 
@@ -91,8 +103,27 @@ void RegFragment::onResume()
 // slots
 void RegFragment::onReg()
 {
-    if (this->checkData())
-        emit navigateTo(screens::ScreenNames::MAIN);
+    if (!this->checkData())
+        return;
+
+    dbInteraction::registrationInfo regMessage;
+    regMessage.set_email(_userEmail->text().toStdString());
+    regMessage.set_username(_userNickName->text().toStdString());
+    regMessage.set_password(_userFirstPassword->text().toStdString());
+    regMessage.set_country(_userCountry->text().toStdString());
+    regMessage.set_firstname(_userFirstName->text().toStdString());
+    regMessage.set_secondname(_userSecondName->text().toStdString());
+    regMessage.set_coins(50);
+    for (int i = 0; i < ViktorDev::gameQuanity; ++i) {
+        regMessage.add_availablegames(false);
+    }
+    regMessage.set_age(_ageTxt->text().toInt());
+
+    ViktorDev::ClientRegistrationHandler clientReg("authRegistrtionInfo.bin", regMessage);
+    clientReg.sendIt();
+    std::cout << std::endl<< "sended message:" << std::endl;
+    clientReg.printMessage();
+    emit navigateTo(screens::ScreenNames::MAIN);
 }
 
 void RegFragment::onBack()

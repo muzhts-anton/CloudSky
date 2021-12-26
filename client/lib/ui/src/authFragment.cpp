@@ -1,6 +1,16 @@
 #include "authFragment.h"
 #include "fragmentThemeStyle.h"
-
+#include "dbOperations.h"
+#include "postgresql/libpq-fe.h"
+#include <arpa/inet.h>
+#include <iomanip>
+#include <iostream>
+#include <netinet/in.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 namespace fragment {
 
 AuthFragment::AuthFragment()
@@ -51,8 +61,16 @@ void AuthFragment::onResume()
 // slots
 void AuthFragment::onAuth()
 {
-    if(this->checkData())
-        emit navigateTo(screens::ScreenNames::MAIN);
+    if(!this->checkData())
+        return;
+    dbInteraction::authInformation message;
+    message.set_username(_userName->text().toStdString());
+    message.set_password(_userPassword->text().toStdString());
+    ViktorDev::ClientAuthorizationHandler clientAuth("authRegistrtionInfo.bin", message);
+    clientAuth.sendIt();
+    std::cout << std::endl<< std::endl<< "sended message:"<< std::endl;
+    clientAuth.printMessage();
+    emit navigateTo(screens::ScreenNames::MAIN);
 }
 
 void AuthFragment::onBack()
