@@ -13,19 +13,21 @@
 
 int main()
 {
+    //TEST requestAuthorization
     std::vector<std::pair<std::string, int>> games { { ViktorDev::firstGameName, ViktorDev::firstGamePrice },
         { ViktorDev::secondGameName, ViktorDev::secondGamePrice },
         { ViktorDev::thirdGameName, ViktorDev::thirdGamePrice } };
     ViktorDev::authorizationHandler autHandler;
-    autHandler.requestAuthorization("President");
+    autHandler.requestAuthorization("arbuzik");
 
     std::string filePath = "dbInformation.bin";
     std::string username = "President";
     std::string password = "mypasswordDT1";
 
     // Test reglog
+    std::cout<<std::endl<<std::endl<<"TEST: reglog"<<std::endl<<std::endl;
     dbInteraction::registrationOrLogIn regOrLogMessage;
-    regOrLogMessage.set_regorlog(true);
+    regOrLogMessage.set_regorlog(false);
     ViktorDev::printRegOrLogMessage(regOrLogMessage);
     ViktorDev::ClientRegOrLog sender(filePath, regOrLogMessage);
     sender.sendIt();
@@ -33,21 +35,19 @@ int main()
     receiver.receiveIt();
 
     //Test authorization
-
-    dbInteraction::clientAuthInformation message;
+    std::cout<<std::endl<<std::endl<<"TEST: authorization"<<std::endl<<std::endl;
+    dbInteraction::authInformation message;
     message.set_username(username);
     message.set_password(password);
     ViktorDev::ClientAuthorizationHandler clientAuth(filePath, message);
     clientAuth.sendIt();
-    std::cout << "sended message:" << std::endl
-              << std::endl;
+    std::cout << std::endl<< std::endl<< "sended message:"<< std::endl;
     clientAuth.printMessage();
 
-    dbInteraction::clientAuthInformation receivedMessage;
+    dbInteraction::authInformation receivedMessage;
     ViktorDev::ServerAuthorizationHandler serverAuth(filePath, receivedMessage);
     serverAuth.receiveIt();
-    std::cout << "received message:" << std::endl
-              << std::endl;
+    std::cout << std::endl<< std::endl<< "received message:"<< std::endl;
     serverAuth.printMessage();
     serverAuth.check();
     serverAuth.sendIt();
@@ -56,6 +56,7 @@ int main()
     clientAuth.printResult();
 
     // Test registration
+    std::cout<<std::endl<<std::endl<<"TEST: registration"<<std::endl<<std::endl;
     std::string email = "Masha@mail.ru";
     username = "Masha";
     password = "passwordMasha";
@@ -82,15 +83,13 @@ int main()
 
     ViktorDev::ClientRegistrationHandler clientReg(filePath, regMessage);
     clientReg.sendIt();
-    std::cout << "sended message:" << std::endl
-              << std::endl;
+    std::cout << std::endl<< "sended message:" << std::endl;
     clientReg.printMessage();
 
     dbInteraction::registrationInfo receivedRegMessage;
     ViktorDev::ServerRegistrationHandler serverReg(filePath, receivedRegMessage);
     serverReg.receiveIt();
-    std::cout << "received message:" << std::endl
-              << std::endl;
+    std::cout << std::endl<< "received message:" << std::endl;
     serverReg.printMessage();
     serverReg.check();
     serverReg.sendIt();

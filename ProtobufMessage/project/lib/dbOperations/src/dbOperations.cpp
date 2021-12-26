@@ -61,7 +61,7 @@ void ViktorDev::authorizationHandler::requestAuthorization(std::string username)
     PGconn* conn = PQconnectdb(conninfo);
     setConnection(&conn);
 
-    const char* sql1 = "SELECT firstname, secondname, coins, availablegames FROM Clients WHERE username = $1";
+    const char* sql1 = "SELECT firstname, secondname, coins, availablegames FROM clients WHERE username = $1";
     const char* sql1param = username.c_str();
     PGresult* res = PQexecParams(conn, sql1, 1, NULL, &sql1param, NULL, NULL, 0);
     ExecStatusType resStatus = PQresultStatus(res);
@@ -193,7 +193,7 @@ void ViktorDev::TransactionHandlerServer::requestTransactionPeek()
     PGconn* conn = PQconnectdb(conninfo);
     setConnection(&conn);
 
-    const char* sql1 = "SELECT coins, availablegames FROM Clients WHERE username = $1";
+    const char* sql1 = "SELECT coins, availablegames FROM clients WHERE username = $1";
     const char* sql1param = getRequestMessage().username().c_str();
     PGresult* res = PQexecParams(conn, sql1, 1, NULL, &sql1param, NULL, NULL, 0);
     ExecStatusType resStatus = PQresultStatus(res);
@@ -264,11 +264,11 @@ void ViktorDev::TransactionHandlerServer::sendToClient(){
     //return ViktorDev::success;
 }
 
-dbInteraction::clientAuthInformation& ViktorDev::ClientAuthorizationHandler::getMessage()
+dbInteraction::authInformation& ViktorDev::ClientAuthorizationHandler::getMessage()
 {
     return message;
 }
-ViktorDev::ClientAuthorizationHandler::ClientAuthorizationHandler(std::string filePath, dbInteraction::clientAuthInformation message)
+ViktorDev::ClientAuthorizationHandler::ClientAuthorizationHandler(std::string filePath, dbInteraction::authInformation message)
 {
     this->filePath = filePath;
     this->getMessage() = message;
@@ -295,7 +295,7 @@ void ViktorDev::ClientAuthorizationHandler::printMessage()
     std::cout << "password = " << getMessage().password() << std::endl;
 }
 
-dbInteraction::clientAuthInformation& ViktorDev::ServerAuthorizationHandler::getMessage()
+dbInteraction::authInformation& ViktorDev::ServerAuthorizationHandler::getMessage()
 {
     return message;
 }
@@ -337,7 +337,7 @@ void ViktorDev::ClientAuthorizationHandler::printResult()
     }
 }
 
-ViktorDev::ServerAuthorizationHandler::ServerAuthorizationHandler(std::string filePath, dbInteraction::clientAuthInformation message)
+ViktorDev::ServerAuthorizationHandler::ServerAuthorizationHandler(std::string filePath, dbInteraction::authInformation message)
 {
     this->filePath = filePath;
     this->message = message;
@@ -392,7 +392,7 @@ void ViktorDev::ServerAuthorizationHandler::check()
     PGconn* conn = PQconnectdb(conninfo);
     setConnection(&conn);
 
-    const char* sql1 = "SELECT password FROM Clients WHERE username = $1";
+    const char* sql1 = "SELECT password FROM clients WHERE username = $1";
     const char* sql1param = getMessage().username().c_str();
     PGresult* res = PQexecParams(conn, sql1, 1, NULL, &sql1param, NULL, NULL, 0);
     ExecStatusType resStatus = PQresultStatus(res);
@@ -687,7 +687,7 @@ void ViktorDev::ServerRegistrationHandler::check()
     PGconn* conn = PQconnectdb(conninfo);
     setConnection(&conn);
 
-    const char* sql1 = "SELECT password FROM Clients WHERE email = $1 or username = $2";
+    const char* sql1 = "SELECT password FROM clients WHERE email = $1 or username = $2";
     const char* sql1param[2] { getMessage().email().c_str(), getMessage().username().c_str() }; 
     PGresult* res = PQexecParams(conn, sql1, 2, NULL, sql1param, NULL, NULL, 0);
     ExecStatusType resStatus = PQresultStatus(res);

@@ -44,7 +44,7 @@ public:
 private:
     std::string dbName;
     std::string username;
-    const char* conninfo = "dbname = serverdb";
+    //const char* conninfo = "dbname = serverdb";
     std::string firstName;
     std::string secondName;
     int coins = 0;
@@ -111,16 +111,16 @@ public:
     std::string filePath;
     AuthorizationResult result;
 
-    dbInteraction::clientAuthInformation& getMessage();
+    dbInteraction::authInformation& getMessage();
     ClientAuthorizationHandler() = delete;
-    ClientAuthorizationHandler(std::string filePath, dbInteraction::clientAuthInformation message);
+    ClientAuthorizationHandler(std::string filePath, dbInteraction::authInformation message);
     int sendIt();
     int receiveIt();
     void printMessage();
     void printResult();
 
 private:
-    dbInteraction::clientAuthInformation message;
+    dbInteraction::authInformation message;
     dbInteraction::serverAuthInformation answerMessage;
 };
 
@@ -131,9 +131,9 @@ public:
     std::string filePath;
     AuthorizationResult checkingResult;
 
-    dbInteraction::clientAuthInformation& getMessage();
+    dbInteraction::authInformation& getMessage();
     ServerAuthorizationHandler() = delete;
-    ServerAuthorizationHandler(std::string filePath, dbInteraction::clientAuthInformation message);
+    ServerAuthorizationHandler(std::string filePath, dbInteraction::authInformation message);
     //~ServerAuthorizationHandler();
     int receiveIt();
     void printMessage();
@@ -143,7 +143,7 @@ public:
     int sendIt();
 
 private:
-    dbInteraction::clientAuthInformation message;
+    dbInteraction::authInformation message;
 };
 
 class ClientRegistrationHandler {

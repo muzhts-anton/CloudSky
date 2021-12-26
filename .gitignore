@@ -50,3 +50,4 @@ ProtobufMessage/ButtonsCoords1.bin
 ProtobufMessage/readme.txt
 ProtobufMessage/project/src/sendReceiveMessage.cpp
 ProtobufMessage/project/src/emulate.cpp
+ProtobufMessage/project/lib/dbOperations/notesDB

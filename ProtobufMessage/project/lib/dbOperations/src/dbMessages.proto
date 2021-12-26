@@ -1,7 +1,7 @@
 syntax = "proto3";
 package dbInteraction;
 
-message clientAuthInformation{
+message authInformation{
     string username = 1;
     string password = 2;
 }
