@@ -4,6 +4,7 @@ include_directories(CloudSky_server/include)
 
 
 target_include_directories(videoAudioOperations PUBLIC include ../../build/lib/emulation)
+target_include_directories(videoAudioOperations  PUBLIC ../dbOperations/include)
 
 target_link_libraries(videoAudioOperations
     avcodec
@@ -18,4 +19,6 @@ target_link_libraries(videoAudioOperations
     protobufOperations
     emulation
     workerConnection
+    dbOperations
 )
+

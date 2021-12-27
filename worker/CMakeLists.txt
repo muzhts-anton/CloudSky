@@ -11,10 +11,15 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-Wall -Werror -Wextra -Wpedantic -Wno-deprecated-declarations)
+link_libraries(-lpq)
+
+add_compile_options(-Wall -Werror -Wextra -Wpedantic -Wno-deprecated-declarations -c -g -lpqxx -L/usr/lib/x86_64-linux-gnu/libpq -lpq)
+add_link_options(-lpqxx -lpq )
 
 find_package(GTest REQUIRED)
 FIND_PACKAGE(Protobuf REQUIRED)
+find_package(PostgreSQL REQUIRED)
+
 INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -25,7 +30,9 @@ add_subdirectory(lib/emulation)
 add_subdirectory(lib/workerConnection)
 add_subdirectory(lib/protobufOperations)
 add_subdirectory(lib/videoAudioOperations)
+add_subdirectory(lib/dbOperations)
 
 add_executable(CloudSky_MyWorker src/main.cpp)
 
-target_link_libraries(CloudSky_MyWorker workerConnection protobufOperations emulation videoAudioOperations)
+target_include_directories(CloudSky_MyWorker PRIVATE ${PostgreSQL_INCLUDE_DIRS})
+target_link_libraries(CloudSky_MyWorker workerConnection protobufOperations emulation videoAudioOperations ${PostgreSQL_LIBRARIES} dbOperations)

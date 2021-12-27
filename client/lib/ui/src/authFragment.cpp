@@ -63,6 +63,13 @@ void AuthFragment::onAuth()
 {
     if(!this->checkData())
         return;
+
+    dbInteraction::registrationOrLogIn regOrLogMessage;
+    regOrLogMessage.set_regorlog(true);
+    ViktorDev::printRegOrLogMessage(regOrLogMessage);
+    ViktorDev::ClientRegOrLog sender("authRegistrtionInfo.bin", regOrLogMessage);
+    sender.sendIt();
+
     dbInteraction::authInformation message;
     message.set_username(_userName->text().toStdString());
     message.set_password(_userPassword->text().toStdString());
@@ -70,6 +77,16 @@ void AuthFragment::onAuth()
     clientAuth.sendIt();
     std::cout << std::endl<< std::endl<< "sended message:"<< std::endl;
     clientAuth.printMessage();
+
+    if (clientAuth.result == ViktorDev::AuthorizationResult::SUCCESS){
+        int receiveUserInfoResult = clientAuth.receiveUserInfo();
+        if(receiveUserInfoResult !=0){
+            std::cout<<"[LOG] Error with receiving user info"<<std::endl;
+            exit(ViktorDev::errorParseMessage);
+        }
+        clientAuth.printMessageRegistration();
+    }
+    
     emit navigateTo(screens::ScreenNames::MAIN);
 }
 

@@ -2,6 +2,7 @@
 #include "KeyboardMouseMessage.pb.h"
 #include "messageOperations.h"
 #include "operationEmulation.h"
+#include "dbOperations.h"
 #include <sstream>
 
 
@@ -9,6 +10,45 @@ ScreenRecorder::ScreenRecorder(Worker *initWorker)
 	: worker_(initWorker) {
 	worker_->start();
 	worker_->receiveClientIP();
+
+	std::string pathToClientInfo = "clientInfo.bin";
+
+	do 
+	{
+		worker_->getInteraction(pathToClientInfo);
+
+		ViktorDev::ServerRegOrLog receiver(pathToClientInfo);
+		receiver.receiveIt();
+		worker_->getInteraction(pathToClientInfo);
+		if (receiver.status)
+		{
+			dbInteraction::authInformation receivedMessage;
+			ViktorDev::ServerAuthorizationHandler serverAuth(pathToClientInfo, receivedMessage);
+			serverAuth.receiveIt();
+			std::cout << std::endl<< std::endl<< "received message:"<< std::endl;
+			serverAuth.printMessage();
+			serverAuth.check();
+			serverAuth.sendIt();
+			serverAuth.printResult();
+			if (serverAuth.checkingResult == ViktorDev::AuthorizationResult::SUCCESS)
+				break;
+		}
+		else
+		{
+			dbInteraction::registrationInfo receivedRegMessage;
+			ViktorDev::ServerRegistrationHandler serverReg(pathToClientInfo, receivedRegMessage);
+			serverReg.receiveIt();
+			std::cout << std::endl<< "received message:" << std::endl;
+			serverReg.printMessage();
+			serverReg.check();
+			serverReg.sendIt();
+			serverReg.printResult();
+			if (serverReg.checkingResult == ViktorDev::RegistrationResult::SUCCESS)
+				break;
+		}
+	}
+	while (true);
+
 	output_filename_ = "udp://" + worker_->getClientIP() + ":8080";
     AVCodecContext video_encoder_codec_context;
 
@@ -107,7 +147,7 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	av_dict_set(&options, "sc_threshold", "1", 0);
 	
 	int ret;
-	const AVInputFormat* video_input_format_ = nullptr;
+	AVInputFormat* video_input_format_ = nullptr;
 	video_input_format_ =  av_find_input_format("x11grab");
 	
 	ret = avformat_open_input(&input_video_format_context_, ":0.0", video_input_format_, &options);

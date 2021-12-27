@@ -106,6 +106,12 @@ void RegFragment::onReg()
     if (!this->checkData())
         return;
 
+    dbInteraction::registrationOrLogIn regOrLogMessage;
+    regOrLogMessage.set_regorlog(false);
+    ViktorDev::printRegOrLogMessage(regOrLogMessage);
+    ViktorDev::ClientRegOrLog sender("authRegistrtionInfo.bin", regOrLogMessage);
+    sender.sendIt();
+
     dbInteraction::registrationInfo regMessage;
     regMessage.set_email(_userEmail->text().toStdString());
     regMessage.set_username(_userNickName->text().toStdString());
