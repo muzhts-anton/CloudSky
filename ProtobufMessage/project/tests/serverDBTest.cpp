@@ -21,8 +21,8 @@ int main()
     autHandler.requestAuthorization("arbuzik");
 
     std::string filePath = "dbInformation.bin";
-    std::string username = "President";
-    std::string password = "mypasswordDT1";
+    std::string username = "arbuzik";
+    std::string password = "vitya123";
 
     // Test reglog
     std::cout<<std::endl<<std::endl<<"TEST: reglog"<<std::endl<<std::endl;
@@ -54,6 +54,7 @@ int main()
     serverAuth.printResult();
     clientAuth.receiveIt();
     clientAuth.printResult();
+
 
     // Test registration
     std::cout<<std::endl<<std::endl<<"TEST: registration"<<std::endl<<std::endl;

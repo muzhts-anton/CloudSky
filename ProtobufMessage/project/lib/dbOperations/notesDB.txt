@@ -18,3 +18,7 @@ INSERT INTO clients (username, password) VALUES ('terminator', 'terminator123');
 INSERT INTO clients (username, password) VALUES ('killer', 'killer123');
 
 INSERT INTO clients (username, password) VALUES ('President', 'mypasswordDT1');
+
+
+Ошибка в том, что мы перезаписываем файлик, в который пишем данные пользователя после успешной регистрации. Конкретно здесь ошибка:
+int ViktorDev::ClientAuthorizationHandler::receiveUserInfo()
