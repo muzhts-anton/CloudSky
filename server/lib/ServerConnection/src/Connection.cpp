@@ -34,7 +34,7 @@ namespace ServerConnection {
     {
         std::string pathToClientInfo = "clientInfo.bin";
         std::cout << "[LOG] : Ready to interact with client\n";
-        TCPServer::TCPServerSocket TCPSocket(8084, "0.0.0.0");
+        TCPServer::TCPServerSocket TCPSocket(8090, "0.0.0.0");
         TCPSocket.activateSocket();
         do 
         {

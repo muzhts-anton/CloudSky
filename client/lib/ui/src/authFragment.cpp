@@ -14,7 +14,7 @@
 namespace fragment {
 
 constexpr const char *serverIP = "10.147.18.164";
-constexpr int serverPort = 8084;
+constexpr int serverPort = 8085;
 
 AuthFragment::AuthFragment()
     : TCPSocket(new TCPClient::TCPClientSocket(serverPort, serverIP))
@@ -25,6 +25,7 @@ AuthFragment::AuthFragment()
     , _backBut(new QPushButton("Back"))
 {
     TCPSocket->activateSocket();
+    TCPSocket->changePort(8090);
     _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
     _userName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));

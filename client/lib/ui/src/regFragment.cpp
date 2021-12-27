@@ -18,7 +18,7 @@
 namespace fragment {
 
 constexpr const char *serverIP = "10.147.18.164";
-constexpr int serverPort = 8084;
+constexpr int serverPort = 8085;
 
 RegFragment::RegFragment()
     : TCPSocket(new TCPClient::TCPClientSocket(serverPort, serverIP))
@@ -37,6 +37,7 @@ RegFragment::RegFragment()
     , _backBut(new QPushButton("Back"))
 {
     TCPSocket->activateSocket();
+    TCPSocket->changePort(8090);
     _userFirstName->setPlaceholderText("First Name");
     _userSecondName->setPlaceholderText("Second Name");
     _userCountry->setPlaceholderText("Country");
