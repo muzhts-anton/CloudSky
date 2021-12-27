@@ -21,8 +21,7 @@ constexpr const char *serverIP = "10.147.18.164";
 constexpr int serverPort = 8085;
 
 RegFragment::RegFragment()
-    : TCPSocket(new TCPClient::TCPClientSocket(serverPort, serverIP))
-    , _explanLabel(new QLabel("Input your data to confirm registration"))
+    : _explanLabel(new QLabel("Input your data to confirm registration"))
     , _userFirstName(new QLineEdit)
     , _userSecondName(new QLineEdit)
     , _userCountry(new QLineEdit)
@@ -36,6 +35,7 @@ RegFragment::RegFragment()
     , _regBut(new QPushButton("Confirm registration"))
     , _backBut(new QPushButton("Back"))
 {
+    BaseFragment::TCPSocket = new TCPClient::TCPClientSocket(serverPort, serverIP);
     TCPSocket->activateSocket();
     usleep(1000000);
     delete TCPSocket;

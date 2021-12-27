@@ -17,13 +17,13 @@ constexpr const char *serverIP = "10.147.18.164";
 constexpr int serverPort = 8085;
 
 AuthFragment::AuthFragment()
-    : TCPSocket(new TCPClient::TCPClientSocket(serverPort, serverIP))
-    , _explanLabel(new QLabel("Input your data to confirm authorization"))
+    : _explanLabel(new QLabel("Input your data to confirm authorization"))
     , _userName(new QLineEdit(this))
     , _userPassword(new QLineEdit(this))
     , _authBut(new QPushButton("Authorization"))
     , _backBut(new QPushButton("Back"))
 {
+    TCPSocket = new TCPClient::TCPClientSocket(serverPort, serverIP);
     TCPSocket->activateSocket();
     usleep(10000000);
     TCPSocket->changePort(8090);

@@ -13,18 +13,16 @@ constexpr int workerPort = 8080;
 namespace fragment {
 
 GameFragment::GameFragment()
-    : TCPSocket(serverPort, serverIP)
-    , _player(new media::MediaPlayer)
+    : _player(new media::MediaPlayer)
     , _backBut(new QPushButton("Go back\nStop testing"))
     , _timer(new QTimer(this))
 {
-    TCPSocket.activateSocket();
-    std::string newIP = TCPSocket.receiveIP();
+    std::string newIP = TCPSocket->receiveIP();
     std::cout << "Переключаемся на IP " << newIP << std::endl;
     usleep(1000000);
-    TCPSocket.changeIP(newIP);
-    TCPSocket.activateSocket();
-    TCPSocket.sendIP();
+    TCPSocket->changeIP(newIP);
+    TCPSocket->activateSocket();
+    TCPSocket->sendIP();
     usleep(1000000);
 
     _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::MAINBUTTON));
@@ -70,7 +68,7 @@ std::string fileToSendPath = "buttonsCoords.bin";
     ViktorDev::SendInteraction SendM(fileToSendPath, message);
     SendM.sendIt();
     try {
-        TCPSocket.transmitFile(fileToSendPath);
+        TCPSocket->transmitFile(fileToSendPath);
     } catch (const std::invalid_argument& e) {
     std::cerr << e.what() << std::endl;
     }

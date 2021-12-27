@@ -1,6 +1,8 @@
 #include "baseFragment.h"
 
 namespace fragment {
+
+TCPClient::TCPClientSocket *BaseFragment::TCPSocket = nullptr;
 // TODO(Tony): = 0 or in .h. This looks ugly
 void BaseFragment::onPause() { }
 void BaseFragment::onResume() { }
