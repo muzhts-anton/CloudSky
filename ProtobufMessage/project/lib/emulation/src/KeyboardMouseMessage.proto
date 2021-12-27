@@ -1,0 +1,10 @@
+syntax = "proto3";
+package KeyboardMouse;
+
+message ButtonsCoords
+{
+    repeated bool buttonPressed = 1 [ packed = true ];
+    int64 xCoord = 2;
+    int64 yCoord = 3;
+    repeated bool mouseButtons = 4;
+}

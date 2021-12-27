@@ -1,0 +1,24 @@
+CREATE TABLE clients (
+    email           varchar(30),
+    username        varchar(30) UNIQUE NOT NULL,     
+    password	    varchar(30) NOT NULL,  
+    country         varchar(30),
+    firstname	     varchar(30),
+    secondname	     varchar(30),
+    coins	     integer,
+    availablegames  boolean[3],
+    id              integer,          
+    fps             int
+);
+
+INSERT INTO clients (email, username, password, country, firstname, secondname, coins, availablegames, id, fps) VALUES ('vityakiselev@mail.ru', 'arbuzik', 'vitya123', 'Russia', 'Viktor', 'Kiselev', 0, '{f,f,f}', 1, 120);
+
+INSERT INTO clients (username, password) VALUES ('terminator', 'terminator123');
+
+INSERT INTO clients (username, password) VALUES ('killer', 'killer123');
+
+INSERT INTO clients (username, password) VALUES ('President', 'mypasswordDT1');
+
+
+Ошибка в том, что мы перезаписываем файлик, в который пишем данные пользователя после успешной регистрации. Конкретно здесь ошибка:
+int ViktorDev::ClientAuthorizationHandler::receiveUserInfo()
