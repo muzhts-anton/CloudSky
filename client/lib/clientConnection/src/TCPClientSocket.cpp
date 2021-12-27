@@ -107,6 +107,7 @@ void TCPClient::TCPClientSocket::changePort(int newPort)
 {
     PORT = newPort;
     address.sin_port = htons(PORT);
+    addressLength = sizeof(address);
     try {
         createConnection();
     }
@@ -153,7 +154,7 @@ void TCPClient::TCPClientSocket::transmitFile(std::string filename)
     if (debug)
         std::cout << "[LOG] : TCP Sending...\n";
 
-    int bytes_sent = send(generalSocketDescriptor, buffer, length - 1, 0);
+    int bytes_sent = send(generalSocketDescriptor, buffer, length, 0);
     file.close();
     if (debug) {
         std::cout << "[LOG] : TCP Transmitted Data Size " << bytes_sent << " Bytes.\n";

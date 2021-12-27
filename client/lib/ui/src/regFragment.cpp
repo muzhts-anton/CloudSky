@@ -37,7 +37,10 @@ RegFragment::RegFragment()
     , _backBut(new QPushButton("Back"))
 {
     TCPSocket->activateSocket();
-    TCPSocket->changePort(8090);
+    usleep(1000000);
+    delete TCPSocket;
+    TCPSocket = new TCPClient::TCPClientSocket(8090, serverIP);
+    TCPSocket->activateSocket();
     _userFirstName->setPlaceholderText("First Name");
     _userSecondName->setPlaceholderText("Second Name");
     _userCountry->setPlaceholderText("Country");

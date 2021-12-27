@@ -25,6 +25,7 @@ AuthFragment::AuthFragment()
     , _backBut(new QPushButton("Back"))
 {
     TCPSocket->activateSocket();
+    usleep(10000000);
     TCPSocket->changePort(8090);
     _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
     _userName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
