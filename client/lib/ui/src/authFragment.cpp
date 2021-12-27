@@ -13,8 +13,7 @@
 #include <sys/types.h>
 namespace fragment {
 
-constexpr const char *serverIP = "10.147.18.164";
-constexpr int serverPort = 8085;
+
 
 AuthFragment::AuthFragment()
     : _explanLabel(new QLabel("Input your data to confirm authorization"))
@@ -23,7 +22,6 @@ AuthFragment::AuthFragment()
     , _authBut(new QPushButton("Authorization"))
     , _backBut(new QPushButton("Back"))
 {
-    TCPSocket = new TCPClient::TCPClientSocket(serverPort, serverIP);
     TCPSocket->activateSocket();
     usleep(10000000);
     TCPSocket->changePort(8090);
