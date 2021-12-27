@@ -56,6 +56,22 @@ int main()
     clientAuth.printResult();
 
 
+    if (serverAuth.checkingResult == ViktorDev::AuthorizationResult::SUCCESS){
+        serverAuth.sendUserInfo();
+    }
+    serverAuth.printMessageRegistration();
+
+    if (clientAuth.result == ViktorDev::AuthorizationResult::SUCCESS){
+        int receiveUserInfoResult = clientAuth.receiveUserInfo();
+        if(receiveUserInfoResult !=0){
+            std::cout<<"[LOG] Error with receiving user info"<<std::endl;
+            exit(ViktorDev::errorParseMessage);
+        }
+        clientAuth.printMessageRegistration();
+    }
+
+
+
     // Test registration
     std::cout<<std::endl<<std::endl<<"TEST: registration"<<std::endl<<std::endl;
     std::string email = "Masha@mail.ru";

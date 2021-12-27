@@ -258,10 +258,8 @@ void ViktorDev::TransactionHandlerServer::sendToClient(){
     }
     if (!answerMessage.SerializePartialToOstream(&out)) {
         std::cout << "ERRORSEND IT !" << std::endl;
-        //return ViktorDev::errorSerializeMessage;
     };
     out.close();
-    //return ViktorDev::success;
 }
 
 dbInteraction::authInformation& ViktorDev::ClientAuthorizationHandler::getMessage()
@@ -318,14 +316,6 @@ void ViktorDev::ClientAuthorizationHandler::printMessageRegistration(){
     std::cout << "country = " << getmessageRegistration().country() << std::endl;
     std::cout << "firstName = " << getmessageRegistration().firstname() << std::endl;
     std::cout << "secondName = " << getmessageRegistration().secondname() << std::endl;
-    // std::cout << "coins = " << getmessageRegistration().coins() << std::endl;
-    // std::cout << "availableGames = ";
-    // for (int i = 0; i < ViktorDev::gameQuanity; ++i) {
-    //     std::cout << getmessageRegistration().availablegames()[i] << ' ';
-    // }
-    // std::cout << std::endl;
-    // std::cout << "age = " << getmessageRegistration().age() << std::endl;
-    // std::cout << "FPS = " << getmessageRegistration().fps() << std::endl;
 }
 
 int ViktorDev::ClientAuthorizationHandler::receiveUserInfo(){
@@ -355,12 +345,6 @@ int ViktorDev::ClientAuthorizationHandler::receiveIt()
     };
     if (answerMessage.authorizationstatus() == 0) {
         result = ViktorDev::AuthorizationResult::SUCCESS;
-        int receiveUserInfoResult = receiveUserInfo();
-        if(receiveUserInfoResult !=0){
-            std::cout<<"[LOG] Error with receiving user info"<<std::endl;
-            exit(errorParseMessage);
-        }
-        printMessageRegistration();
 
     } else {
         if (answerMessage.authorizationstatus() == 1) {
@@ -421,14 +405,6 @@ void ViktorDev::ServerAuthorizationHandler::printMessageRegistration(){
     std::cout << "country = " << getmessageRegistration().country() << std::endl;
     std::cout << "firstName = " << getmessageRegistration().firstname() << std::endl;
     std::cout << "secondName = " << getmessageRegistration().secondname() << std::endl;
-    // std::cout << "coins = " << getmessageRegistration().coins() << std::endl;
-    // std::cout << "availableGames = ";
-    // for (int i = 0; i < ViktorDev::gameQuanity; ++i) {
-    //     std::cout << getmessageRegistration().availablegames()[i] << ' ';
-    // }
-    // std::cout << std::endl;
-    // std::cout << "age = " << getmessageRegistration().age() << std::endl;
-    // std::cout << "FPS = " << getmessageRegistration().fps() << std::endl;
 }
 
 void ViktorDev::ServerAuthorizationHandler::parseRequestCheck(PGresult* res)
@@ -474,7 +450,6 @@ void ViktorDev::ServerAuthorizationHandler::parseRequestCheck(PGresult* res)
             for(int i = 0; i <gameQuanity; ++i){
                 getmessageRegistration().add_availablegames(0);
             }
-            // getmessageRegistration().set_id(1);
             getmessageRegistration().set_fps(60);
             
 
@@ -531,15 +506,11 @@ int ViktorDev::ServerAuthorizationHandler::sendIt()
         return ViktorDev::errorSerializeMessage;
     };
     out.close();
-    if (checkingResult == ViktorDev::AuthorizationResult::SUCCESS){
-        sendUserInfo();
-    }
     return ViktorDev::success;
 }
 
 int ViktorDev::ServerAuthorizationHandler::sendUserInfo()
 {
-    //dbInteraction::registrationInfo infoMessage;
     
     out.open(filePath, std::ios_base::binary);
     if (!out) {
@@ -724,7 +695,6 @@ int ViktorDev::ServerRegistrationHandler::receiveIt()
     if (!message.ParseFromIstream(&in)) {
         return ViktorDev::errorParseMessage;
     };
-    //message.set_id(10);
     in.close();
     return ViktorDev::success;
 }
