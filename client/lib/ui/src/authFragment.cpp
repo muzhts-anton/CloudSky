@@ -14,7 +14,7 @@
 namespace fragment {
 
 constexpr const char *serverIP = "10.147.18.164";
-constexpr int serverPort = 8085;
+constexpr int serverPort = 8084;
 
 AuthFragment::AuthFragment()
     : TCPSocket(new TCPClient::TCPClientSocket(serverPort, serverIP))

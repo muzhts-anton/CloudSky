@@ -3,7 +3,7 @@
 
 constexpr bool debug = true;
 
-constexpr const char *clientIP = "10.147.18.148";
+constexpr const char *clientIP = "10.147.18.62";
 constexpr int clientIPLength = 13;
 
 TCPClient::TCPClientSocket::TCPClientSocket(const int port, const char* ip)

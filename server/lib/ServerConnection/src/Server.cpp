@@ -66,6 +66,8 @@ void Server::handleAccept(const boost::system::error_code& e)
     {
         newConnection->start();
     }
+    else
+        std::cout << "[ERROR] : Something unknown\n";
     startAccept();
 }
 

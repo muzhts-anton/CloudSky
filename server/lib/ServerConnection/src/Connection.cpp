@@ -5,6 +5,7 @@
 
 #include "Connection.h"
 #include "dbOperations.h"
+#include "TCPServerSocket.h"
 
 namespace ServerConnection {
     Connection::Connection(boost::asio::io_context& io_context, int port):
@@ -22,6 +23,7 @@ namespace ServerConnection {
 
     void Connection::start()
     {
+        std::cout << "[LOG] : Start\n";
         prepareClient();
         socket_.async_read_some(boost::asio::buffer(clientIP),
                                 boost::bind(&Connection::handle_read, shared_from_this(),
@@ -31,14 +33,18 @@ namespace ServerConnection {
     void Connection::prepareClient()
     {
         std::string pathToClientInfo = "clientInfo.bin";
-
+        std::cout << "[LOG] : Ready to interact with client\n";
+        TCPServer::TCPServerSocket TCPSocket(8084, "0.0.0.0");
+        TCPSocket.activateSocket();
         do 
         {
-            getClientInfo();
-
+            TCPSocket.receiveFile(pathToClientInfo);
+            // getClientInfo();
+            std::cout << "[LOG] : Have the 1st part read\n";
             ViktorDev::ServerRegOrLog receiver(pathToClientInfo);
             receiver.receiveIt();
-            getClientInfo();
+            TCPSocket.receiveFile(pathToClientInfo);
+            // getClientInfo();
             if (receiver.status)
             {
                 dbInteraction::authInformation receivedMessage;
@@ -72,9 +78,12 @@ namespace ServerConnection {
 
     void Connection::getClientInfo()
     {
+        std::cout << "[LOG] : Ready to read client info\n";
         buffer.resize(1024);
+        std::cout << "[LOG] : buffer resized\n";
         socket_.async_read_some(boost::asio::buffer(buffer, 1024), boost::bind(&Connection::handleClientInfo, shared_from_this(),
                                             boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+        std::cout << "[LOG] : End read\n";
     }
 
     void Connection::handleClientInfo(
@@ -82,8 +91,8 @@ namespace ServerConnection {
         std::size_t bytes_transferred           // Number of bytes read.
     )
     {
-        if (error)
-            std::cout << "[LOG] : getClientInfo error: " << error << std::endl;
+        std::cout << "[LOG] : Ready to write client info to file\n";
+        std::cout << "[LOG] : getClientInfo error: " << error << std::endl;
         std::string filename = "clientInfo.bin";
         std::fstream file;
         file.open(filename, std::ios::out | std::ios::trunc | std::ios::binary);
