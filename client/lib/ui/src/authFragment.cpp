@@ -13,13 +13,18 @@
 #include <sys/types.h>
 namespace fragment {
 
+constexpr const char *serverIP = "10.147.18.164";
+constexpr int serverPort = 8085;
+
 AuthFragment::AuthFragment()
-    : _explanLabel(new QLabel("Input your data to confirm authorization"))
+    : TCPSocket(new TCPClient::TCPClientSocket(serverPort, serverIP))
+    , _explanLabel(new QLabel("Input your data to confirm authorization"))
     , _userName(new QLineEdit(this))
     , _userPassword(new QLineEdit(this))
     , _authBut(new QPushButton("Authorization"))
     , _backBut(new QPushButton("Back"))
 {
+    TCPSocket->activateSocket();
     _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
     _userName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
@@ -64,17 +69,22 @@ void AuthFragment::onAuth()
     if(!this->checkData())
         return;
 
+    std::string filename = "authRegistrtionInfo.bin";
     dbInteraction::registrationOrLogIn regOrLogMessage;
     regOrLogMessage.set_regorlog(true);
     ViktorDev::printRegOrLogMessage(regOrLogMessage);
-    ViktorDev::ClientRegOrLog sender("authRegistrtionInfo.bin", regOrLogMessage);
+    ViktorDev::ClientRegOrLog sender(filename, regOrLogMessage);
     sender.sendIt();
+    TCPSocket->transmitFile(filename);
 
     dbInteraction::authInformation message;
     message.set_username(_userName->text().toStdString());
     message.set_password(_userPassword->text().toStdString());
-    ViktorDev::ClientAuthorizationHandler clientAuth("authRegistrtionInfo.bin", message);
+    ViktorDev::ClientAuthorizationHandler clientAuth(filename, message);
     clientAuth.sendIt();
+    
+    TCPSocket->transmitFile(filename);
+
     std::cout << std::endl<< std::endl<< "sended message:"<< std::endl;
     clientAuth.printMessage();
 
@@ -87,6 +97,7 @@ void AuthFragment::onAuth()
         clientAuth.printMessageRegistration();
     }
     
+    delete TCPSocket;
     emit navigateTo(screens::ScreenNames::MAIN);
 }
 

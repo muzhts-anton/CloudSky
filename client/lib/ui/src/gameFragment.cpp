@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 constexpr const char *serverIP = "10.147.18.164";
-constexpr int serverPort = 8080;
+constexpr int serverPort = 8085;
 constexpr int workerPort = 8080;
 
 namespace fragment {

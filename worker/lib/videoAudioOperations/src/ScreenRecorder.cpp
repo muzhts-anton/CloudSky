@@ -11,67 +11,30 @@ ScreenRecorder::ScreenRecorder(Worker *initWorker)
 	worker_->start();
 	worker_->receiveClientIP();
 
-	std::string pathToClientInfo = "clientInfo.bin";
-
-	do 
-	{
-		worker_->getInteraction(pathToClientInfo);
-
-		ViktorDev::ServerRegOrLog receiver(pathToClientInfo);
-		receiver.receiveIt();
-		worker_->getInteraction(pathToClientInfo);
-		if (receiver.status)
-		{
-			dbInteraction::authInformation receivedMessage;
-			ViktorDev::ServerAuthorizationHandler serverAuth(pathToClientInfo, receivedMessage);
-			serverAuth.receiveIt();
-			std::cout << std::endl<< std::endl<< "received message:"<< std::endl;
-			serverAuth.printMessage();
-			serverAuth.check();
-			serverAuth.sendIt();
-			serverAuth.printResult();
-			if (serverAuth.checkingResult == ViktorDev::AuthorizationResult::SUCCESS)
-				break;
-		}
-		else
-		{
-			dbInteraction::registrationInfo receivedRegMessage;
-			ViktorDev::ServerRegistrationHandler serverReg(pathToClientInfo, receivedRegMessage);
-			serverReg.receiveIt();
-			std::cout << std::endl<< "received message:" << std::endl;
-			serverReg.printMessage();
-			serverReg.check();
-			serverReg.sendIt();
-			serverReg.printResult();
-			if (serverReg.checkingResult == ViktorDev::RegistrationResult::SUCCESS)
-				break;
-		}
-	}
-	while (true);
-
 	output_filename_ = "udp://" + worker_->getClientIP() + ":8080";
     AVCodecContext video_encoder_codec_context;
 
-	video_encoder_codec_context.bit_rate = 400000;
-	video_encoder_codec_context.width = 2560;
-	video_encoder_codec_context.height = 1920;
+	video_encoder_codec_context.bit_rate = 4000000;
+	video_encoder_codec_context.width = 1920;
+	video_encoder_codec_context.height = 1080;
 	video_encoder_codec_context.pix_fmt = AV_PIX_FMT_YUV420P;
 	video_encoder_codec_context.time_base.num = 1;
 	video_encoder_codec_context.time_base.den = 60;
-	video_encoder_codec_context.framerate.num = 60;
-	video_encoder_codec_context.framerate.den = 1;
-	video_encoder_codec_context.gop_size = 	1;
+	video_encoder_codec_context.gop_size =  3;
+	video_encoder_codec_context.qmin = 16;
+	video_encoder_codec_context.qmax = 26;
 	video_encoder_codec_context.max_b_frames = 1;
+	//video_encoder_codec_context.scenechange_threshold = 50;
 	InitVideo(&video_encoder_codec_context);
-	//InitAudio();
 	InitWriter();
 }
+
 int ScreenRecorder::InitWriter(){
 	
 	avformat_alloc_output_context2(&output_format_context_, nullptr, "h264", output_filename_.c_str());
 	if (!output_format_context_)
 	{
-		std::cout << "\nerror in allocating av format output context";
+		std::cout << "\n [ERROR] error in allocating av format output context";
 		return 1;
 	}
 	out_video_stream_ = avformat_new_stream(output_format_context_, nullptr);
@@ -79,18 +42,9 @@ int ScreenRecorder::InitWriter(){
 	out_video_stream_->time_base = video_encoder_codec_context_->time_base;
 	int ret = avcodec_parameters_from_context(out_video_stream_->codecpar, video_encoder_codec_context_);
 	if (ret < 0) {
-		av_log(nullptr, AV_LOG_ERROR, "Failed to copy encoder parameters to output stream\n");
+		av_log(nullptr, AV_LOG_ERROR, "[ERROR] Failed to copy encoder parameters to output stream\n");
 		return ret;
 	}
-
-	// out_audio_stream_ = avformat_new_stream(output_format_context_, NULL);
-	// out_audio_stream_->time_base = audio_encoder_codec_context_->time_base;
-	// out_audio_stream_->id = output_format_context_->nb_streams - 1;
-	// ret = avcodec_parameters_from_context(out_audio_stream_->codecpar, audio_encoder_codec_context_);
-	// if (ret < 0) {
-	// 	av_log(NULL, AV_LOG_ERROR, "Failed to copy encoder parameters to output stream\n");
-	// 	return ret;
-	// }
 
 	if (output_format_context_->oformat->flags & AVFMT_GLOBALHEADER)
 	{
@@ -98,14 +52,6 @@ int ScreenRecorder::InitWriter(){
 	}
 	
 	AVDictionary* options = nullptr;
-	av_dict_set(&options, "sc_threshold", "200", 0);
-	av_dict_set(&options, "analyzeduration", "32", 0);
-	//av_dict_set(&options, "profile", "high", 0);
-	av_dict_set(&options, "probesize", "100000", 0);
-	av_dict_set(&options, "rtbufsize", "100000", 0);
-	av_dict_set(&options,"preset", "fast",0);
-	av_dict_set(&options,"tune", "zerolatency", 0);
-	av_dict_set(&options, "max_interleave_delta", "1", 0);
 
 
 
@@ -113,21 +59,21 @@ int ScreenRecorder::InitWriter(){
 	{
 		if (avio_open2(&output_format_context_->pb, output_filename_.c_str(), AVIO_FLAG_WRITE, nullptr, &options) < 0)
 		{
-			std::cout << "\nerror in creating the video file";
+			std::cout << "\n[ERROR] error in creating the video file";
 			return 1;
 		}
 	}
 
 	if (!output_format_context_->nb_streams)
 	{
-		std::cout << "\noutput file dose not contain any stream";
+		std::cout << "\n[ERROR] output file dose not contain any stream";
 		return 1;
 	}
 
 	ret = avformat_write_header(output_format_context_, nullptr);
 	if (ret < 0)
 	{
-		std::cout << "\nerror in writing the header context";
+		std::cout << "\n[ERROR] error in writing the header context";
 		return 1;
 	}
 	return 0;
@@ -138,13 +84,11 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	avformat_network_init();
 	AVDictionary* options = nullptr;
 	
-	// int width = 640;
-	// int height = 480;
-	// std::stringstream ost;
-	// ost << width << "x" << height;
-	
 	av_dict_set(&options,"video_size", "1920x1080",0); 
-	av_dict_set(&options, "sc_threshold", "1", 0);
+	av_dict_set(&options,"preset", "fast",0);
+	av_dict_set(&options,"tune", "zerolatency", 0);
+	av_dict_set(&options,"framerate", "60", 0);
+
 	
 	int ret;
 	AVInputFormat* video_input_format_ = nullptr;
@@ -153,33 +97,33 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	ret = avformat_open_input(&input_video_format_context_, ":0.0", video_input_format_, &options);
 	if (ret != 0)
 	{
-		std::cout << "\nerror in opening input device";
+		std::cout << "\n[ERROR] error in opening input device";
 		return ret;
 	}
 	ret = avformat_find_stream_info(input_video_format_context_, &options);
 	if (ret < 0)
 	{
-		std::cout << "\nunable to find the stream information";
+		std::cout << "\n [ERROR] unable to find the stream information";
 		return ret;
 	}
 	int out_video_stream_index = av_find_best_stream(input_video_format_context_, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
 	if (out_video_stream_index == -1)
 	{
-		std::cout << "\nunable to find the video stream index. (-1)";
+		std::cout << "\n[ERROR] unable to find the video stream index. (-1)";
 		return 1;
 	}
 
 	AVCodecParameters* video_parameter_ = nullptr;
 	video_parameter_ = input_video_format_context_->streams[out_video_stream_index]->codecpar;
-	const AVCodec* decoder_codec_ =nullptr;
+	AVCodec* decoder_codec_ =nullptr;
 	decoder_codec_ = avcodec_find_decoder(video_parameter_->codec_id);
 	if (!decoder_codec_) {
-		std::cout << "codec not found\n";
+		std::cout << "[ERROR] codec not found\n";
 		return 1;
 	}
 	video_decoder_codec_context_ = avcodec_alloc_context3(decoder_codec_);
 	if (!video_decoder_codec_context_) {
-		std::cout << "Could not allocate video decoder context\n";
+		std::cout << "[ERROR] Could not allocate video decoder context\n";
 		return 1;
 	}
 
@@ -187,20 +131,20 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 
 	ret = avcodec_open2(video_decoder_codec_context_, decoder_codec_, nullptr);
 	if (ret < 0) {
-		std::cout << "Could not open decoder\n";
+		std::cout << "[ERROR] Could not open decoder\n";
 		return ret;
 	}
 
-	const AVCodec* video_encoder_codec_ = nullptr;
-	video_encoder_codec_ = avcodec_find_encoder(AV_CODEC_ID_MPEG4);
+	AVCodec* video_encoder_codec_ = nullptr;
+	video_encoder_codec_ = avcodec_find_encoder(AV_CODEC_ID_H264);
 	if (!video_encoder_codec_) {
-		std::cout << "Codec AV_CODEC_ID_MPEG4 not found\n";
+		std::cout << "[ERROR] Codec AV_CODEC_ID_H264 not found\n";
 		return 1;
 	}
 	
 	video_encoder_codec_context_ = avcodec_alloc_context3(video_encoder_codec_);
 	if (!video_encoder_codec_context_) {
-		std::cout << "Could not allocate video video encoder context\n";
+		std::cout << "[ERROR] Could not allocate video video encoder context\n";
 		return 1;
 	}
 
@@ -214,10 +158,23 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	video_encoder_codec_context_->framerate.den = video_encoder_codec_context->framerate.den;
 	video_encoder_codec_context_->gop_size	  = video_encoder_codec_context->gop_size;
 	video_encoder_codec_context_->max_b_frames  = video_encoder_codec_context->max_b_frames;
+	video_encoder_codec_context_->qmin = 	video_encoder_codec_context->qmin;
+	video_encoder_codec_context_->qmax = video_encoder_codec_context->qmax;
+	//video_encoder_codec_context_->scenechange_threshold = video_encoder_codec_context->scenechange_threshold;
+
+
+	av_opt_set(video_encoder_codec_context_, "preset", "fast", 0);
+    av_opt_set(video_encoder_codec_context_, "tune", "zerolatency", 0);
+	av_opt_set(video_encoder_codec_context_, "bitrate", "6000k", 0);
+	av_opt_set(video_encoder_codec_context_, "analyzeduration", "0", 0);
+	av_opt_set(video_encoder_codec_context_, "probesize", "32", 0);
+	av_opt_set(video_encoder_codec_context_, "threads", "4", 0);
+    
+
 	
 	ret = avcodec_open2(video_encoder_codec_context_, video_encoder_codec_, &options);
 	if (ret < 0) {
-		std::cout << "Could not open video encoder\n";
+		std::cout << "[ERROR] Could not open video encoder\n";
 		return ret;
 	}
 
@@ -246,8 +203,7 @@ ScreenRecorder::~ScreenRecorder() {
 
 void ScreenRecorder::Start() {
 	isRecord_ = true;
-	//EmulateClientInput();
-	//threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
+	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
 	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
 }
 
@@ -265,7 +221,6 @@ void ScreenRecorder::EmulateClientInput()
 	KeyboardMouse::ButtonsCoords ReceiveMessage;
     ViktorDev::EmelationKeyBoard keyboard;
 	ViktorDev::EmulationMouse mouse;
-    //emulation.initEmulateKbMouse();
     std::string filename = "receivedButtonsCoords.bin";
     //double fps = 100;
     while (true)
@@ -297,7 +252,6 @@ void ScreenRecorder::EmulateClientInput()
 }
 
 void ScreenRecorder::DecodeVideo() {
-	int frame_number = 0;
 	bool previous = worker_->getState();
 	while (isRecord_) {
 		if(!worker_->getState()){
@@ -313,7 +267,7 @@ void ScreenRecorder::DecodeVideo() {
 		ret = avcodec_send_packet(video_decoder_codec_context_, input_packet);
 		if (ret < 0) {
 			av_packet_free(&input_packet);
-			std::cout << "Error sending a packet for decoding\n";
+			std::cout << "[ERROR] Error sending a packet for decoding\n";
 			return;
 		}
 
@@ -322,7 +276,7 @@ void ScreenRecorder::DecodeVideo() {
 			AVFrame* decoded_frame = av_frame_alloc();
 			if (!decoded_frame) {
 
-				std::cout << "Could not allocate video pFrame\n";
+				std::cout << "[ERROR] Could not allocate video pFrame\n";
 				return;
 			}
 			ret = avcodec_receive_frame(video_decoder_codec_context_, decoded_frame);
@@ -330,25 +284,18 @@ void ScreenRecorder::DecodeVideo() {
 				break;
 			else if (ret < 0) {
 				av_frame_free(&decoded_frame);
-				std::cout << "Error during decoding\n";
+				std::cout << "[ERROR] Error during decoding\n";
 				return;
 			}
 			ScaleVideo(decoded_frame);
 			av_packet_free(&input_packet);
-			std::cout << "return from decode\n";
+			std::cout << "[LOG] Frame have been send\n";
 
-		}
-		++frame_number;
-		std::cout << frame_number;
-		if (frame_number > 10000){
-			return;
-		}
-		
+		}		
 		previous = worker_->getState();
 
 	}
 
-	return;
 }
 
 void ScreenRecorder::ScaleVideo(AVFrame* decoded_frame) {

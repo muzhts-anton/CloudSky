@@ -17,8 +17,12 @@
 
 namespace fragment {
 
+constexpr const char *serverIP = "10.147.18.164";
+constexpr int serverPort = 8085;
+
 RegFragment::RegFragment()
-    : _explanLabel(new QLabel("Input your data to confirm registration"))
+    : TCPSocket(new TCPClient::TCPClientSocket(serverPort, serverIP))
+    , _explanLabel(new QLabel("Input your data to confirm registration"))
     , _userFirstName(new QLineEdit)
     , _userSecondName(new QLineEdit)
     , _userCountry(new QLineEdit)
@@ -32,6 +36,7 @@ RegFragment::RegFragment()
     , _regBut(new QPushButton("Confirm registration"))
     , _backBut(new QPushButton("Back"))
 {
+    TCPSocket->activateSocket();
     _userFirstName->setPlaceholderText("First Name");
     _userSecondName->setPlaceholderText("Second Name");
     _userCountry->setPlaceholderText("Country");
@@ -106,11 +111,14 @@ void RegFragment::onReg()
     if (!this->checkData())
         return;
 
+    std::string filename = "authRegistrtionInfo.bin";
     dbInteraction::registrationOrLogIn regOrLogMessage;
     regOrLogMessage.set_regorlog(false);
     ViktorDev::printRegOrLogMessage(regOrLogMessage);
-    ViktorDev::ClientRegOrLog sender("authRegistrtionInfo.bin", regOrLogMessage);
+    ViktorDev::ClientRegOrLog sender(filename, regOrLogMessage);
     sender.sendIt();
+
+    TCPSocket->transmitFile(filename);
 
     dbInteraction::registrationInfo regMessage;
     regMessage.set_email(_userEmail->text().toStdString());
@@ -125,10 +133,15 @@ void RegFragment::onReg()
     }
     regMessage.set_age(_ageTxt->text().toInt());
 
-    ViktorDev::ClientRegistrationHandler clientReg("authRegistrtionInfo.bin", regMessage);
+    ViktorDev::ClientRegistrationHandler clientReg(filename, regMessage);
     clientReg.sendIt();
+
+    TCPSocket->transmitFile(filename);
+
     std::cout << std::endl<< "sended message:" << std::endl;
     clientReg.printMessage();
+
+    delete TCPSocket;
     emit navigateTo(screens::ScreenNames::MAIN);
 }
 

@@ -39,6 +39,15 @@ private:
 
     void handle_write(const boost::system::error_code& e);
 
+    void prepareClient();
+
+    void handleClientInfo(
+        const boost::system::error_code& error, // Result of operation.
+        std::size_t bytes_transferred           // Number of bytes read.
+    );
+
+    void getClientInfo();
+
     std::string find_free_worker();
 
     boost::asio::strand<boost::asio::io_context::executor_type> strand_;
@@ -46,9 +55,10 @@ private:
     boost::asio::ip::tcp::socket socket_;
 
     //boost::array<char, 1024> buffer_;
-    std::array<std::string, workersAmount> workersIP = { viktorIP, kostyaIP};
+    std::array<std::string, workersAmount> workersIP = { paulIP, kostyaIP};
     std::array<bool, workersAmount> workersBussiness = { false, false};
     std::string clientIP;
+    std::string buffer;
     int newPort;
     
 };

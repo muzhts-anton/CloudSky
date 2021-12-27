@@ -1,8 +1,10 @@
 #include <iostream>
 #include <boost/bind/bind.hpp>
 #include <stdlib.h>
+#include <fstream>
 
 #include "Connection.h"
+#include "dbOperations.h"
 
 namespace ServerConnection {
     Connection::Connection(boost::asio::io_context& io_context, int port):
@@ -20,9 +22,81 @@ namespace ServerConnection {
 
     void Connection::start()
     {
+        prepareClient();
         socket_.async_read_some(boost::asio::buffer(clientIP),
                                 boost::bind(&Connection::handle_read, shared_from_this(),
                                             boost::asio::placeholders::error));
+    }
+
+    void Connection::prepareClient()
+    {
+        std::string pathToClientInfo = "clientInfo.bin";
+
+        do 
+        {
+            getClientInfo();
+
+            ViktorDev::ServerRegOrLog receiver(pathToClientInfo);
+            receiver.receiveIt();
+            getClientInfo();
+            if (receiver.status)
+            {
+                dbInteraction::authInformation receivedMessage;
+                ViktorDev::ServerAuthorizationHandler serverAuth(pathToClientInfo, receivedMessage);
+                serverAuth.receiveIt();
+                std::cout << std::endl<< std::endl<< "received message:"<< std::endl;
+                serverAuth.printMessage();
+                serverAuth.check();
+                serverAuth.sendIt();
+                serverAuth.printResult();
+                if (serverAuth.checkingResult == ViktorDev::AuthorizationResult::SUCCESS)
+                    break;
+            }
+            else
+            {
+                dbInteraction::registrationInfo receivedRegMessage;
+                ViktorDev::ServerRegistrationHandler serverReg(pathToClientInfo, receivedRegMessage);
+                serverReg.receiveIt();
+                std::cout << std::endl<< "received message:" << std::endl;
+                serverReg.printMessage();
+                serverReg.check();
+                serverReg.sendIt();
+                serverReg.printResult();
+                if (serverReg.checkingResult == ViktorDev::RegistrationResult::SUCCESS)
+                    break;
+            }
+        }
+        while (true);
+
+    }
+
+    void Connection::getClientInfo()
+    {
+        buffer.resize(1024);
+        socket_.async_read_some(boost::asio::buffer(buffer, 1024), boost::bind(&Connection::handleClientInfo, shared_from_this(),
+                                            boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+    }
+
+    void Connection::handleClientInfo(
+        const boost::system::error_code& error, // Result of operation.
+        std::size_t bytes_transferred           // Number of bytes read.
+    )
+    {
+        if (error)
+            std::cout << "[LOG] : getClientInfo error: " << error << std::endl;
+        std::string filename = "clientInfo.bin";
+        std::fstream file;
+        file.open(filename, std::ios::out | std::ios::trunc | std::ios::binary);
+        if (file.is_open()) {
+            std::cout << "[LOG] : TCP File Created.\n";
+        } else {
+            std::cerr << "[ERROR] : TCP File creation failed." << std::endl;
+            throw std::invalid_argument("[ERROR] : TCP File creation failed.");
+        }
+        for (size_t i = 0; i < bytes_transferred; i++)
+            file.write((&buffer[0]) + i, 1);
+        file.close();
+            std::cout << "[LOG] : TCP File Saved.\n";
     }
 
     std::string Connection::find_free_worker()
