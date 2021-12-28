@@ -25,6 +25,7 @@ namespace ServerConnection {
     {
         std::cout << "[LOG] : Start\n";
         prepareClient();
+        std::cout << "[LOG] : End\n";
         socket_.async_read_some(boost::asio::buffer(clientIP),
                                 boost::bind(&Connection::handle_read, shared_from_this(),
                                             boost::asio::placeholders::error));
@@ -79,6 +80,7 @@ namespace ServerConnection {
             }
         }
         while (true);
+        std::cout << "[LOG] : Client's connected\n";
 
     }
 

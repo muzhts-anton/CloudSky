@@ -106,7 +106,7 @@ void AuthFragment::onAuth()
     else
         return;
     
-    delete TCPSocket;
+    delete infoSocket;
     emit navigateTo(screens::ScreenNames::MAIN);
 }
 
