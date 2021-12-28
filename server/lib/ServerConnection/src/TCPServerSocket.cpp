@@ -150,7 +150,7 @@ void TCPServerSocket::transmitFile(std::string filename)
     if(length > 3){
         --length;
     }
-    int bytes_sent = send(generalSocketDescriptor, buffer, length, 0);
+    int bytes_sent = send(newSocketDescriptor, buffer, length, 0);
     file.close();
     if (debug) {
         std::cout << "[LOG] : TCP Transmitted Data Size " << bytes_sent << " Bytes.\n";

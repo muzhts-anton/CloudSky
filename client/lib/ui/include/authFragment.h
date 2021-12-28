@@ -31,6 +31,7 @@ private:
     bool checkData();
 
 private:
+    TCPClient::TCPClientSocket* infoSocket;
     QPointer<QLabel> _explanLabel;
     QPointer<QLineEdit> _userName;
     QPointer<QLineEdit> _userPassword;

@@ -13,7 +13,8 @@
 #include <sys/types.h>
 namespace fragment {
 
-
+constexpr const char *serverIP = "10.147.18.164";
+constexpr int serverPort = 8085;
 
 AuthFragment::AuthFragment()
     : _explanLabel(new QLabel("Input your data to confirm authorization"))
@@ -24,7 +25,8 @@ AuthFragment::AuthFragment()
 {
     TCPSocket->activateSocket();
     usleep(10000000);
-    TCPSocket->changePort(8090);
+    infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
+    infoSocket->activateSocket();
     _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
     _userName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
@@ -75,7 +77,7 @@ void AuthFragment::onAuth()
     ViktorDev::printRegOrLogMessage(regOrLogMessage);
     ViktorDev::ClientRegOrLog sender(filename, regOrLogMessage);
     sender.sendIt();
-    TCPSocket->transmitFile(filename);
+    infoSocket->transmitFile(filename);
 
     dbInteraction::authInformation message;
     message.set_username(_userName->text().toStdString());
@@ -83,19 +85,24 @@ void AuthFragment::onAuth()
     ViktorDev::ClientAuthorizationHandler clientAuth(filename, message);
     clientAuth.sendIt();
     
-    TCPSocket->transmitFile(filename);
+    infoSocket->transmitFile(filename);
 
     std::cout << std::endl<< std::endl<< "sended message:"<< std::endl;
     clientAuth.printMessage();
+    usleep(1000000);
+    infoSocket->receiveFile(filename);
 
     if (clientAuth.result == ViktorDev::AuthorizationResult::SUCCESS){
+        infoSocket->receiveFile(filename);
         int receiveUserInfoResult = clientAuth.receiveUserInfo();
-        if(receiveUserInfoResult !=0){
-            std::cout<<"[LOG] Error with receiving user info"<<std::endl;
+        if(receiveUserInfoResult != 0){
+            std::cout<< "[LOG] : Error with receiving user info" << std::endl;
             exit(ViktorDev::errorParseMessage);
         }
         clientAuth.printMessageRegistration();
     }
+    else
+        return;
     
     delete TCPSocket;
     emit navigateTo(screens::ScreenNames::MAIN);

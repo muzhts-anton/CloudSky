@@ -143,7 +143,7 @@ void RegFragment::onReg()
 
     std::cout << std::endl<< "sended message:" << std::endl;
     clientReg.printMessage();
-    usleep(100000);
+    usleep(1000000);
     infoSocket->receiveFile(filename);
     clientReg.receiveIt();
     clientReg.printResult();
