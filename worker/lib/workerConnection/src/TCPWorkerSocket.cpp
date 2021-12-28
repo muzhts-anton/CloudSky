@@ -4,6 +4,7 @@
 #include <iostream>
 
 constexpr int debug = 1;
+constexpr int defaultServerPort = 8085;
 
 using namespace TCPWorker;
 
@@ -181,7 +182,7 @@ void TCPWorkerSocket::sendWorkerIP()
 
 void TCPWorkerSocket::sendSignal()
 {
-    TCPWorkerSocket newSocket(8080, defaultServerIp);
+    TCPWorkerSocket newSocket(defaultServerPort, defaultServerIp);
     newSocket.activateSendSocket();
     if (debug)
         std::cout << "[LOG] : TCP Sending Freeing signal...\n";

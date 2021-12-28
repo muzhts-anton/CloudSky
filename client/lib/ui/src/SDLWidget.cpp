@@ -89,14 +89,12 @@ void MediaPlayer::play()
         std::cout << "Cannot allocate frame\n";
     }
 
-    // pCodecCtx->width = 1024;
-    // pCodecCtx->height = 768;
     screen = SDL_CreateWindow(
-        "SDL Video Player",
+        "Cloud Sky Game Screen",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        1024,
-        768,
+        1280,
+        720,
         SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
 
     if (!screen) {

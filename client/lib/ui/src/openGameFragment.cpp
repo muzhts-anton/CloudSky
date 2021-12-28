@@ -14,7 +14,7 @@ OpenGameFragment::OpenGameFragment()
     _backBut->setStyleSheet(themestyle::fixed.value(themestyle::Type::SECONDBUTTON));
 
     _backBut->setFixedWidth(75);
-    _gameSelecterBox->addItem("CS:GO");
+    _gameSelecterBox->addItem("Forza Horizon 6");
     _gameSelecterBox->addItem("Horizon: Zero Dawn");
 
     _buttsHL = new QHBoxLayout;
