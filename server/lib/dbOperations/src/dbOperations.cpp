@@ -804,6 +804,8 @@ void ViktorDev::ServerRegistrationHandler::check()
 int ViktorDev::ServerRegistrationHandler::sendIt()
 {
     dbInteraction::serverRegInformation answerMessage;
+    answerMessage.set_userinfo(555);
+    answerMessage.set_serverinfo(777);
     if (checkingResult == ViktorDev::RegistrationResult::SUCCESS) {
         answerMessage.set_authorizationstatus(0);
     } else {

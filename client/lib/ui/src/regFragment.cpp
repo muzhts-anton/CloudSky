@@ -37,8 +37,6 @@ RegFragment::RegFragment()
 {
     TCPSocket->activateSocket();
     usleep(1000000);
-    infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
-    infoSocket->activateSocket();
     _userFirstName->setPlaceholderText("First Name");
     _userSecondName->setPlaceholderText("Second Name");
     _userCountry->setPlaceholderText("Country");
@@ -113,6 +111,9 @@ void RegFragment::onReg()
     if (!this->checkData())
         return;
 
+    infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
+    infoSocket->activateSocket();
+    
     std::string filename = "authRegistrtionInfo.bin";
     dbInteraction::registrationOrLogIn regOrLogMessage;
     regOrLogMessage.set_regorlog(false);

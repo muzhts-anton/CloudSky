@@ -25,8 +25,6 @@ AuthFragment::AuthFragment()
 {
     TCPSocket->activateSocket();
     usleep(100000);
-    infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
-    infoSocket->activateSocket();
     _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
     _userName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
@@ -71,6 +69,9 @@ void AuthFragment::onAuth()
     if(!this->checkData())
         return;
 
+    infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
+    infoSocket->activateSocket();
+    
     std::string filename = "authRegistrtionInfo.bin";
     dbInteraction::registrationOrLogIn regOrLogMessage;
     regOrLogMessage.set_regorlog(true);
@@ -106,7 +107,7 @@ void AuthFragment::onAuth()
     else
         return;
     
-    delete TCPSocket;
+    delete infoSocket;
     emit navigateTo(screens::ScreenNames::MAIN);
 }
 

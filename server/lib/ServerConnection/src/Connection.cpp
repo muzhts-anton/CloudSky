@@ -58,7 +58,7 @@ namespace ServerConnection {
                 if (serverAuth.checkingResult == ViktorDev::AuthorizationResult::SUCCESS)
                 {
                     serverAuth.sendUserInfo();
-                    usleep(1000000);
+                    usleep(100000);
                     TCPSocket.transmitFile(pathToClientInfo);
                     break;
                 }
