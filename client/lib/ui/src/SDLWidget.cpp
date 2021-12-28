@@ -39,8 +39,8 @@ void MediaPlayer::initInputStream(const std::string path)
     }
     pFormatCtx = avformat_alloc_context();
 
-    //av_dict_set(&opts, "max_interleave_delta", "1", 0);
-    //av_dict_set(&opts, "buffer_size", "204800", 0);
+    av_dict_set(&opts, "max_interleave_delta", "1", 0);
+    av_dict_set(&opts, "buffer_size", "204800", 0);
     ret = avformat_open_input(&pFormatCtx, path.c_str(), nullptr, &opts);
 
     if (ret < 0) {
@@ -246,7 +246,7 @@ void MediaPlayer::play()
                     texture,
                     nullptr,
                     nullptr);
-                //SDL_ShowCursor(SDL_ENABLE);
+                SDL_ShowCursor(SDL_DISABLE);
                 SDL_RenderPresent(renderer);
             }
         }
