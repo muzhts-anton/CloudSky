@@ -146,8 +146,10 @@ void TCPServerSocket::transmitFile(std::string filename)
         length++;
     }
     if (debug)
-        std::cout << "[LOG] : TCP Sending...\n";
-
+        std::cout << "[LOG] : TCP Sending... File " << length << "bytes\n";
+    if(length > 3){
+        --length;
+    }
     int bytes_sent = send(generalSocketDescriptor, buffer, length, 0);
     file.close();
     if (debug) {

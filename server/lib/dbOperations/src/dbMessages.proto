@@ -13,9 +13,13 @@ message registrationOrLogIn{
 
 message serverAuthInformation{
     int32 authorizationStatus = 1; // 0 - SUCCESS; 1 - WRONG_USERNAME; 2 - WRONG_PASSWORD
+    int32 userInfo = 2;
+    int32 serverInfo = 3;
 }
 message serverRegInformation{
     int32 authorizationStatus = 1; // 0 - SUCCESS; 2 - DUPLICATED_INFO
+    int32 userInfo = 2;
+    int32 serverInfo = 3;
 }
 
 message transactionRequst{
