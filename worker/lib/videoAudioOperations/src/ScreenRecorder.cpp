@@ -107,7 +107,7 @@ int ScreenRecorder::InitVideo(AVCodecContext* video_encoder_codec_context) {
 	av_dict_set(&options, "sc_threshold", "1", 0);
 	
 	int ret;
-	const AVInputFormat* video_input_format_ = nullptr;
+	AVInputFormat* video_input_format_ = nullptr;
 	video_input_format_ =  av_find_input_format("x11grab");
 	
 	ret = avformat_open_input(&input_video_format_context_, ":0.0", video_input_format_, &options);
@@ -206,8 +206,7 @@ ScreenRecorder::~ScreenRecorder() {
 
 void ScreenRecorder::Start() {
 	isRecord_ = true;
-	//EmulateClientInput();
-	//threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
+	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::EmulateClientInput, this)));
 	threads_.push_back(std::make_shared<std::thread>(std::bind(&ScreenRecorder::DecodeVideo, this)));
 }
 
@@ -225,7 +224,6 @@ void ScreenRecorder::EmulateClientInput()
 	KeyboardMouse::ButtonsCoords ReceiveMessage;
     ViktorDev::EmelationKeyBoard keyboard;
 	ViktorDev::EmulationMouse mouse;
-    //emulation.initEmulateKbMouse();
     std::string filename = "receivedButtonsCoords.bin";
     //double fps = 100;
     while (true)
