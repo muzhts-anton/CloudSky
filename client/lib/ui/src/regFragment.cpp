@@ -36,7 +36,6 @@ RegFragment::RegFragment()
     , _backBut(new QPushButton("Back"))
 {
     TCPSocket->activateSocket();
-    usleep(1000000);
     _userFirstName->setPlaceholderText("First Name");
     _userSecondName->setPlaceholderText("Second Name");
     _userCountry->setPlaceholderText("Country");
@@ -113,7 +112,8 @@ void RegFragment::onReg()
 
     infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
     infoSocket->activateSocket();
-    
+    usleep(1000000);
+
     std::string filename = "authRegistrtionInfo.bin";
     dbInteraction::registrationOrLogIn regOrLogMessage;
     regOrLogMessage.set_regorlog(false);

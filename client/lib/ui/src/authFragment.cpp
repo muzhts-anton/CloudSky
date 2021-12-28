@@ -24,7 +24,6 @@ AuthFragment::AuthFragment()
     , _backBut(new QPushButton("Back"))
 {
     TCPSocket->activateSocket();
-    usleep(100000);
     _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
     _userName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
@@ -71,7 +70,8 @@ void AuthFragment::onAuth()
 
     infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
     infoSocket->activateSocket();
-    
+    usleep(100000);
+
     std::string filename = "authRegistrtionInfo.bin";
     dbInteraction::registrationOrLogIn regOrLogMessage;
     regOrLogMessage.set_regorlog(true);
