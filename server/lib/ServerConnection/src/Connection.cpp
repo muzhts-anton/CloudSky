@@ -54,9 +54,11 @@ namespace ServerConnection {
                 serverAuth.sendIt();
                 serverAuth.printResult();
                 TCPSocket.transmitFile(pathToClientInfo);
+                usleep(1000000);
                 if (serverAuth.checkingResult == ViktorDev::AuthorizationResult::SUCCESS)
                 {
                     serverAuth.sendUserInfo();
+                    usleep(1000000);
                     TCPSocket.transmitFile(pathToClientInfo);
                     break;
                 }

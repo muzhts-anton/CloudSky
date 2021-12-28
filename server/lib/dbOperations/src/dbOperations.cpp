@@ -258,16 +258,20 @@ void ViktorDev::TransactionHandlerServer::sendToClient(){
     }
     if (!answerMessage.SerializePartialToOstream(&out)) {
         std::cout << "ERRORSEND IT !" << std::endl;
-        //return ViktorDev::errorSerializeMessage;
     };
     out.close();
-    //return ViktorDev::success;
 }
 
 dbInteraction::authInformation& ViktorDev::ClientAuthorizationHandler::getMessage()
 {
     return message;
 }
+
+dbInteraction::registrationInfo& ViktorDev::ClientAuthorizationHandler::getmessageRegistration()
+{
+    return messageRegistration;
+}
+
 ViktorDev::ClientAuthorizationHandler::ClientAuthorizationHandler(std::string filePath, dbInteraction::authInformation message)
 {
     this->filePath = filePath;
@@ -299,6 +303,34 @@ dbInteraction::authInformation& ViktorDev::ServerAuthorizationHandler::getMessag
 {
     return message;
 }
+dbInteraction::registrationInfo& ViktorDev::ServerAuthorizationHandler::getmessageRegistration()
+{
+    return messageRegistration;
+}
+
+void ViktorDev::ClientAuthorizationHandler::printMessageRegistration(){
+    std::cout << std::endl<< "Received message registration:"<< std::endl;
+    std::cout << "email = " << getmessageRegistration().email() << std::endl;
+    std::cout << "username = " << getmessageRegistration().username() << std::endl;
+    std::cout << "password = " << getmessageRegistration().password() << std::endl;
+    std::cout << "country = " << getmessageRegistration().country() << std::endl;
+    std::cout << "firstName = " << getmessageRegistration().firstname() << std::endl;
+    std::cout << "secondName = " << getmessageRegistration().secondname() << std::endl;
+}
+
+int ViktorDev::ClientAuthorizationHandler::receiveUserInfo(){
+    in.open(filePath, std::ios_base::binary);
+    if (!in) {
+        assert(errorWithFile);
+        in.close();
+        exit(errorWithFile);
+    };
+    if (!messageRegistration.ParseFromIstream(&in)) {
+        return ViktorDev::errorParseMessage;
+    };
+    in.close();
+    return ViktorDev::success;
+}
 
 int ViktorDev::ClientAuthorizationHandler::receiveIt()
 {
@@ -313,6 +345,7 @@ int ViktorDev::ClientAuthorizationHandler::receiveIt()
     };
     if (answerMessage.authorizationstatus() == 0) {
         result = ViktorDev::AuthorizationResult::SUCCESS;
+
     } else {
         if (answerMessage.authorizationstatus() == 1) {
             result = ViktorDev::AuthorizationResult::WRONG_USERNAME;
@@ -364,6 +397,16 @@ void ViktorDev::ServerAuthorizationHandler::printMessage()
     std::cout << "password = " << getMessage().password() << std::endl;
 }
 
+void ViktorDev::ServerAuthorizationHandler::printMessageRegistration(){
+    std::cout << std::endl<< "Send message registration:"<< std::endl;
+    std::cout << "email = " << getmessageRegistration().email() << std::endl;
+    std::cout << "username = " << getmessageRegistration().username() << std::endl;
+    std::cout << "password = " << getmessageRegistration().password() << std::endl;
+    std::cout << "country = " << getmessageRegistration().country() << std::endl;
+    std::cout << "firstName = " << getmessageRegistration().firstname() << std::endl;
+    std::cout << "secondName = " << getmessageRegistration().secondname() << std::endl;
+}
+
 void ViktorDev::ServerAuthorizationHandler::parseRequestCheck(PGresult* res)
 {
     int nTuples = PQntuples(res);
@@ -372,7 +415,7 @@ void ViktorDev::ServerAuthorizationHandler::parseRequestCheck(PGresult* res)
     fprintf(stdout, "Fields count: %i\n", nFields);
 
     std::string passwordDB;
-    passwordDB.assign(PQgetvalue(res, 0, 0), PQgetlength(res, 0, 0));
+    passwordDB.assign(PQgetvalue(res, 0, 2), PQgetlength(res, 0, 2));
     std::cout << "passwordDB = " << passwordDB << std::endl;
 
     if (passwordDB == "") {
@@ -380,6 +423,36 @@ void ViktorDev::ServerAuthorizationHandler::parseRequestCheck(PGresult* res)
     } else {
         if (passwordDB == getMessage().password()) {
             checkingResult = ViktorDev::AuthorizationResult::SUCCESS;
+
+            std::string emailDB;
+            emailDB.assign(PQgetvalue(res, 0, 0), PQgetlength(res, 0, 0));
+            getmessageRegistration().set_email(emailDB);
+
+            std::string usernameDB;
+            usernameDB.assign(PQgetvalue(res, 0, 1), PQgetlength(res, 0, 1));
+            getmessageRegistration().set_username(usernameDB);
+
+            getmessageRegistration().set_password(passwordDB);
+
+            std::string countryDB;
+            countryDB.assign(PQgetvalue(res, 0, 3), PQgetlength(res, 0, 3));
+            getmessageRegistration().set_country(countryDB);
+
+            std::string firstnameDB;
+            firstnameDB.assign(PQgetvalue(res, 0, 4), PQgetlength(res, 0, 4));
+            getmessageRegistration().set_firstname(firstnameDB);
+
+            std::string secondnameDB;
+            secondnameDB.assign(PQgetvalue(res, 0, 5), PQgetlength(res, 0, 5));
+            getmessageRegistration().set_secondname(secondnameDB);
+
+            getmessageRegistration().set_coins(0);
+            for(int i = 0; i <gameQuanity; ++i){
+                getmessageRegistration().add_availablegames(0);
+            }
+            getmessageRegistration().set_fps(60);
+            
+
         } else {
             checkingResult = ViktorDev::AuthorizationResult::WRONG_PASSWORD;
         }
@@ -392,7 +465,7 @@ void ViktorDev::ServerAuthorizationHandler::check()
     PGconn* conn = PQconnectdb(conninfo);
     setConnection(&conn);
 
-    const char* sql1 = "SELECT password FROM clients WHERE username = $1";
+    const char* sql1 = "SELECT email, username, password, country, firstname, secondname, coins, availablegames, id, fps FROM clients WHERE username = $1";
     const char* sql1param = getMessage().username().c_str();
     PGresult* res = PQexecParams(conn, sql1, 1, NULL, &sql1param, NULL, NULL, 0);
     ExecStatusType resStatus = PQresultStatus(res);
@@ -413,6 +486,8 @@ void ViktorDev::ServerAuthorizationHandler::check()
 int ViktorDev::ServerAuthorizationHandler::sendIt()
 {
     dbInteraction::serverAuthInformation answerMessage;
+    answerMessage.set_userinfo(555);
+    answerMessage.set_serverinfo(777);
     if (checkingResult == ViktorDev::AuthorizationResult::SUCCESS) {
         answerMessage.set_authorizationstatus(0);
     } else {
@@ -432,6 +507,24 @@ int ViktorDev::ServerAuthorizationHandler::sendIt()
         std::cout << "ERRORSEND IT !" << std::endl;
         return ViktorDev::errorSerializeMessage;
     };
+    out.close();
+    return ViktorDev::success;
+}
+
+int ViktorDev::ServerAuthorizationHandler::sendUserInfo()
+{
+    
+    out.open(filePath, std::ios_base::binary);
+    if (!out) {
+        std::cout << "FILE DOES NOT OPENED!" << std::endl;
+        assert(ViktorDev::errorWithFile);
+        exit(ViktorDev::errorWithFile);
+    }
+    if (!messageRegistration.SerializePartialToOstream(&out)) {
+        std::cout << "ERROR send user info  !" << std::endl;
+        return ViktorDev::errorSerializeMessage;
+    };
+    printMessageRegistration();
     out.close();
     return ViktorDev::success;
 }
@@ -604,7 +697,6 @@ int ViktorDev::ServerRegistrationHandler::receiveIt()
     if (!message.ParseFromIstream(&in)) {
         return ViktorDev::errorParseMessage;
     };
-    //message.set_id(10);
     in.close();
     return ViktorDev::success;
 }
@@ -712,8 +804,6 @@ void ViktorDev::ServerRegistrationHandler::check()
 int ViktorDev::ServerRegistrationHandler::sendIt()
 {
     dbInteraction::serverRegInformation answerMessage;
-    answerMessage.set_userinfo(555);
-    answerMessage.set_serverinfo(777);
     if (checkingResult == ViktorDev::RegistrationResult::SUCCESS) {
         answerMessage.set_authorizationstatus(0);
     } else {

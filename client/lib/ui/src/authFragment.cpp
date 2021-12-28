@@ -24,7 +24,7 @@ AuthFragment::AuthFragment()
     , _backBut(new QPushButton("Back"))
 {
     TCPSocket->activateSocket();
-    usleep(10000000);
+    usleep(100000);
     infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
     infoSocket->activateSocket();
     _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
@@ -91,7 +91,9 @@ void AuthFragment::onAuth()
     clientAuth.printMessage();
     usleep(1000000);
     infoSocket->receiveFile(filename);
-
+    clientAuth.receiveIt();
+    clientAuth.printResult();
+    
     if (clientAuth.result == ViktorDev::AuthorizationResult::SUCCESS){
         infoSocket->receiveFile(filename);
         int receiveUserInfoResult = clientAuth.receiveUserInfo();
