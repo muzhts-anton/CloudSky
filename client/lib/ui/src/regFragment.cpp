@@ -1,9 +1,24 @@
 #include "regFragment.h"
 #include "fragmentThemeStyle.h"
-
+#include "dbOperations.h"
+#include "postgresql/libpq-fe.h"
+#include <arpa/inet.h>
+#include <iomanip>
+#include <iostream>
+#include <netinet/in.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 #include <QtGui>
 
+
+
 namespace fragment {
+
+constexpr const char *serverIP = "10.147.18.164";
+constexpr int serverPort = 8085;
 
 RegFragment::RegFragment()
     : _explanLabel(new QLabel("Input your data to confirm registration"))
@@ -20,6 +35,10 @@ RegFragment::RegFragment()
     , _regBut(new QPushButton("Confirm registration"))
     , _backBut(new QPushButton("Back"))
 {
+    TCPSocket->activateSocket();
+    usleep(1000000);
+    infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
+    infoSocket->activateSocket();
     _userFirstName->setPlaceholderText("First Name");
     _userSecondName->setPlaceholderText("Second Name");
     _userCountry->setPlaceholderText("Country");
@@ -91,8 +110,47 @@ void RegFragment::onResume()
 // slots
 void RegFragment::onReg()
 {
-    if (this->checkData())
-        emit navigateTo(screens::ScreenNames::MAIN);
+    if (!this->checkData())
+        return;
+
+    std::string filename = "authRegistrtionInfo.bin";
+    dbInteraction::registrationOrLogIn regOrLogMessage;
+    regOrLogMessage.set_regorlog(false);
+    ViktorDev::printRegOrLogMessage(regOrLogMessage);
+    ViktorDev::ClientRegOrLog sender(filename, regOrLogMessage);
+    sender.sendIt();
+
+    infoSocket->transmitFile(filename);
+    usleep(100000);
+
+    dbInteraction::registrationInfo regMessage;
+    regMessage.set_email(_userEmail->text().toStdString());
+    regMessage.set_username(_userNickName->text().toStdString());
+    regMessage.set_password(_userFirstPassword->text().toStdString());
+    regMessage.set_country(_userCountry->text().toStdString());
+    regMessage.set_firstname(_userFirstName->text().toStdString());
+    regMessage.set_secondname(_userSecondName->text().toStdString());
+    regMessage.set_coins(50);
+    for (int i = 0; i < ViktorDev::gameQuanity; ++i) {
+        regMessage.add_availablegames(false);
+    }
+    regMessage.set_age(_ageTxt->text().toInt());
+
+    ViktorDev::ClientRegistrationHandler clientReg(filename, regMessage);
+    clientReg.sendIt();
+
+    infoSocket->transmitFile(filename);
+
+    std::cout << std::endl<< "sended message:" << std::endl;
+    clientReg.printMessage();
+    usleep(1000000);
+    infoSocket->receiveFile(filename);
+    clientReg.receiveIt();
+    clientReg.printResult();
+    if (clientReg.result != ViktorDev::RegistrationResult::SUCCESS)
+        return;
+    delete infoSocket;
+    emit navigateTo(screens::ScreenNames::MAIN);
 }
 
 void RegFragment::onBack()

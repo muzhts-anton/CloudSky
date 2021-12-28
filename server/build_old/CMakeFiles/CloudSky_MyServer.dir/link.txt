@@ -1,0 +1,1 @@
+/usr/bin/c++    -pthread -lpqxx -lpq CMakeFiles/CloudSky_MyServer.dir/src/main.cpp.o  -o CloudSky_MyServer  -Wl,-rpath,/usr/local/lib lib/ServerConnection/libServerConnection.a /usr/lib/x86_64-linux-gnu/libpq.so lib/dbOperations/libdbOperations.a /usr/local/lib/libprotobuf.so -lpthread /usr/lib/x86_64-linux-gnu/libpq.so 

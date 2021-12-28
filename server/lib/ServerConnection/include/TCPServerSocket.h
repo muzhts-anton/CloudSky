@@ -37,6 +37,8 @@ public:
 
     void receiveFile(std::string filename);
 
+    void transmitFile(std::string filename);
+
 private:
     std::fstream file;
     int PORT;

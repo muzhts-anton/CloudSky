@@ -2,6 +2,7 @@
 #define REGFRAGMENT_H
 
 #include "baseFragment.h"
+#include "TCPClientSocket.h"
 
 #include <QPushButton>
 #include <QLineEdit>
@@ -31,6 +32,7 @@ private:
     bool checkData();
 
 private:
+    TCPClient::TCPClientSocket* infoSocket;
     QPointer<QLabel> _explanLabel;
     QPointer<QLineEdit> _userFirstName;
     QPointer<QLineEdit> _userSecondName;

@@ -6,6 +6,9 @@ src/Server.cpp  src/Connection.cpp
 include/TCPServerSocket.h include/Server.h include/Connection.h)
 
 target_include_directories(ServerConnection PUBLIC include)
+target_include_directories(ServerConnection  PUBLIC ../dbOperations/include)
+
+target_link_libraries(ServerConnection ${PostgreSQL_LIBRARIES} dbOperations)
 
 # enable_testing()
 

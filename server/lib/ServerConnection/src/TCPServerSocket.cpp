@@ -127,3 +127,33 @@ void TCPServerSocket::receiveFile(std::string filename)
     if (debug)
         std::cout << "[LOG] : TCP File Saved.\n";
 }
+
+void TCPServerSocket::transmitFile(std::string filename)
+{
+    file.open(filename, std::ios::in | std::ios::binary);
+    if (file.is_open()) {
+        if (debug)
+            std::cout << "[LOG] : TCP File is ready to Transmit." << std::endl;
+    } else {
+        if (debug)
+            std::cout << "[ERROR] : TCP File loading failed. Maybe I should exit..." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP File loading failed. Maybe I should exit...");
+    }
+    char buffer[1024] = {};
+    int length = 0;
+    while (!file.eof()) {
+        file.get(buffer[length]);
+        length++;
+    }
+    if (debug)
+        std::cout << "[LOG] : TCP Sending... File " << length << "bytes\n";
+    if(length > 3){
+        --length;
+    }
+    int bytes_sent = send(newSocketDescriptor, buffer, length, 0);
+    file.close();
+    if (debug) {
+        std::cout << "[LOG] : TCP Transmitted Data Size " << bytes_sent << " Bytes.\n";
+        std::cout << "[LOG] : TCP File Transfer Complete.\n";
+    }
+}

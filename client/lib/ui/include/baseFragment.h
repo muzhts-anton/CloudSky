@@ -7,6 +7,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "TCPClientSocket.h"
+
 namespace fragment {
 
 class BaseFragment : public QFrame {
@@ -25,6 +27,7 @@ signals:
     void newRootScreen(screens::ScreenNames tag);
 
 protected:
+    static TCPClient::TCPClientSocket *TCPSocket;
     void clearList(QLayout* list);
 };
 

@@ -1,0 +1,51 @@
+syntax = "proto3";
+package dbInteraction;
+
+message authInformation{
+    string username = 1;
+    string password = 2;
+}
+
+message registrationOrLogIn{
+    bool regOrLog = 1; // 0 - registration; 1 - log in
+    string username = 2;
+}
+
+message serverAuthInformation{
+    int32 authorizationStatus = 1; // 0 - SUCCESS; 1 - WRONG_USERNAME; 2 - WRONG_PASSWORD
+    int32 userInfo = 2;
+    int32 serverInfor = 3;
+}
+message serverRegInformation{
+    int32 authorizationStatus = 1; // 0 - SUCCESS; 2 - DUPLICATED_INFO
+    int32 userInfo = 2;
+    int32 serverInfor = 3;
+}
+
+message transactionRequst{
+    int32 productID = 1;
+    string username = 2;
+}
+
+message transactionAnswer{
+    int32 transactionStatus = 1; // CHANGE TO ENUM! SUCCESS = 0; not enough coins = 1; the product has already been purchased = 2
+    int32 coins = 2; //quanity of coins after transaction
+    repeated bool gameAccess = 3;
+}
+
+message selectedGame{
+    int32 gameID = 1;
+}
+
+message registrationInfo{
+    string email = 1;
+    string username = 2;
+    string password = 3;
+    string country = 4; 
+    string firstName = 5; 
+    string secondName = 6; 
+    int32 coins = 7;
+    repeated bool availableGames =8;
+    int32 age = 9;
+    int32 FPS = 10;
+}

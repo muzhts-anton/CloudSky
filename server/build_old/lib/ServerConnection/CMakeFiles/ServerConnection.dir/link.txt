@@ -1,0 +1,2 @@
+/usr/bin/ar qc libServerConnection.a  CMakeFiles/ServerConnection.dir/src/TCPServerSocket.cpp.o CMakeFiles/ServerConnection.dir/src/UDPServerSocket.cpp.o CMakeFiles/ServerConnection.dir/src/Server.cpp.o CMakeFiles/ServerConnection.dir/src/Connection.cpp.o
+/usr/bin/ranlib libServerConnection.a

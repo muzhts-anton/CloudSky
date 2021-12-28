@@ -36,5 +36,7 @@ include/openGameFragment.h
 add_library(ui STATIC ${UI_SRC} ${UI_HDR})
 
 target_include_directories(ui PUBLIC include)
+# target_include_directories(ui PUBLIC /../../build/lib/dbOperations)
+target_include_directories(ui PUBLIC ../dbOperations/include)
 
 target_link_libraries(ui PUBLIC Qt5::Widgets protobufOperations clientConnection) # MessageOperations

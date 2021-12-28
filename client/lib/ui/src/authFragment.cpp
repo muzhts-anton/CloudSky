@@ -1,7 +1,20 @@
 #include "authFragment.h"
 #include "fragmentThemeStyle.h"
-
+#include "dbOperations.h"
+#include "postgresql/libpq-fe.h"
+#include <arpa/inet.h>
+#include <iomanip>
+#include <iostream>
+#include <netinet/in.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 namespace fragment {
+
+constexpr const char *serverIP = "10.147.18.164";
+constexpr int serverPort = 8085;
 
 AuthFragment::AuthFragment()
     : _explanLabel(new QLabel("Input your data to confirm authorization"))
@@ -10,6 +23,10 @@ AuthFragment::AuthFragment()
     , _authBut(new QPushButton("Authorization"))
     , _backBut(new QPushButton("Back"))
 {
+    TCPSocket->activateSocket();
+    usleep(100000);
+    infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
+    infoSocket->activateSocket();
     _explanLabel->setStyleSheet(themestyle::fixed.value(themestyle::Type::CAPITALLABEL));
     _userName->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
     _userPassword->setStyleSheet(themestyle::fixed.value(themestyle::Type::LINEEDIT) + themestyle::active.value(themestyle::Type::LINEEDIT));
@@ -51,8 +68,46 @@ void AuthFragment::onResume()
 // slots
 void AuthFragment::onAuth()
 {
-    if(this->checkData())
-        emit navigateTo(screens::ScreenNames::MAIN);
+    if(!this->checkData())
+        return;
+
+    std::string filename = "authRegistrtionInfo.bin";
+    dbInteraction::registrationOrLogIn regOrLogMessage;
+    regOrLogMessage.set_regorlog(true);
+    ViktorDev::printRegOrLogMessage(regOrLogMessage);
+    ViktorDev::ClientRegOrLog sender(filename, regOrLogMessage);
+    sender.sendIt();
+    infoSocket->transmitFile(filename);
+
+    dbInteraction::authInformation message;
+    message.set_username(_userName->text().toStdString());
+    message.set_password(_userPassword->text().toStdString());
+    ViktorDev::ClientAuthorizationHandler clientAuth(filename, message);
+    clientAuth.sendIt();
+    
+    infoSocket->transmitFile(filename);
+
+    std::cout << std::endl<< std::endl<< "sended message:"<< std::endl;
+    clientAuth.printMessage();
+    usleep(1000000);
+    infoSocket->receiveFile(filename);
+    clientAuth.receiveIt();
+    clientAuth.printResult();
+    
+    if (clientAuth.result == ViktorDev::AuthorizationResult::SUCCESS){
+        infoSocket->receiveFile(filename);
+        int receiveUserInfoResult = clientAuth.receiveUserInfo();
+        if(receiveUserInfoResult != 0){
+            std::cout<< "[LOG] : Error with receiving user info" << std::endl;
+            exit(ViktorDev::errorParseMessage);
+        }
+        clientAuth.printMessageRegistration();
+    }
+    else
+        return;
+    
+    delete TCPSocket;
+    emit navigateTo(screens::ScreenNames::MAIN);
 }
 
 void AuthFragment::onBack()

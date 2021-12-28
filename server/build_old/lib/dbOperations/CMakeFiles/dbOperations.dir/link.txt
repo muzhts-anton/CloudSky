@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdbOperations.a  CMakeFiles/dbOperations.dir/src/dbOperations.cpp.o CMakeFiles/dbOperations.dir/dbMessages.pb.cc.o
+/usr/bin/ranlib libdbOperations.a

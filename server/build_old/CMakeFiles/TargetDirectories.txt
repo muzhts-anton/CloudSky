@@ -1,0 +1,9 @@
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/CMakeFiles/rebuild_cache.dir
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/CMakeFiles/edit_cache.dir
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/CMakeFiles/CloudSky_MyServer.dir
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/lib/dbOperations/CMakeFiles/edit_cache.dir
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/lib/dbOperations/CMakeFiles/rebuild_cache.dir
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/lib/dbOperations/CMakeFiles/dbOperations.dir
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/lib/ServerConnection/CMakeFiles/rebuild_cache.dir
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/lib/ServerConnection/CMakeFiles/edit_cache.dir
+/media/paul/kalashkov/university/thirdTerm/vk/cloudSky/server/build/lib/ServerConnection/CMakeFiles/ServerConnection.dir

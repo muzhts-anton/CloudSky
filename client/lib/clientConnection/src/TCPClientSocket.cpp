@@ -107,6 +107,7 @@ void TCPClient::TCPClientSocket::changePort(int newPort)
 {
     PORT = newPort;
     address.sin_port = htons(PORT);
+    addressLength = sizeof(address);
     try {
         createConnection();
     }
@@ -117,14 +118,18 @@ void TCPClient::TCPClientSocket::changePort(int newPort)
 
 std::string TCPClient::TCPClientSocket::receiveIP()
 {
+    std::cout<<"In receiveIP"<<std::endl;
     char buffer[1024] = {};
+    usleep(1000000);
     send(generalSocketDescriptor, clientIP, clientIPLength, 0);
-
+    std::cout<<"After send()"<<std::endl;
     std::string IPString;
     int valread = read(generalSocketDescriptor, buffer, 1024);
+    std::cout<<"After read()"<<std::endl;
     if (debug) {
         std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
     }
+    std::cout<<"After debug checking"<<std::endl;
     if (valread > 0 && valread < 14) {
         for (int i = 0; i < valread; i++)
             IPString.push_back(buffer[i]);
@@ -152,11 +157,40 @@ void TCPClient::TCPClientSocket::transmitFile(std::string filename)
     }
     if (debug)
         std::cout << "[LOG] : TCP Sending...\n";
-
-    int bytes_sent = send(generalSocketDescriptor, buffer, length - 1, 0);
+    if(length > 1){
+        --length;
+    }
+    int bytes_sent = send(generalSocketDescriptor, buffer, length, 0);
     file.close();
     if (debug) {
         std::cout << "[LOG] : TCP Transmitted Data Size " << bytes_sent << " Bytes.\n";
         std::cout << "[LOG] : TCP File Transfer Complete.\n";
     }
+}
+
+void TCPClient::TCPClientSocket::receiveFile(std::string filename)
+{
+    file.open(filename, std::ios::out | std::ios::trunc | std::ios::binary);
+    if (file.is_open()) {
+        if (debug)
+            std::cout << "[LOG] : TCP File Created.\n";
+    } else {
+        if (debug)
+            std::cerr << "[ERROR] : TCP File creation failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP File creation failed.");
+    }
+    char buffer[1024] = {};
+    int valread = read(generalSocketDescriptor, buffer, 1024);
+    if (debug) {
+        std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
+        std::cout << "[LOG] : TCP Saving data to file.\n";
+    }
+    if (valread == 0) {
+        std::cerr << "[LOG] : TCP Client is not connected anymore. Maybe I should exit...\n";
+    }
+    for (int i = 0; i < valread; i++)
+        file.write(buffer + i, 1);
+    file.close();
+    if (debug)
+        std::cout << "[LOG] : TCP File Saved.\n";
 }

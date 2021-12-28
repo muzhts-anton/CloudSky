@@ -2,6 +2,7 @@
 #define AUTHFRAGMENT_H
 
 #include "baseFragment.h"
+#include "TCPClientSocket.h"
 
 #include <QPushButton>
 #include <QLineEdit>
@@ -30,6 +31,7 @@ private:
     bool checkData();
 
 private:
+    TCPClient::TCPClientSocket* infoSocket;
     QPointer<QLabel> _explanLabel;
     QPointer<QLineEdit> _userName;
     QPointer<QLineEdit> _userPassword;
