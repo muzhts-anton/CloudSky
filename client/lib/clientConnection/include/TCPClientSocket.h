@@ -41,6 +41,8 @@ public:
 
     void transmitFile(std::string filename);
 
+    void receiveFile(std::string filename);
+
 private:
     std::fstream file;
     int PORT;

@@ -161,3 +161,30 @@ void TCPClient::TCPClientSocket::transmitFile(std::string filename)
         std::cout << "[LOG] : TCP File Transfer Complete.\n";
     }
 }
+
+void TCPClient::TCPClientSocket::receiveFile(std::string filename)
+{
+    file.open(filename, std::ios::out | std::ios::trunc | std::ios::binary);
+    if (file.is_open()) {
+        if (debug)
+            std::cout << "[LOG] : TCP File Created.\n";
+    } else {
+        if (debug)
+            std::cerr << "[ERROR] : TCP File creation failed." << std::endl;
+        throw std::invalid_argument("[ERROR] : TCP File creation failed.");
+    }
+    char buffer[1024] = {};
+    int valread = read(generalSocketDescriptor, buffer, 1024);
+    if (debug) {
+        std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
+        std::cout << "[LOG] : TCP Saving data to file.\n";
+    }
+    if (valread == 0) {
+        std::cerr << "[LOG] : TCP Client is not connected anymore. Maybe I should exit...\n";
+    }
+    for (int i = 0; i < valread; i++)
+        file.write(buffer + i, 1);
+    file.close();
+    if (debug)
+        std::cout << "[LOG] : TCP File Saved.\n";
+}

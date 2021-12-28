@@ -144,7 +144,12 @@ void RegFragment::onReg()
 
     std::cout << std::endl<< "sended message:" << std::endl;
     clientReg.printMessage();
-
+    usleep(100000);
+    TCPSocket->receiveFile(filename);
+    clientReg.receiveIt();
+    clientReg.printResult();
+    if (clientReg.result != ViktorDev::RegistrationResult::SUCCESS)
+        return;
     delete TCPSocket;
     emit navigateTo(screens::ScreenNames::MAIN);
 }

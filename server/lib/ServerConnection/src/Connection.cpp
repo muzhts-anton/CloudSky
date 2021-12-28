@@ -39,12 +39,10 @@ namespace ServerConnection {
         do 
         {
             TCPSocket.receiveFile(pathToClientInfo);
-            // getClientInfo();
             std::cout << "[LOG] : Have the 1st part read\n";
             ViktorDev::ServerRegOrLog receiver(pathToClientInfo);
             receiver.receiveIt();
             TCPSocket.receiveFile(pathToClientInfo);
-            // getClientInfo();
             if (receiver.status)
             {
                 dbInteraction::authInformation receivedMessage;
@@ -55,6 +53,7 @@ namespace ServerConnection {
                 serverAuth.check();
                 serverAuth.sendIt();
                 serverAuth.printResult();
+                
                 if (serverAuth.checkingResult == ViktorDev::AuthorizationResult::SUCCESS)
                     break;
             }
@@ -68,6 +67,7 @@ namespace ServerConnection {
                 serverReg.check();
                 serverReg.sendIt();
                 serverReg.printResult();
+                TCPSocket.transmitFile(pathToClientInfo);
                 if (serverReg.checkingResult == ViktorDev::RegistrationResult::SUCCESS)
                     break;
             }
