@@ -35,12 +35,10 @@ RegFragment::RegFragment()
     , _regBut(new QPushButton("Confirm registration"))
     , _backBut(new QPushButton("Back"))
 {
-    BaseFragment::TCPSocket = new TCPClient::TCPClientSocket(serverPort, serverIP);
     TCPSocket->activateSocket();
     usleep(1000000);
-    delete TCPSocket;
-    TCPSocket = new TCPClient::TCPClientSocket(8090, serverIP);
-    TCPSocket->activateSocket();
+    infoSocket = new TCPClient::TCPClientSocket(8090, serverIP);
+    infoSocket->activateSocket();
     _userFirstName->setPlaceholderText("First Name");
     _userSecondName->setPlaceholderText("Second Name");
     _userCountry->setPlaceholderText("Country");
@@ -122,7 +120,8 @@ void RegFragment::onReg()
     ViktorDev::ClientRegOrLog sender(filename, regOrLogMessage);
     sender.sendIt();
 
-    TCPSocket->transmitFile(filename);
+    infoSocket->transmitFile(filename);
+    usleep(100000);
 
     dbInteraction::registrationInfo regMessage;
     regMessage.set_email(_userEmail->text().toStdString());
@@ -140,17 +139,17 @@ void RegFragment::onReg()
     ViktorDev::ClientRegistrationHandler clientReg(filename, regMessage);
     clientReg.sendIt();
 
-    TCPSocket->transmitFile(filename);
+    infoSocket->transmitFile(filename);
 
     std::cout << std::endl<< "sended message:" << std::endl;
     clientReg.printMessage();
     usleep(100000);
-    TCPSocket->receiveFile(filename);
+    infoSocket->receiveFile(filename);
     clientReg.receiveIt();
     clientReg.printResult();
     if (clientReg.result != ViktorDev::RegistrationResult::SUCCESS)
         return;
-    delete TCPSocket;
+    delete infoSocket;
     emit navigateTo(screens::ScreenNames::MAIN);
 }
 

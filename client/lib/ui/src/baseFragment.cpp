@@ -2,7 +2,10 @@
 
 namespace fragment {
 
-TCPClient::TCPClientSocket *BaseFragment::TCPSocket = nullptr;
+constexpr const char *serverIP = "10.147.18.164";
+constexpr int serverPort = 8085;
+TCPClient::TCPClientSocket *BaseFragment::TCPSocket = new TCPClient::TCPClientSocket(serverPort, serverIP);
+
 // TODO(Tony): = 0 or in .h. This looks ugly
 void BaseFragment::onPause() { }
 void BaseFragment::onResume() { }

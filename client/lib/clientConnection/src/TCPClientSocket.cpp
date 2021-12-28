@@ -3,7 +3,7 @@
 
 constexpr bool debug = true;
 
-constexpr const char *clientIP = "10.147.18.62";
+constexpr const char *clientIP = "10.147.18.111";
 constexpr int clientIPLength = 13;
 
 TCPClient::TCPClientSocket::TCPClientSocket(const int port, const char* ip)
@@ -118,14 +118,18 @@ void TCPClient::TCPClientSocket::changePort(int newPort)
 
 std::string TCPClient::TCPClientSocket::receiveIP()
 {
+    std::cout<<"In receiveIP"<<std::endl;
     char buffer[1024] = {};
+    usleep(1000000);
     send(generalSocketDescriptor, clientIP, clientIPLength, 0);
-
+    std::cout<<"After send()"<<std::endl;
     std::string IPString;
     int valread = read(generalSocketDescriptor, buffer, 1024);
+    std::cout<<"After read()"<<std::endl;
     if (debug) {
         std::cout << "[LOG] : TCP Data received " << valread << " bytes\n";
     }
+    std::cout<<"After debug checking"<<std::endl;
     if (valread > 0 && valread < 14) {
         for (int i = 0; i < valread; i++)
             IPString.push_back(buffer[i]);
@@ -153,7 +157,9 @@ void TCPClient::TCPClientSocket::transmitFile(std::string filename)
     }
     if (debug)
         std::cout << "[LOG] : TCP Sending...\n";
-
+    if(length > 1){
+        --length;
+    }
     int bytes_sent = send(generalSocketDescriptor, buffer, length, 0);
     file.close();
     if (debug) {
