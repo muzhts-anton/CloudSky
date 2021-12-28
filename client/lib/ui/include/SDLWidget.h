@@ -64,22 +64,22 @@ private:
     };
 
 private:
-    AVFormatContext* pFormatCtx = NULL;
-    AVCodecContext* pCodecCtx = NULL;
-    const AVCodec* pCodec = NULL;
-    AVFrame* pFrame = NULL;
-    AVFrame* pFrameRGB = NULL;
+    AVFormatContext* pFormatCtx = nullptr;
+    AVCodecContext* pCodecCtx = nullptr;
+    const AVCodec* pCodec = nullptr;
+    AVFrame* pFrame = nullptr;
+    AVFrame* pFrameRGB = nullptr;
     size_t buffer_size;
-    struct SwsContext* swsCtx = NULL;
-    AVPacket* pPacket = NULL;
+    struct SwsContext* swsCtx = nullptr;
+    AVPacket* pPacket = nullptr;
     std::vector<uint8_t> buffer;
     int videoStream = -1;
-    SDL_Window* screen = NULL;
-    SDL_Renderer* renderer = NULL;
-    SDL_Texture* texture = NULL;
+    SDL_Window* screen = nullptr;
+    SDL_Renderer* renderer = nullptr;
+    SDL_Texture* texture = nullptr;
     SDL_Event event;
     bool quit;
-    AVDictionary* opts = NULL;
+    AVDictionary* opts = nullptr;
 
     bool _butts[(size_t)Buttons::COUNT];
     bool _mouse[(size_t)Mouse::COUNT];

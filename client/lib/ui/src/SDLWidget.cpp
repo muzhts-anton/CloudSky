@@ -35,22 +35,23 @@ void MediaPlayer::initInputStream(const std::string path)
     int ret = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
     if (ret != 0) {
         std::cout << "Cannot not initialize. " << SDL_GetError() << std::endl;
+		return;
     }
-    std::cout << "before\n";
     pFormatCtx = avformat_alloc_context();
 
-    av_dict_set(&opts, "buffer_size", "204800", 0);
-    av_dict_set(&opts, "max_interleave_delta", "1", 0);
-    ret = avformat_open_input(&pFormatCtx, path.c_str(), NULL, &opts);
-    std::cout << "after\n";
+    //av_dict_set(&opts, "max_interleave_delta", "1", 0);
+    //av_dict_set(&opts, "buffer_size", "204800", 0);
+    ret = avformat_open_input(&pFormatCtx, path.c_str(), nullptr, &opts);
 
     if (ret < 0) {
         std::cout << "[LOG]: Error while open file: " << path << std::endl;
+		return;
     }
 
-    ret = avformat_find_stream_info(pFormatCtx, NULL);
+    ret = avformat_find_stream_info(pFormatCtx, nullptr);
     if (ret < 0) {
         std::cout << "Could not find stream information %s\n";
+		return;
     }
 
     av_dump_format(pFormatCtx, 0, path.c_str(), 0);
@@ -62,22 +63,26 @@ void MediaPlayer::initInputStream(const std::string path)
     }
     if (videoStream == -1) {
         std::cout << "Didnt find video stream\n";
+		return;
     }
 
     pCodec = avcodec_find_decoder(pFormatCtx->streams[videoStream]->codecpar->codec_id);
-    if (pCodec == NULL) {
+    if (pCodec == nullptr) {
         std::cout << "Unsupported codec!\n";
+		return;
     }
 
     pCodecCtx = avcodec_alloc_context3(pCodec);
     ret = avcodec_parameters_to_context(pCodecCtx, pFormatCtx->streams[videoStream]->codecpar);
     if (ret != 0) {
         std::cout << "Could not copy codec context\n";
+		return;
     }
 
-    ret = avcodec_open2(pCodecCtx, pCodec, NULL);
+    ret = avcodec_open2(pCodecCtx, pCodec, nullptr);
     if (ret < 0) {
         std::cout << "Could not open codec.\n";
+		return;
     }
 }
 
@@ -85,7 +90,7 @@ void MediaPlayer::play()
 {
 
     pFrame = av_frame_alloc();
-    if (pFrame == NULL) {
+    if (pFrame == nullptr) {
         std::cout << "Cannot allocate frame\n";
     }
 
@@ -99,6 +104,7 @@ void MediaPlayer::play()
 
     if (!screen) {
         std::cout << "Cannot set video mode\n";
+		return;
     }
 
     SDL_GL_SetSwapInterval(0);
@@ -113,7 +119,7 @@ void MediaPlayer::play()
         pCodecCtx->height);
 
     pPacket = av_packet_alloc();
-    if (pPacket == NULL) {
+    if (pPacket == nullptr) {
         std::cout << "Could not alloc packet,\n";
     }
 
@@ -125,9 +131,9 @@ void MediaPlayer::play()
         pCodecCtx->height,
         AV_PIX_FMT_YUV420P,
         SWS_BILINEAR,
-        NULL,
-        NULL,
-        NULL);
+        nullptr,
+        nullptr,
+        nullptr);
 
     buffer_size = av_image_get_buffer_size(AV_PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height, 32);
     buffer.reserve(buffer_size * sizeof(uint8_t));
@@ -219,27 +225,12 @@ void MediaPlayer::play()
                     pict->data,
                     pict->linesize);
 
-                // double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
-                // std::cout << fps << std::endl;
-                // double sleep_time = 1.0/(double)fps;
-                // SDL_Delay((1000 * sleep_time));
                 SDL_Rect rect;
                 rect.x = 0;
                 rect.y = 0;
                 rect.w = pCodecCtx->width;
                 rect.h = pCodecCtx->height;
-                // printf(
-                //     "Frame %c (%d) pts %ld dts %ld key_frame %d [coded_picture_number %d, display_picture_number %d, %dx%d]\n",
-                //     av_get_picture_type_char(pFrame->pict_type),
-                //     pCodecCtx->frame_number,
-                //     pFrame->pts,
-                //     pFrame->pkt_dts,
-                //     pFrame->key_frame,
-                //     pFrame->coded_picture_number,
-                //     pFrame->display_picture_number,
-                //     pCodecCtx->width,
-                //     pCodecCtx->height
-                // );
+                
                 SDL_UpdateYUVTexture(
                     texture,
                     &rect,
@@ -253,9 +244,9 @@ void MediaPlayer::play()
                 SDL_RenderCopy(
                     renderer,
                     texture,
-                    NULL,
-                    NULL);
-                SDL_ShowCursor(SDL_ENABLE);
+                    nullptr,
+                    nullptr);
+                //SDL_ShowCursor(SDL_ENABLE);
                 SDL_RenderPresent(renderer);
             }
         }
