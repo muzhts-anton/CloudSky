@@ -75,6 +75,8 @@ void AuthFragment::onAuth()
     std::string filename = "authRegistrtionInfo.bin";
     dbInteraction::registrationOrLogIn regOrLogMessage;
     regOrLogMessage.set_regorlog(true);
+    regOrLogMessage.set_userinfo(555);
+    regOrLogMessage.set_serverinfo(777);
     ViktorDev::printRegOrLogMessage(regOrLogMessage);
     ViktorDev::ClientRegOrLog sender(filename, regOrLogMessage);
     sender.sendIt();
