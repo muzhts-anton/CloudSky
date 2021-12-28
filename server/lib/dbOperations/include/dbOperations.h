@@ -112,21 +112,16 @@ public:
     AuthorizationResult result;
 
     dbInteraction::authInformation& getMessage();
-    dbInteraction::registrationInfo& getmessageRegistration();
-
     ClientAuthorizationHandler() = delete;
     ClientAuthorizationHandler(std::string filePath, dbInteraction::authInformation message);
     int sendIt();
     int receiveIt();
-    int receiveUserInfo();
     void printMessage();
-    void printMessageRegistration();
     void printResult();
 
 private:
     dbInteraction::authInformation message;
     dbInteraction::serverAuthInformation answerMessage;
-    dbInteraction::registrationInfo messageRegistration;
 };
 
 class ServerAuthorizationHandler {
@@ -137,22 +132,18 @@ public:
     AuthorizationResult checkingResult;
 
     dbInteraction::authInformation& getMessage();
-    dbInteraction::registrationInfo& getmessageRegistration();
     ServerAuthorizationHandler() = delete;
     ServerAuthorizationHandler(std::string filePath, dbInteraction::authInformation message);
     //~ServerAuthorizationHandler();
     int receiveIt();
     void printMessage();
     void printResult();
-    void printMessageRegistration();
     void parseRequestCheck(PGresult* res);
     void check();
-    int sendUserInfo();
     int sendIt();
 
 private:
     dbInteraction::authInformation message;
-    dbInteraction::registrationInfo messageRegistration;
 };
 
 class ClientRegistrationHandler {
