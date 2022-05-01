@@ -1,0 +1,5 @@
+#ifndef DATA_BASE_HANDLER_HPP_
+
+#define DATA_BASE_HANDLER_HPP_
+
+#endif

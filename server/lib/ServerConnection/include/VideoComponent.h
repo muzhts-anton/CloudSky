@@ -1,0 +1,5 @@
+#ifndef VIDEO_COMPONENT_HPP_
+
+#define VIDEO_COMPONENT_HPP_
+
+#endif
